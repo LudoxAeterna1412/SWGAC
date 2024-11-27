@@ -1,0 +1,28 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "api/auth.js",     
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",                  
+        "dest": "/api/auth.js"                
+      },
+      {
+        "src": "/login",                      
+        "dest": "/Vista/login.html"          
+      },
+      {
+        "src": "/index",                      
+        "dest": "/Vista/index.html"          
+      },
+      {
+        "src": "/(.*)",                      
+        "dest": "/Vista/$1"                  
+      }
+    ]
+  }
+  

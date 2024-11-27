@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlar Módulo de Rutas</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <div class="navbar">
+        <h1>Transporte Collasuyo</h1>
+        <a href="login.html" style="color: white;">Cerrar sesión</a>
+    </div>
+    <div class="sidebar">
+        <h3>Menú</h3>
+        <a href="estadisticas.html">Predicción de Tiempo y Distancia de Viaje</a>
+        <a href="gps.html">Monitoreo GPS</a>
+        <a href="control_rutas.html">Control de Rutas</a>
+        <a href="notificaciones.html">Notificaciones y Alertas</a>
+        <a href="historial.html">Historial de Cambios</a>
+        <a href="gestor_usuarios.html">Gestor de Usuarios</a>
+    </div>
+
+    <div class="content">
+        <div class="main-content">
+            <h2>Controlar Módulo de Rutas</h2>
+            <div class="form-container">
+                <form id="routeForm" onsubmit="addRoute(event)">
+                    <input type="text" id="routeName" placeholder="Nombre de la Ruta" required>
+                    <input type="text" id="origin" placeholder="Origen de la Ruta (lat,lng)" required>
+                    <input type="text" id="destination" placeholder="Destino de la Ruta (lat,lng)" required>
+                    <textarea id="stops" placeholder="Paradas (separadas por comas)" required></textarea>
+                    <input type="time" id="departureTime" required>
+                    <input type="time" id="arrivalTime" required>
+                    <button type="submit">Agregar Ruta</button>
+                </form>
+                <p id="message" style="color: green;"></p>
+                <p id="error-message" style="color: red;"></p>
+            </div>
+
+            <div class="routes-list">
+                <h3>Lista de Rutas</h3>
+                <ul id="route-list"></ul>
+            </div>
+
+            <div class="map-container">
+                <h3>Mapa de Rutas</h3>
+                <div id="map" style="height: 400px;"></div>
+            </div>
+
+            <div class="consultar-container">
+                <h3>Consultar Rutas</h3>
+                <button onclick="consultRoutes()">Ver Todas las Rutas</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const routes = [];
+
+        // Rutas predefinidas
+        const predefinedRoutes = [
+            {
+                id: 1,
+                routeName: "Tacna - Candarave",
+                origin: "-17.5,-70.0", // Coordenadas de Tacna
+                destination: "-15.0,-70.0", // Coordenadas de Candarave
+                stops: ["Parada 1", "Parada 2"],
+                departureTime: "06:00",
+                arrivalTime: "08:00"
+            },
+            {
+                id: 2,
+                routeName: "Tacna - Locumba",
+                origin: "-17.5,-70.0", // Coordenadas de Tacna
+                destination: "-17.2,-70.2", // Coordenadas de Locumba
+                stops: ["Parada A", "Parada B"],
+                departureTime: "09:00",
+                arrivalTime: "10:30"
+            },
+            {
+                id: 3,
+                routeName: "Tacna - Desaguadero",
+                origin: "-17.5,-70.0", // Coordenadas de Tacna
+                destination: "-16.5,-69.9", // Coordenadas de Desaguadero
+                stops: ["Parada X", "Parada Y"],
+                departureTime: "11:00",
+                arrivalTime: "13:00"
+            }
+        ];
+
+        // Inicializar mapa
+        const map = L.map('map').setView([-17.5, -70.0], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Agregar rutas predefinidas
+        predefinedRoutes.forEach(route => routes.push(route));
+
+        // Mostrar rutas iniciales
+        displayRoutes();
+
+        // Añadir nueva ruta
+        function addRoute(event) {
+            event.preventDefault();
+            const routeName = document.getElementById('routeName').value.trim();
+            const origin = document.getElementById('origin').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const stops = document.getElementById('stops').value.split(',').map(s => s.trim());
+            const departureTime = document.getElementById('departureTime').value;
+            const arrivalTime = document.getElementById('arrivalTime').value;
+
+            // Validación de horarios
+            if (departureTime >= arrivalTime) {
+                document.getElementById('error-message').innerText = "La hora de salida debe ser anterior a la hora de llegada.";
+                return;
+            }
+
+            // Verificar si la ruta ya existe
+            if (routes.some(route => route.routeName === routeName && route.origin === origin && route.destination === destination)) {
+                document.getElementById('error-message').innerText = "La ruta ya existe.";
+                return;
+            }
+
+            // Verificar conflictos de horarios
+            if (routes.some(route => (
+                (route.origin === origin && route.destination === destination) && 
+                (route.departureTime < arrivalTime && route.arrivalTime > departureTime)
+            ))) {
+                document.getElementById('error-message').innerText = "Conflicto de horarios con otra ruta existente.";
+                return;
+            }
+
+            const newRoute = {
+                id: routes.length + 1,
+                routeName,
+                origin,
+                destination,
+                stops,
+                departureTime,
+                arrivalTime
+            };
+            routes.push(newRoute);
+            displayRoutes();
+            document.getElementById('routeForm').reset();
+            document.getElementById('message').innerText = 'Ruta creada exitosamente';
+            document.getElementById('error-message').innerText = ''; // Limpiar mensajes de error
+        }
+
+        // Mostrar rutas en la lista
+        function displayRoutes() {
+            const routeList = document.getElementById('route-list');
+            routeList.innerHTML = '';
+            routes.forEach(route => {
+                const routeItem = document.createElement('li');
+                routeItem.className = 'route-item';
+                routeItem.innerHTML = `
+                    <strong>${route.routeName}</strong>: ${route.origin} - Destino: ${route.destination} - Salida: ${route.departureTime} - Llegada: ${route.arrivalTime}
+                    <div>
+                        <button onclick="showRouteDetails(${route.id})">Detalle</button>
+                        <button onclick="editRoute(${route.id})">Editar</button>
+                        <button onclick="deleteRoute(${route.id})">Eliminar</button>
+                    </div>
+                `;
+                routeList.appendChild(routeItem);
+            });
+        }
+
+        // Consultar rutas
+        function consultRoutes() {
+            if (routes.length === 0) {
+                alert("No hay rutas registradas.");
+                return;
+            }
+            const routesDetails = routes.map(route => 
+                `Nombre: ${route.routeName}, Origen: ${route.origin}, Destino: ${route.destination}, Salida: ${route.departureTime}, Llegada: ${route.arrivalTime}`
+            ).join('\n');
+            alert("Rutas Registradas:\n" + routesDetails);
+        }
+
+        // Mostrar detalles de la ruta seleccionada
+        function showRouteDetails(id) {
+            const route = routes.find(r => r.id === id);
+            if (route) {
+                const destinationCoords = route.destination.split(',').map(Number); // Convertir a coordenadas
+                L.marker(destinationCoords).addTo(map)
+                    .bindPopup(`Ruta: ${route.routeName} - Salida: ${route.departureTime}`)
+                    .openPopup();
+                map.setView(destinationCoords, 8);
+            }
+        }
+
+        // Editar ruta
+        function editRoute(id) {
+            const route = routes.find(r => r.id === id);
+            if (route) {
+                const newName = prompt("Nuevo Nombre de la Ruta", route.routeName);
+                const newOrigin = prompt("Nuevo Origen", route.origin);
+                const newDestination = prompt("Nuevo Destino", route.destination);
+                const newDepartureTime = prompt("Nueva Hora de Salida", route.departureTime);
+                const newArrivalTime = prompt("Nueva Hora de Llegada", route.arrivalTime);
+                
+                if (newName) route.routeName = newName;
+                if (newOrigin) route.origin = newOrigin;
+                if (newDestination) route.destination = newDestination;
+                if (newDepartureTime) route.departureTime = newDepartureTime;
+                if (newArrivalTime) route.arrivalTime = newArrivalTime;
+                
+                displayRoutes();
+            }
+        }
+
+        // Eliminar ruta
+        function deleteRoute(id) {
+            routes.splice(routes.findIndex(r => r.id === id), 1);
+            displayRoutes();
+        }
+    </script>
+</body>
+</html>

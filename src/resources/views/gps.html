@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Monitoreo GPS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <div class="navbar">
+        <h1>Transporte Collasuyo</h1>
+        <a href="login.html" style="color: white;">Cerrar sesión</a>
+    </div>
+    <div class="sidebar">
+        <h3>Menú</h3>
+        <a href="estadisticas.html">Predicción de Tiempo y Distancia de Viaje</a>
+        <a href="gps.html">Monitoreo GPS</a>
+        <a href="control_rutas.html">Control de Rutas</a>
+        <a href="notificaciones.html">Notificaciones y Alertas</a>
+        <a href="historial.html">Historial de Cambios</a>
+        <a href="gestor_usuarios.html">Gestor de Usuarios</a>
+    </div>
+
+    <div class="content">
+        <div class="main-content">
+            <h2>Panel de Control - Monitoreo GPS</h2>
+
+            <div class="monitoring-info">
+                <h3>Información de Buses</h3>
+                <div id="busList" class="bus-list"></div>
+            </div>
+
+            <div class="gps-controls">
+                <button class="button" onclick="startTracking()">Iniciar Monitoreo</button>
+                <button class="button" onclick="stopTracking()">Detener Monitoreo</button>
+            </div>
+
+            <div id="gps-status" style="margin-top: 20px;">
+                <p>Estado del GPS: Desconectado</p>
+            </div>
+            <div id="map" style="height: 400px;"></div>
+
+            <div class="route-gps-management">
+                <h3>Gestión de Buses y GPS</h3>
+                <form id="busForm" class="bus-form" onsubmit="addBus(event)">
+                    <input type="text" id="busName" placeholder="Nombre del Bus" required>
+                    <input type="text" id="gpsNumber" placeholder="Número de GPS" required>
+                    <input type="text" id="gpsRoute" placeholder="Información de Ruta" required>
+                    <button type="submit" class="button">Añadir Bus y GPS</button>
+                </form>
+            </div>
+
+            <div class="monitoring-data">
+                <h3>Datos a Monitorear</h3>
+                <p>Ubicación en tiempo real: Muestra la posición actual del GPS en el mapa.</p>
+                <p>Estado de la Batería: Muestra el porcentaje de batería del dispositivo GPS.</p>
+                <p class="alert" id="alert-message" style="display: none;">¡Alerta! El GPS ha salido de la ruta predeterminada o hay un cambio en la velocidad.</p>
+            </div>
+
+            <div class="configurations">
+                <h3>Configuraciones Adicionales</h3>
+                <p>Alertas: Configura alertas para recibir notificaciones si el GPS sale de una ruta predeterminada o si hay un cambio en la velocidad.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let map, markers = {};
+        let tracking = false;
+        let buses = [];
+        const predefinedRoute = [
+            { lat: -17.5, lng: -70.0 },
+            { lat: -17.4, lng: -70.1 },
+            { lat: -17.3, lng: -70.2 }
+        ];
+
+        function initMap() {
+            map = L.map('map').setView([-17.5, -70.0], 8);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        function startTracking() {
+            tracking = true;
+            document.getElementById('gps-status').querySelector('p').innerText = 'Estado del GPS: Conectado';
+            updateVehicleData();
+        }
+
+        function stopTracking() {
+            tracking = false;
+            document.getElementById('gps-status').querySelector('p').innerText = 'Estado del GPS: Desconectado';
+        }
+
+        function isOutsideRoute(lat, lng) {
+            return !predefinedRoute.some(point => 
+                Math.abs(point.lat - lat) < 0.01 && Math.abs(point.lng - lng) < 0.01
+            );
+        }
+
+        function updateVehicleData() {
+            if (tracking) {
+                buses.forEach((bus, index) => {
+                    const lat = bus.lat + (Math.random() - 0.5) * 0.01;
+                    const lng = bus.lng + (Math.random() - 0.5) * 0.01;
+
+                    bus.lat = lat;
+                    bus.lng = lng;
+                    bus.battery = Math.max(0, bus.battery - Math.floor(Math.random() * 3));
+
+                    if (isOutsideRoute(lat, lng)) {
+                        document.getElementById('alert-message').style.display = 'block';
+                    } else {
+                        document.getElementById('alert-message').style.display = 'none';
+                    }
+
+                    if (!markers[bus.name]) {
+                        markers[bus.name] = L.marker([lat, lng]).addTo(map);
+                    } else {
+                        markers[bus.name].setLatLng([lat, lng]);
+                    }
+
+                    document.getElementById(`bus-${index}`).innerHTML = `
+                        <div class="info-card">
+                            <h4>${bus.name}</h4>
+                            <p>Número de GPS: ${bus.gpsNumber}</p>
+                            <p>Información de Ruta: ${bus.route}</p>
+                            <p>Posición Actual: Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}</p>
+                            <p>Estado de la Batería: ${bus.battery}%</p>
+                        </div>
+                    `;
+                });
+                setTimeout(updateVehicleData, 2000);
+            }
+        }
+
+        function addBus(event) {
+            event.preventDefault();
+            const busName = document.getElementById('busName').value;
+            const gpsNumber = document.getElementById('gpsNumber').value;
+            const gpsRoute = document.getElementById('gpsRoute').value;
+
+            const newBus = {
+                name: busName,
+                gpsNumber: gpsNumber,
+                route: gpsRoute,
+                battery: 100,
+                lat: -17.5 + Math.random() * 0.1,
+                lng: -70.0 + Math.random() * 0.1
+            };
+            buses.push(newBus);
+            renderBusList();
+        }
+
+        function renderBusList() {
+            const busList = document.getElementById('busList');
+            busList.innerHTML = '';
+            buses.forEach((bus, index) => {
+                const busDiv = document.createElement('div');
+                busDiv.id = `bus-${index}`;
+                busDiv.className = 'bus-item';
+                busDiv.innerHTML = `
+                    <div class="info-card">
+                        <h4>${bus.name}</h4>
+                        <p>Número de GPS: ${bus.gpsNumber}</p>
+                        <p>Información de Ruta: ${bus.route}</p>
+                        <p>Posición Actual: Lat: ${bus.lat.toFixed(5)}, Lng: ${bus.lng.toFixed(5)}</p>
+                        <p>Estado de la Batería: ${bus.battery}%</p>
+                    </div>
+                `;
+                busList.appendChild(busDiv);
+            });
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

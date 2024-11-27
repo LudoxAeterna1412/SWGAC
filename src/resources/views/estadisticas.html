@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Módulo de Predicción de Tiempo y Distancia de Viaje</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Transporte Collasuyo</h1>
+        <a href="login.html" style="color: white;">Cerrar sesión</a>
+    </div>
+    <div class="sidebar">
+        <h3>Menú</h3>
+        <a href="estadisticas.html">Predicción de Tiempo y Distancia de Viaje</a>
+        <a href="gps.html">Monitoreo GPS</a>
+        <a href="control_rutas.html">Control de Rutas</a>
+        <a href="notificaciones.html">Notificaciones y Alertas</a>
+        <a href="historial.html">Historial de Cambios</a>
+        <a href="gestor_usuarios.html">Gestor de Usuarios</a>
+    </div>
+
+    <div class="content">
+        <div class="main-content">
+            <h2>Gestionar Módulo de Predicción de Tiempo y Distancia de Viaje</h2>
+            <form id="predictionForm" onsubmit="calculatePrediction(event)">
+                <label for="route">Ruta Seleccionada:</label>
+                <input type="text" id="route" required placeholder="Ingrese la ruta">
+
+                <label for="stops">Paradas Programadas:</label>
+                <input type="text" id="stops" required placeholder="Ingrese las paradas separadas por comas">
+
+                <label for="traffic">Condiciones de Tráfico:</label>
+                <select id="traffic" required>
+                    <option value="normal">Normal</option>
+                    <option value="congestionado">Congestionado</option>
+                    <option value="cerrado">Cerrado</option>
+                </select>
+
+                <button type="submit" class="button">Calcular</button>
+            </form>
+
+            <div id="results" style="margin-top: 20px;">
+                <h3>Resultados de Predicción</h3>
+                <div id="predictionOutput"></div>
+            </div>
+
+            <h3>Ajustar Parámetros de Predicción</h3>
+            <form id="adjustForm" onsubmit="adjustPredictions(event)">
+                <label for="newPrediction">Nuevo Tiempo Estimado (min):</label>
+                <input type="number" id="newPrediction" required placeholder="Ingrese nuevo tiempo estimado">
+                <button type="submit" class="button">Modificar</button>
+            </form>
+
+            <div id="predictionsList" style="margin-top: 20px;">
+                <h3>Lista de Predicciones</h3>
+                <ul id="predictionsOutput"></ul>
+            </div>
+
+            <button onclick="generateReport()" class="button">Generar Informe de Predicción</button>
+
+            <div>
+                <canvas id="predictionsChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulación de autenticación de Administrador
+        const isAdmin = true; // Cambia a false para simular acceso denegado
+        if (!isAdmin) {
+            alert("Acceso denegado. Solo administradores pueden gestionar predicciones.");
+            window.location.href = "login.html"; // Redirigir a la página de login
+        }
+
+        const predictions = []; // Almacena las predicciones generadas
+
+        // Función para calcular la predicción
+        function calculatePrediction(event) {
+            event.preventDefault();
+            const route = document.getElementById('route').value;
+            const stops = document.getElementById('stops').value.split(',');
+            const traffic = document.getElementById('traffic').value;
+
+            // Simulación de predicción
+            let predictedTime = stops.length * 10; // Simulación básica (10 min por parada)
+            if (traffic === 'congestionado') predictedTime *= 1.5; // Aumentar el tiempo si está congestionado
+            if (traffic === 'cerrado') predictedTime *= 2; // Duplicar el tiempo si está cerrado
+
+            // Generar y mostrar resultados
+            const predictionOutput = document.getElementById('predictionOutput');
+            predictionOutput.innerHTML = `Predicción de tiempo: ${predictedTime} minutos.`;
+            predictions.push({ route, stops, traffic, predictedTime }); // Almacenar la predicción
+            displayPredictions(); // Mostrar lista de predicciones
+
+            // Generar gráfico de la predicción
+            generateChart(predictedTime);
+        }
+
+        // Función para generar gráfico
+        function generateChart(predictedTime) {
+            const ctx = document.getElementById('predictionsChart').getContext('2d');
+            const chartData = {
+                labels: ['Predicción'],
+                datasets: [{
+                    label: 'Tiempo Estimado (min)',
+                    data: [predictedTime],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+            const chartOptions = {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            };
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // Función para ajustar predicciones
+        function adjustPredictions(event) {
+            event.preventDefault();
+            const newTime = document.getElementById('newPrediction').value;
+
+            // Aquí puedes incluir lógica adicional para modificar cálculos según el nuevo tiempo ingresado.
+            alert(`El nuevo tiempo estimado es de ${newTime} minutos.`);
+        }
+
+        // Función para mostrar la lista de predicciones
+        function displayPredictions() {
+            const predictionsOutput = document.getElementById('predictionsOutput');
+            predictionsOutput.innerHTML = '';
+            predictions.forEach((pred, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Ruta: ${pred.route}, Paradas: ${pred.stops.join(', ')}, Tráfico: ${pred.traffic}, Tiempo Estimado: ${pred.predictedTime} minutos.`;
+                predictionsOutput.appendChild(li);
+            });
+        }
+
+        // Función para generar informe
+        function generateReport() {
+            if (predictions.length === 0) {
+                alert("No hay predicciones para generar un informe.");
+                return;
+            }
+            const reportContent = predictions.map(pred => 
+                `Ruta: ${pred.route}, Paradas: ${pred.stops.join(', ')}, Tráfico: ${pred.traffic}, Tiempo Estimado: ${pred.predictedTime} minutos.`
+            ).join('\n');
+            alert("Informe de Predicción Generado:\n" + reportContent);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Cambios</title>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Transporte Collasuyo</h1>
+        <a href="login.html" style="color: white;">Cerrar sesión</a>
+    </div>
+    <div class="sidebar">
+        <h3>Menú</h3>
+        <a href="estadisticas.html">Predicción de Tiempo y Distancia de Viaje</a>
+        <a href="gps.html">Monitoreo GPS</a>
+        <a href="control_rutas.html">Control de Rutas</a>
+        <a href="notificaciones.html">Notificaciones y Alertas</a>
+        <a href="historial.html">Historial de Cambios</a>
+        <a href="gestor_usuarios.html">Gestor de Usuarios</a>
+    </div>
+
+    <div class="content">
+        <div class="main-content">
+            <h2>Historial de Cambios</h2>
+            <div class="crud-container">
+                <button class="button" onclick="addReport()">Añadir Informe</button>
+                <button class="button" onclick="editReport()">Editar Informe</button>
+                <button class="button" onclick="deleteReport()">Eliminar Informe</button>
+            </div>
+            <ul id="reports-list">
+                <li>Informe 1: Cambio en la ruta 1</li>
+                <li>Informe 2: Actualización de GPS en vehículo 5</li>
+                <li>Informe 3: Mantenimiento del sistema</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addReport() {
+            const report = prompt("Añadir informe:");
+            if (report) {
+                const li = document.createElement("li");
+                li.textContent = report;
+                document.getElementById('reports-list').appendChild(li);
+            }
+        }
+
+        function editReport() {
+            const reports = document.getElementById('reports-list').children;
+            const reportIndex = prompt("Ingrese el número de informe a editar (1, 2, ...):");
+            if (reportIndex && reports[reportIndex - 1]) {
+                const reportText = prompt("Nuevo texto del informe:");
+                if (reportText) {
+                    reports[reportIndex - 1].textContent = reportText;
+                }
+            }
+        }
+
+        function deleteReport() {
+            const reportIndex = prompt("Ingrese el número de informe a eliminar (1, 2, ...):");
+            const reports = document.getElementById('reports-list').children;
+            if (reportIndex && reports[reportIndex - 1]) {
+                reports[reportIndex - 1].remove();
+            }
+        }
+    </script>
+</body>
+</html>
