@@ -119,9 +119,7 @@
                     // Mostrar una alerta con los valores de result
 
                     //mantendremos esto pero debemos sacarlo
-                    alert(`Bienvenido, ${result.user.usuario_nombre} 
-                    con el rol de ${result.user.usuario_tipo} 
-                    con sesion ${result.user.usuario_sesion}`);
+                    alert(`Bienvenido, ${result.user.usuario_nombre} con el rol de ${result.user.usuario_tipo}`);
 
                     // alert(`Datos del resultado:\n${JSON.stringify(result, null, 2)}`);
                     localStorage.setItem('usuarioActivo', JSON.stringify(result, null, 2));
@@ -138,7 +136,6 @@
             }
         });
     </script>
-
 </body>
 
 </html>

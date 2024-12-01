@@ -1,0 +1,339 @@
+<%- layout('layout') %> <!-- Usar el layout principal -->
+
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion de Usuario</h1>
+            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Generar Reporte</a>
+        </div>
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <hr>
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Registrar Usuario</h1>
+            </div>
+            <!-- Begin Form Content -->
+            <form class="user" id="userForm" onsubmit="addUser(event)"
+                style="display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 1000px; margin: auto;">
+                <!-- Campos de usuario, contraseña, tipo de usuario y botón alineados horizontalmente -->
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
+                    <input type="text" class="form-control form-control-user" id="username"
+                        placeholder="Nombre de Usuario" required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <input type="password" class="form-control form-control-user" id="password" placeholder="Contraseña"
+                        required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <input type="email" class="form-control form-control-user" id="email"
+                        placeholder="Correo Electronico" required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <select id="userType"
+                        style="min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                        <option value="administrador">Administrador</option>
+                        <option value="operador">Operador</option>
+                        <option value="pasajero">Pasajero</option>
+                        <option value="conductor">Conductor</option>
+                    </select>
+                    <input type="submit" class="btn btn-primary btn-user" value="Registrar"
+                        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
+                </div>
+                <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
+            </form>
+            <hr>
+            <!-- Table Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Usuarios Registrados</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="userTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre de Usuario</th>
+                                    <th>Tipo de Usuario</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Nombre de Usuario</th>
+                                    <th>Tipo de Usuario</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                            <tbody id="user-list">
+                                <!-- Aquí se llenarán los datos dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para agregar un usuario
+        async function addUser(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            const user = {
+                usuario_email: email,
+                usuario_nombre: username,
+                usuario_password: password,
+                usuario_tipo: userType
+            };
+            try {
+                const response = await fetch('/api/usuario/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+                if (response.ok) {
+                    alert('Usuario creado exitosamente');
+                    document.getElementById('userForm').reset();  // Limpiar el formulario
+                    loadUsers();  // Recargar la lista de usuarios
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al agregar el usuario:', error);
+                alert('Hubo un problema al agregar el usuario');
+            }
+        }
+
+        // Función para cargar todos los usuarios
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/usuario/records');
+                const users = await response.json();
+
+                // Limpia la tabla si ya fue inicializada anteriormente
+                if ($.fn.DataTable.isDataTable('#userTable')) {
+                    const dataTable = $('#userTable').DataTable();
+                    dataTable.clear();
+
+                    // Agrega filas nuevamente
+                    users.forEach(user => {
+                        dataTable.row.add([
+                            `<div class="searchable" style="display:none;">${user.usuario_nombre}</div>
+                           <input type="text" value="${user.usuario_nombre}" data-id="${user._id}" class="editable nombre">`,
+                            `<select data-id="${user._id}" class="editable tipo">
+                              <option value="administrador" ${user.usuario_tipo === 'administrador' ? 'selected' : ''}>administrador</option>
+                              <option value="operador" ${user.usuario_tipo === 'operador' ? 'selected' : ''}>operador</option>
+                              <option value="conductor" ${user.usuario_tipo === 'conductor' ? 'selected' : ''}>conductor</option>
+                              <option value="pasajero" ${user.usuario_tipo === 'pasajero' ? 'selected' : ''}>pasajero</option>
+                          </select>`,
+                            `
+                              <button onclick="saveUser('${user._id}')">Guardar</button>
+                              <button onclick="deleteUser('${user._id}')">Eliminar</button>
+                          `
+                        ]);
+                    });
+
+                    dataTable.draw();
+                } else {
+                    $('#userTable').DataTable({
+                        data: users.map(function (user) {
+                            return [
+                                // Columna Nombre de Usuario
+                                '<div class="searchable" style="display:none;">' + user.usuario_nombre + '</div>' +
+                                '<input type="text" value="' + user.usuario_nombre + '" data-id="' + user._id + '" class="editable nombre">',
+
+                                // Columna Tipo de Usuario
+                                '<div class="searchable tipo-oculto" style="display:none;">' + user.usuario_tipo + '</div>' + //tecnicamente....no funciona aun
+                                '<select data-id="' + user._id + '" class="editable tipo">' +
+                                '<option value="administrador" ' + (user.usuario_tipo === 'administrador' ? 'selected' : '') + '>administrador</option>' +
+                                '<option value="operador" ' + (user.usuario_tipo === 'operador' ? 'selected' : '') + '>operador</option>' +
+                                '<option value="conductor" ' + (user.usuario_tipo === 'conductor' ? 'selected' : '') + '>conductor</option>' +
+                                '<option value="pasajero" ' + (user.usuario_tipo === 'pasajero' ? 'selected' : '') + '>pasajero</option>' +
+                                '</select>',
+
+                                // Columna Acciones
+                                '<button onclick="saveUser(\'' + user._id + '\')">Guardar</button>' +
+                                '<button onclick="deleteUser(\'' + user._id + '\')">Eliminar</button>'
+                            ];
+                        }),
+                        columns: [
+                            { title: "Nombre de Usuario" },
+                            { title: "Tipo de Usuario" },
+                            { title: "Acciones" }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: [2],
+                                searchable: false,
+                                orderable: false
+                            }
+                        ],
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        autoWidth: false,
+                        language: {
+                            sProcessing: "Procesando...",
+                            sLengthMenu: "Mostrar _MENU_ registros",
+                            sZeroRecords: "No se encontraron resultados",
+                            sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
+                            sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                            sInfoFiltered: "(filtrado de _MAX_ registros en total)",
+                            sSearch: "Buscar:",
+                            oPaginate: {
+                                sFirst: "Primero",
+                                sPrevious: "Anterior",
+                                sNext: "Siguiente",
+                                sLast: "Último"
+                            },
+                            oAria: {
+                                sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                                sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                            }
+                        },
+                        initComplete: function () {
+                            // Configurar la búsqueda por columna
+                            this.api()
+                                .columns([0, 1]) // Aplica la búsqueda solo a las columnas 0 y 1
+                                .every(function (index) {
+                                    var column = this;
+                                    var title = $(column.footer()).text();
+
+                                    // Crea un campo de entrada en el pie de tabla
+                                    var input = document.createElement('input');
+                                    input.placeholder = 'Buscar ' + title;
+                                    $(column.footer()).empty().append(input);
+
+                                    // Agrega el evento de búsqueda
+                                    $(input).on('keyup change', function () {
+                                        if (column.search() !== this.value) {
+                                            column.search(this.value).draw();
+                                        }
+                                    });
+                                });
+                        },
+                        fixedHeader: {
+                            footer: true // Habilita el header y footer fijos
+                        }
+                    });
+
+
+
+
+
+
+                }
+            } catch (error) {
+                console.error('Error al cargar los usuarios:', error);
+                alert('Hubo un problema al cargar los usuarios');
+            }
+        }
+        async function saveUser(userId) {
+            try {
+                // Recuperar los valores editados directamente de los elementos DOM
+                const nombreInput = document.querySelector(`input[data-id="${userId}"]`);
+                const tipoSelect = document.querySelector(`select[data-id="${userId}"]`);
+
+                if (!nombreInput || !tipoSelect) {
+                    throw new Error('No se pudieron encontrar los campos editables para este usuario.');
+                }
+
+                const nombre = nombreInput.value.trim();
+                const tipo = tipoSelect.value;
+
+                // Validar los datos antes de enviarlos
+                if (!nombre) {
+                    alert('El nombre de usuario no puede estar vacío.');
+                    return;
+                }
+
+                // Enviar los datos al servidor
+                const response = await fetch(`/api/usuario/update/${userId}`, {
+                    method: 'PUT', // O el método correspondiente en tu API
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ usuario_nombre: nombre, usuario_tipo: tipo })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al guardar los cambios.');
+                }
+
+                alert('Usuario actualizado correctamente');
+                loadUsers(); // Recargar la tabla para reflejar los cambios
+            } catch (error) {
+                console.error('Error al guardar los cambios:', error);
+                alert(`Hubo un problema al guardar los cambios: ${error.message}`);
+            }
+        }
+
+
+
+        // Función para eliminar un usuario
+        async function deleteUser(userId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/usuario/delete/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (response.ok) {
+                    alert('Usuario eliminado exitosamente');
+                    loadUsers(); // Recargar la lista de usuarios
+                } else {
+                    const data = await response.json();
+                    alert(`Error al eliminar el usuario: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al eliminar el usuario:', error);
+                alert('Hubo un problema al eliminar el usuario');
+            }
+        }
+
+        // Función para actualizar un usuario
+        async function updateUser(event, userId) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            const updatedUser = {
+                usuario_email: email,
+                usuario_nombre: username,
+                usuario_password: password,
+                usuario_tipo: userType,
+            };
+            try {
+                const response = await fetch(`/api/users/update/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedUser),
+                });
+                if (response.ok) {
+                    alert('Usuario actualizado exitosamente');
+                    document.getElementById('userForm').reset(); // Limpiar el formulario
+                    loadUsers(); // Recargar la lista de usuarios
+                } else {
+                    const data = await response.json();
+                    alert(`Error al actualizar el usuario: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al actualizar el usuario:', error);
+                alert('Hubo un problema al actualizar el usuario');
+            }
+        }
+        // Llamar a la función loadUsers al cargar la página
+        window.onload = loadUsers;
+    </script>

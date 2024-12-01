@@ -42,6 +42,8 @@
     "dotenv": "^16.4.5",
     "ecdsa-sig-formatter": "^1.0.11",
     "ee-first": "^1.1.1",
+    "ejs": "^3.1.10",
+    "ejs-locals": "^1.0.2",
     "emoji-regex": "^8.0.0",
     "encodeurl": "^2.0.0",
     "es-define-property": "^1.0.0",

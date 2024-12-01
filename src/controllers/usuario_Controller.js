@@ -2,7 +2,25 @@
 const User = require('../model/usuario_Model');
 const Controller = require('./cls_wraper_Controller');
 const path = require("path");
+
+
+
 class usuario_Controller extends Controller {
+  
+  // Obtener al usuario por id
+  async getUser(req, res) {
+    try {
+      
+      const { usuario_email } = req.body;
+      const user = await User.getByEmail(usuario_email);
+      if (!user) {
+        return res.status(400).json({ message: "Usuario no encontrado" });
+      }
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(500).send(error.message);
+    }
+  }
   // Obtener todos los usuarios
   async records(req, res) {
     try {
@@ -75,8 +93,16 @@ class usuario_Controller extends Controller {
     }
   }
   // Renderizar la vista del gestor de usuarios
+  // gestor_usuarios(req, res) {
+  //   res.sendFile(path.join(__dirname, "../resources/views", "gestor_usuarios.html"));
+  // }
+
+  // Renderizar la vista del gestor de usuarios con EJS
   gestor_usuarios(req, res) {
-    res.sendFile(path.join(__dirname, "../resources/views", "gestor_usuarios.html"));
+    res.render('gestor_usuarios', {  // Usamos res.render para renderizar la vista EJS
+      title: 'Gestor de Usuarios',
+      mensaje: 'Bienvenido al Gestor de Usuarios',
+    });
   }
 }
 

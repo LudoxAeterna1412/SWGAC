@@ -1,6 +1,7 @@
 //get instance of app from express
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto'); // Importamos crypto
 
 const { auth_Controller, usuario_Controller } = require('../controllers/barrel_Controller');
 
@@ -14,6 +15,8 @@ const authRoutes = express.Router();
 //rutas
 //login
 authRoutes.post('/login', auth_Controller.login);
+//logout
+userRoutes.post('/getUser', usuario_Controller.getUser);
 //users
 userRoutes.get('/records', usuario_Controller.records);
 
