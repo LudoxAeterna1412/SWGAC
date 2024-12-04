@@ -19,6 +19,7 @@
   <link href="template/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.css" rel="stylesheet">
 
+
 </head>
 
 <body id="page-top">
@@ -29,9 +30,9 @@
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="template/index.html">
         <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
+          <i class="fa fa-bus" aria-hidden="true"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        <div class="sidebar-brand-text mx-3">S.W.T.I.C. <sup>v.2.0</sup></div>
       </a>
       <!-- Divider -->
       <hr class="sidebar-divider my-0">
@@ -364,6 +365,8 @@
 <script src="https://cdn.datatables.net/fixedheader/4.0.1/js/fixedHeader.dataTables.js"></script>
 
 
+<!-- con suerte funciona el modal -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
 <!-- Page level plugins -->
 <script src="template/vendor/chart.js/Chart.min.js"></script>
@@ -391,11 +394,11 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ usuario_email:'admin@gmail.com' }),
+          body: JSON.stringify({ usuario_email: usuario_email }),
         });
-    
+
         const result = await response.json();
-    
+
         if (response.ok) {
           // Mostrar una alerta con los valores de result
           //mantendremos esto pero debemos sacarlo
@@ -413,35 +416,81 @@
       }
 
 
-  
-      
+
+
       const menu_seguridad = document.getElementById('menu_seguridad');
       const menu_mantenimiento = document.getElementById('menu_mantenimiento');
       const menu_proyecto = document.getElementById('menu_proyecto');
+
+      const Controlar_Módulo_de_Rutas = document.getElementById('link_rf03');
+      const Gestionar_Notificaciones_y_Alertas = document.getElementById('link_rf04');
+      const Controlar_Módulo_de_Monitoreo = document.getElementById('link_rf05');
+      const Gestionar_Módulo_de_Predicción = document.getElementById('link_rf06');
+
       // Ocultar el elemento si el tipo de usuario no tiene permisos
-      if (usuarioActivo.user.usuario_tipo !== 'administrador') { // Ajusta 'admin' al tipo de usuario que debe ver el menú
-        //menu_seguridad.style.display = 'none';
-        menu_mantenimiento.style.display = 'none';
+      if (usuarioActivo.user.usuario_tipo == 'operador') { // Ajusta 'admin' al tipo de usuario que debe ver el menú
+        menu_seguridad.style.display = 'none';
+        //menu_mantenimiento.style.display = 'none';
         //menu_proyecto.style.display = 'none';
       }
-  
+      else if (usuarioActivo.user.usuario_tipo == 'pasajero') {
+        menu_seguridad.style.display = 'none';
+        //menu_mantenimiento.style.display = 'none';
+        //menu_proyecto.style.display = 'none';
+        Controlar_Módulo_de_Monitoreo.style.display = 'none';
+        Gestionar_Módulo_de_Predicción.style.display = 'none';
+      }
+      else if (usuarioActivo.user.usuario_tipo == 'conductor') {
+        menu_seguridad.style.display = 'none';
+        //menu_mantenimiento.style.display = 'none';
+        //menu_proyecto.style.display = 'none';
+        Controlar_Módulo_de_Rutas.style.display = 'none';
+        Gestionar_Módulo_de_Predicción.style.display = 'none';
+      }
+      else if (usuarioActivo.user.usuario_tipo == 'administrador') {
+        //menu_mantenimiento.style.display = 'none';
+        //menu_mantenimiento.style.display = 'none';
+        //menu_mantenimiento.style.display = 'none';
+      }
+
       console.log('Usuario activo:', usuarioActivo);
     } else {
       console.error('No se encontró usuarioActivo en localStorage');
     }
-  
+
     // Obtener el elemento del enlace
     const link_rf02 = document.getElementById('link_rf02');
-  
     // Asignar una función para manejar el clic
     link_rf02.addEventListener('click', (event) => {
       event.preventDefault(); // Evita la redirección predeterminada del enlace
       window.location.href = '/gestor_usuarios'; // Redirige a la URL deseada
     });
-     
+    // Obtener el elemento del enlace
+    const link_rf03 = document.getElementById('link_rf03');
+    // Asignar una función para manejar el clic
+    link_rf03.addEventListener('click', (event) => {
+      event.preventDefault(); // Evita la redirección predeterminada del enlace
+      window.location.href = '/gestor_viajes'; // Redirige a la URL deseada
+    });
+
+    // Obtener el elemento del enlace
+    const link_rf05 = document.getElementById('link_rf05');
+    // Asignar una función para manejar el clic
+    link_rf05.addEventListener('click', (event) => {
+      event.preventDefault(); // Evita la redirección predeterminada del enlace
+      window.location.href = '/gestor_gps'; // Redirige a la URL deseada
+    });
+
+    // Obtener el elemento del enlace
+    const link_rf04 = document.getElementById('link_rf04');
+    // Asignar una función para manejar el clic
+    link_rf04.addEventListener('click', (event) => {
+      event.preventDefault(); // Evita la redirección predeterminada del enlace
+      window.location.href = '/gestor_notificaciones'; // Redirige a la URL deseada
+    });
   });
 </script>
 
 <script>
-  
+
 </script>

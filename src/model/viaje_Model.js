@@ -11,7 +11,8 @@ const viajeSchema = new mongoose.Schema({
   viaje_hora_llegada_real: { type: Date },
   viaje_duracion_real: { type: String }, // Formato HH:MM:SS
   viaje_prediccion_tiempo: { type: String }, // Formato HH:MM:SS
-  viaje_estado: { type: String, required: true }
+  viaje_estado: { type: String, required: true },
+  viaje_codigo: { type: String, required: true }
 });
 
 const mongo_viaje = mongoose.model('Viaje', viajeSchema, 'viaje');

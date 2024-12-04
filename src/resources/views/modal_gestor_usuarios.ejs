@@ -1,0 +1,31 @@
+<!-- Begin Form Content -->
+<form class="user" id="modal_userForm" onsubmit="updateUser(event)"
+style="display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 1000px; margin: auto;">
+<!-- Campos de usuario, contraseña, tipo de usuario y botón alineados horizontalmente -->
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
+   
+    <input type="text" class="form-control form-control-user" id="modal_id"
+        placeholder="Id:" required disabled
+        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+
+    <input type="text" class="form-control form-control-user" id="modal_username"
+        placeholder="Nombre de Usuario" required
+        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+    <input type="password" class="form-control form-control-user" id="modal_password" placeholder="Contraseña"
+        required
+        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+    <input type="email" class="form-control form-control-user" id="modal_email"
+        placeholder="Correo Electronico" required
+        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+    <select id="modal_userType"
+        style="min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+        <option value="administrador">Administrador</option>
+        <option value="operador">Operador</option>
+        <option value="pasajero">Pasajero</option>
+        <option value="conductor">Conductor</option>
+    </select>
+    <input type="submit" class="btn btn-primary btn-user" value="Actualizar"
+        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
+</div>
+<hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
+</form>

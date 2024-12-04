@@ -1,5 +1,4 @@
 <%- layout('layout') %> <!-- Usar el layout principal -->
-
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -68,10 +67,44 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            <!-- Definición del Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <% include modal_gestor_usuarios %>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
-
     <script>
+        //Funcion para llamar modal
+        async function openModal(modalId) {
+            try {
+                // Esperar un pequeño tiempo si necesitas cargar datos antes de mostrar el modal
+                await new Promise(resolve => setTimeout(resolve, 100)); 
+                // Inicializar el modal usando Bootstrap
+                const modalElement = document.getElementById(modalId);
+                const bootstrapModal = new bootstrap.Modal(modalElement);
+                // Mostrar el modal
+                bootstrapModal.show();
+            } catch (error) {
+                console.error("Error al abrir el modal:", error);
+            }
+        }
         // Función para agregar un usuario
         async function addUser(event) {
             event.preventDefault();
@@ -106,18 +139,46 @@
                 alert('Hubo un problema al agregar el usuario');
             }
         }
+        async function editUser(userId) {
+            try {
+                // Realizar la solicitud para obtener los datos del usuario por ID
+                const response = await fetch(`/api/usuario/getUserById`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _id: userId }),
+                });
+                // Verificar si la respuesta fue exitosa
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error al obtener el usuario: ${errorData.message}`);
+                    return;
+                }
+                const user = await response.json();
+                // Rellenar los campos del modal con los datos del usuario
+                document.getElementById('modal_id').value = user._id || '';
+                document.getElementById('modal_username').value = user.usuario_nombre || '';
+                document.getElementById('modal_password').value = user.usuario_password || '';// Vaciar el campo por seguridad
+                document.getElementById('modal_email').value = user.usuario_email || '';
+                document.getElementById('modal_userType').value = user.usuario_tipo || '';
+                // Abrir el modal (asegúrate de tener implementada esta función)
+                openModal('exampleModal');
+            } catch (error) {
+                console.error('Error al editar el usuario:', error);
+                alert('Hubo un problema al obtener los datos del usuario.');
+            }
+        }
 
         // Función para cargar todos los usuarios
         async function loadUsers() {
             try {
                 const response = await fetch('/api/usuario/records');
                 const users = await response.json();
-
                 // Limpia la tabla si ya fue inicializada anteriormente
                 if ($.fn.DataTable.isDataTable('#userTable')) {
                     const dataTable = $('#userTable').DataTable();
                     dataTable.clear();
-
                     // Agrega filas nuevamente
                     users.forEach(user => {
                         dataTable.row.add([
@@ -131,11 +192,11 @@
                           </select>`,
                             `
                               <button onclick="saveUser('${user._id}')">Guardar</button>
+                              <button onclick="editUser('${user._id}')">Editar</button>
                               <button onclick="deleteUser('${user._id}')">Eliminar</button>
                           `
                         ]);
                     });
-
                     dataTable.draw();
                 } else {
                     $('#userTable').DataTable({
@@ -144,7 +205,6 @@
                                 // Columna Nombre de Usuario
                                 '<div class="searchable" style="display:none;">' + user.usuario_nombre + '</div>' +
                                 '<input type="text" value="' + user.usuario_nombre + '" data-id="' + user._id + '" class="editable nombre">',
-
                                 // Columna Tipo de Usuario
                                 '<div class="searchable tipo-oculto" style="display:none;">' + user.usuario_tipo + '</div>' + //tecnicamente....no funciona aun
                                 '<select data-id="' + user._id + '" class="editable tipo">' +
@@ -153,9 +213,9 @@
                                 '<option value="conductor" ' + (user.usuario_tipo === 'conductor' ? 'selected' : '') + '>conductor</option>' +
                                 '<option value="pasajero" ' + (user.usuario_tipo === 'pasajero' ? 'selected' : '') + '>pasajero</option>' +
                                 '</select>',
-
                                 // Columna Acciones
                                 '<button onclick="saveUser(\'' + user._id + '\')">Guardar</button>' +
+                                '<button onclick="editUser(\'' + user._id + '\')">Editar</button>' +
                                 '<button onclick="deleteUser(\'' + user._id + '\')">Eliminar</button>'
                             ];
                         }),
@@ -202,12 +262,10 @@
                                 .every(function (index) {
                                     var column = this;
                                     var title = $(column.footer()).text();
-
                                     // Crea un campo de entrada en el pie de tabla
                                     var input = document.createElement('input');
                                     input.placeholder = 'Buscar ' + title;
                                     $(column.footer()).empty().append(input);
-
                                     // Agrega el evento de búsqueda
                                     $(input).on('keyup change', function () {
                                         if (column.search() !== this.value) {
@@ -220,12 +278,6 @@
                             footer: true // Habilita el header y footer fijos
                         }
                     });
-
-
-
-
-
-
                 }
             } catch (error) {
                 console.error('Error al cargar los usuarios:', error);
@@ -237,20 +289,16 @@
                 // Recuperar los valores editados directamente de los elementos DOM
                 const nombreInput = document.querySelector(`input[data-id="${userId}"]`);
                 const tipoSelect = document.querySelector(`select[data-id="${userId}"]`);
-
                 if (!nombreInput || !tipoSelect) {
                     throw new Error('No se pudieron encontrar los campos editables para este usuario.');
                 }
-
                 const nombre = nombreInput.value.trim();
                 const tipo = tipoSelect.value;
-
                 // Validar los datos antes de enviarlos
                 if (!nombre) {
                     alert('El nombre de usuario no puede estar vacío.');
                     return;
                 }
-
                 // Enviar los datos al servidor
                 const response = await fetch(`/api/usuario/update/${userId}`, {
                     method: 'PUT', // O el método correspondiente en tu API
@@ -259,12 +307,10 @@
                     },
                     body: JSON.stringify({ usuario_nombre: nombre, usuario_tipo: tipo })
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Error al guardar los cambios.');
                 }
-
                 alert('Usuario actualizado correctamente');
                 loadUsers(); // Recargar la tabla para reflejar los cambios
             } catch (error) {
@@ -272,9 +318,6 @@
                 alert(`Hubo un problema al guardar los cambios: ${error.message}`);
             }
         }
-
-
-
         // Función para eliminar un usuario
         async function deleteUser(userId) {
             if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
@@ -299,14 +342,14 @@
                 alert('Hubo un problema al eliminar el usuario');
             }
         }
-
         // Función para actualizar un usuario
-        async function updateUser(event, userId) {
+        async function updateUser(event) {
             event.preventDefault();
-            const email = document.getElementById('email').value;
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const userType = document.getElementById('userType').value;
+            const id = document.getElementById('modal_id').value;
+            const email = document.getElementById('modal_email').value;
+            const username = document.getElementById('modal_username').value;
+            const password = document.getElementById('modal_password').value;
+            const userType = document.getElementById('modal_userType').value;
             const updatedUser = {
                 usuario_email: email,
                 usuario_nombre: username,
@@ -314,7 +357,7 @@
                 usuario_tipo: userType,
             };
             try {
-                const response = await fetch(`/api/users/update/${userId}`, {
+                const response = await fetch(`/api/usuario/updateModal/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -323,7 +366,8 @@
                 });
                 if (response.ok) {
                     alert('Usuario actualizado exitosamente');
-                    document.getElementById('userForm').reset(); // Limpiar el formulario
+                    alert(id+' '+updatedUser.usuario_email +' '+updatedUser.usuario_nombre +' '+updatedUser.usuario_password +' '+updatedUser.usuario_tipo +' ');
+                    document.getElementById('modal_userForm').reset(); // Limpiar el formulario
                     loadUsers(); // Recargar la lista de usuarios
                 } else {
                     const data = await response.json();

@@ -87,8 +87,13 @@ class notificacion_Controller extends Controller {
   }
 
   // Renderizar la vista del gestor de notificaciones
+  //gestor_notificaciones(req, res) {
+  //  res.sendFile(path.join(__dirname, "../resources/views", "gestor_notificaciones.html"));
+  //}
+
   gestor_notificaciones(req, res) {
-    res.sendFile(path.join(__dirname, "../resources/views", "gestor_notificaciones.html"));
+    res.render('gestor_notificaciones', {  // Usamos res.render para renderizar la vista EJS
+    });
   }
 }
 

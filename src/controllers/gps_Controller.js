@@ -87,8 +87,12 @@ class gps_Controller extends Controller {
   }
 
   // Renderizar la vista del gestor de GPS
+  //gestor_gps(req, res) {
+  //  res.sendFile(path.join(__dirname, "../resources/views", "gestor_gps.html"));
+  //}
   gestor_gps(req, res) {
-    res.sendFile(path.join(__dirname, "../resources/views", "gestor_gps.html"));
+    res.render('gestor_gps', {  // Usamos res.render para renderizar la vista EJS
+    });
   }
 }
 

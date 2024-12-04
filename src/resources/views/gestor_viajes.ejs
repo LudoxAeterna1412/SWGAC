@@ -1,1 +1,243 @@
 <%- layout('layout') %> <!-- Usar el layout principal -->
+
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Gestión de Notificaciones</h1>
+    </div>
+    <hr>
+    <!-- Sección para Operadores -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Operadores: Crear y Modificar Notificaciones</h1>
+    </div>
+    <form class="user" id="notificationForm" onsubmit="addNotification(event)"
+        style="width: 90%; max-width: 1000px; margin: auto;">
+        <!-- Campos alineados horizontalmente -->
+        <div
+            style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+           
+            
+            
+
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="notificationTime" style="margin-bottom: 5px; font-size: 14px; color: #555;">Mensaje de Notificación:</label>
+                    <input type="text" class="form-control form-control-user" id="notificationMessage"
+                    placeholder="Mensaje de Notificación" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                <label for="notificationTime" style="margin-bottom: 5px; font-size: 14px; color: #555;">Hora
+                    Programada:</label>
+                <input type="datetime-local" class="form-control form-control-user" id="notificationTime" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                <label for="flightDetailId" style="margin-bottom: 5px; font-size: 14px; color: #555;">Detalle de
+                    Viaje-Usuario:</label>
+                <select id="flightDetailId" class="form-control form-control-user" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <!-- Opciones dinámicas -->
+                </select>
+            </div>
+            <input type="submit" class="btn btn-primary btn-user" value="Crear Notificación"
+                style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; min-width: 150px; max-width: 200px;">
+        </div>
+
+        <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
+    </form>
+    <hr>
+    <!-- Notificaciones Existentes -->
+    <h1 class="h3 mb-2 text-gray-800">Viajes Existentes</h1>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="viajeTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ruta_origen</th>
+                            <th>ruta_destino</th>
+                            <th>viaje_hora_salida_programado</th>
+                            <th>viaje_hora_llegada_programado</th>
+                            <th>viaje_hora_salida_real</th>
+                            <th>viaje_hora_llegada_real</th>
+                            <th>viaje_duracion_real</th>
+                            <th>viaje_prediccion_tiempo</th>
+                            <th>viaje_estado</th>
+                            <th>viaje_codigo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ruta_origen</th>
+                            <th>ruta_destino</th>
+                            <th>viaje_hora_salida_programado</th>
+                            <th>viaje_hora_llegada_programado</th>
+                            <th>viaje_hora_salida_real</th>
+                            <th>viaje_hora_llegada_real</th>
+                            <th>viaje_duracion_real</th>
+                            <th>viaje_prediccion_tiempo</th>
+                            <th>viaje_estado</th>
+                            <th>viaje_codigo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="notifications-list">
+                        <!-- Aquí se llenarán los datos dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <!-- Configuración de Notificaciones -->
+    <h1 class="h3 mb-0 text-gray-800">Pasajeros: Configuración de Notificaciones</h1>
+    <form class="user" id="passengerNotificationForm" onsubmit="setPassengerNotifications(event)"
+        style="width: 90%; max-width: 1000px; margin: auto;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
+            <input type="checkbox" id="departureAlert" checked> Alerta de Salida
+            <input type="checkbox" id="arrivalAlert" checked> Alerta de Llegada
+            <label for="notificationType" style="flex: 1; min-width: 200px;">Tipo de Notificación:</label>
+            <select id="notificationType" class="form-control form-control-user"
+                style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                <option value="sound">Sonido</option>
+                <option value="visual">Visual</option>
+                <option value="scheduled">Programar</option>
+            </select>
+            <input type="submit" class="btn btn-primary btn-user" value="Guardar Configuración"
+                style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
+        </div>
+    </form>
+    <hr>
+    <!-- Consultas -->
+    <h1 class="h3 mb-0 text-gray-800">Consultar Notificaciones</h1>
+    <button onclick="viewNotifications()" class="btn btn-primary btn-user"
+        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">Ver
+        Todas las Notificaciones</button>
+</div>
+<script>
+        
+    // Función para cargar todos los usuarios
+    async function loadViajes() {
+        try {
+            const response = await fetch('/api/viaje/records');
+            const viajes = await response.json();
+    
+            // Limpia la tabla si ya fue inicializada anteriormente
+            if ($.fn.DataTable.isDataTable('#viajeTable')) {
+                const dataTable = $('#viajeTable').DataTable();
+                dataTable.clear();
+    
+                // Agrega filas nuevamente
+                viajes.forEach(viaje => {
+                    dataTable.row.add([
+                        viaje.ruta_origen || '-',
+                        viaje.ruta_destino || '-',
+                        viaje.viaje_hora_salida_programado || '-',
+                        viaje.viaje_hora_llegada_programado || '-',
+                        viaje.viaje_hora_salida_real || '-',
+                        viaje.viaje_hora_llegada_real || '-',
+                        viaje.viaje_duracion_real || '-',
+                        viaje.viaje_prediccion_tiempo || '-',
+                        viaje.viaje_estado || '-',
+                        viaje.viaje_codigo || '-',
+                        `
+                        <button onclick="editViaje('${viaje._id}')">Editar</button>
+                        <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
+                        `
+                    ]);
+                });
+    
+                dataTable.draw();
+            } else {
+                $('#viajeTable').DataTable({
+                    data: viajes.map(viaje => [
+                        viaje.ruta_origen || '-',
+                        viaje.ruta_destino || '-',
+                        viaje.viaje_hora_salida_programado || '-',
+                        viaje.viaje_hora_llegada_programado || '-',
+                        viaje.viaje_hora_salida_real || '-',
+                        viaje.viaje_hora_llegada_real || '-',
+                        viaje.viaje_duracion_real || '-',
+                        viaje.viaje_prediccion_tiempo || '-',
+                        viaje.viaje_estado || '-',
+                        viaje.viaje_codigo || '-',
+                        `
+                        <button onclick="editViaje('${viaje._id}')">Editar</button>
+                        <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
+                        `
+                    ]),
+                    columns: [
+                        { title: "Origen" },
+                        { title: "Destino" },
+                        { title: "Salida Programada" },
+                        { title: "Llegada Programada" },
+                        { title: "Salida Real" },
+                        { title: "Llegada Real" },
+                        { title: "Duración Real" },
+                        { title: "Predicción Tiempo" },
+                        { title: "Estado" },
+                        { title: "Código" },
+                        { title: "Acciones" }
+                    ],
+                    columnDefs: [
+                        {
+                            targets: [10],
+                            searchable: false,
+                            orderable: false
+                        }
+                    ],
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    autoWidth: false,
+                    language: {
+                        sProcessing: "Procesando...",
+                        sLengthMenu: "Mostrar _MENU_ registros",
+                        sZeroRecords: "No se encontraron resultados",
+                        sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
+                        sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                        sInfoFiltered: "(filtrado de _MAX_ registros en total)",
+                        sSearch: "Buscar:",
+                        oPaginate: {
+                            sFirst: "Primero",
+                            sPrevious: "Anterior",
+                            sNext: "Siguiente",
+                            sLast: "Último"
+                        },
+                        oAria: {
+                            sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                            sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                        }
+                    },
+                    initComplete: function () {
+                        // Configuración para búsqueda por columna en el pie de tabla
+                        this.api()
+                            .columns([0, 1, 8, 9]) // Aplica búsqueda en columnas específicas
+                            .every(function (index) {
+                                var column = this;
+                                var input = document.createElement('input');
+                                input.placeholder = 'Buscar';
+                                $(column.footer()).empty().append(input);
+                                $(input).on('keyup change', function () {
+                                    if (column.search() !== this.value) {
+                                        column.search(this.value).draw();
+                                    }
+                                });
+                            });
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error al cargar los viajes:', error);
+            alert('Hubo un problema al cargar los viajes');
+        }
+    }
+    
+    
+    // Llamar a la función loadUsers al cargar la página
+    window.onload = loadViajes;
+</script>

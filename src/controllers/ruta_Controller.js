@@ -99,8 +99,13 @@ class ruta_Controller extends Controller {
   }
 
   // Renderizar la vista del gestor de rutas
+  //gestor_rutas(req, res) {
+  //  res.sendFile(path.join(__dirname, "../resources/views", "gestor_rutas.html"));
+  //}
+
   gestor_rutas(req, res) {
-    res.sendFile(path.join(__dirname, "../resources/views", "gestor_rutas.html"));
+    res.render('gestor_rutas', {  // Usamos res.render para renderizar la vista EJS
+    });
   }
 }
 

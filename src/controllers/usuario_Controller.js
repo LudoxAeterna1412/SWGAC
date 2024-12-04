@@ -8,6 +8,25 @@ const path = require("path");
 class usuario_Controller extends Controller {
   
   // Obtener al usuario por id
+  async getUserById(req, res) {
+    try {
+      const { _id } = req.body; // Extraer el ID del cuerpo de la solicitud
+      if (!_id) {
+        return res.status(400).json({ message: "El ID del usuario es requerido" });
+      }
+      
+      const user = await User.findById(_id); // Buscar usuario por ID
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+      
+      return res.status(200).json(user); // Retornar datos del usuario
+    } catch (error) {
+      console.error("Error en getUserById:", error);
+      return res.status(500).send(error.message); // Manejar errores del servidor
+    }
+  }
+  // Obtener al usuario por email
   async getUser(req, res) {
     try {
       
@@ -70,13 +89,38 @@ class usuario_Controller extends Controller {
         return res.status(404).json({ message: "Usuario no encontrado." });
       }
       return res.status(200).json(updatedUser);
+
     } catch (error) { 
       console.error(error);
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
   }
+  async updateModal(req, res) {
+    try {
+      const { id } = req.params;
+      const { usuario_nombre, usuario_email ,usuario_password, usuario_tipo } = req.body;
 
+      // Validación básica
+      if (!usuario_nombre || !usuario_email|| !usuario_password|| !usuario_tipo) {
+        return res.status(400).json({ message: "Todos los campos son obligatorios." });
+      }
+      // Actualizar usuario
+      const updatedUser = await User.update(id, {
+        usuario_nombre,
+        usuario_email,
+        usuario_password,
+        usuario_tipo,
+      });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "Usuario no encontrado." });
+      }
+      return res.status(200).json(updatedUser);
 
+    } catch (error) { 
+      console.error(error);
+      return res.status(500).json({ message: `Error: ${error.message}` });
+    }
+  }
   // Eliminar un usuario
   async delete(req, res) {
     try {

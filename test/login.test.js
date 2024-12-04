@@ -22,7 +22,12 @@ describe('POST /api/auth/login', () => {
         usuario_email: 'admin@gmail.com',
         usuario_password: 'abcde',
     });
-
+    User.update.mockResolvedValue({
+      usuario_nombre: 'admin',
+      usuario_email: 'admin@gmail.com',
+      usuario_tipo: 'administrador',
+      usuario_sesion: '951bb9a17a830a1c8c120da73fd18beb',
+    });
     const response = await request(app)
       .post('/api/auth/login')
       .send({
@@ -56,7 +61,7 @@ describe('POST /api/auth/login', () => {
     // Mockear un usuario con una contraseña incorrecta
     User.getByEmail.mockResolvedValue({
         usuario_email: 'admin@gmail.com',
-        usuario_password: 'abcde',
+        usuario_password: 'abcd',
     });
 
     const response = await request(app)

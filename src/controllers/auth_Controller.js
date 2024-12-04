@@ -2,7 +2,7 @@ const User = require("../model/usuario_Model");
 const Controller = require("./cls_wraper_Controller");
 const path = require("path");
 const crypto = require('crypto');
-const finalizarSesionActiva = require("../middleware/finalizarSesionActiva"); 
+const finalizarSesionActiva = require("../middleware/finalizarSesionActiva");
 
 class auth_Controller extends Controller {
 
@@ -34,7 +34,6 @@ class auth_Controller extends Controller {
         usuario_sesion: sessionToken,
         usuario_ultimasesion: new Date(),
       });
-
       // Devolver respuesta exitosa
       res.status(200).json({
         message: "Login exitoso",
@@ -45,6 +44,7 @@ class auth_Controller extends Controller {
           usuario_sesion: updatedUser.usuario_sesion, // Token de sesión
         },
       });
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error interno del servidor" });
