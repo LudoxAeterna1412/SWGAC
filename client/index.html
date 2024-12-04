@@ -10,20 +10,20 @@
             const socket = io('http://localhost:3000'); // Reemplaza con la URL de tu servidor
 
             
-            // socket.on('connection', () => {
-            //     console.log('Conectado al servidor');
+            socket.on('connection', () => {
+                console.log('Conectado al servidor');
 
-            //     // // Emitir un evento de prueba
-            //     // socket.emit('mensaje', { texto: 'Hola, servidor!' });
+                // // Emitir un evento de prueba
+                // socket.emit('mensaje', { texto: 'Hola, servidor!' });
 
-            //     // // Escuchar la respuesta del servidor
-            //     // socket.on('respuesta', (data) => {
-            //     //     console.log('Respuesta del servidor:', data);
-            //     // });
+                // // Escuchar la respuesta del servidor
+                // socket.on('respuesta', (data) => {
+                //     console.log('Respuesta del servidor:', data);
+                // });
 
-            //     // // Emitir otro evento de prueba
-            //     // socket.emit('otroEvento', { texto: 'Otro evento' });
-            // });
+                // // Emitir otro evento de prueba
+                // socket.emit('otroEvento', { texto: 'Otro evento' });
+            });
 
             socket.on('disconnect', () => {
                 console.log('Desconectado del servidor');
