@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Test</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io('http://localhost:3000'); // Reemplaza con la URL de tu servidor
+
+            
+            // socket.on('connection', () => {
+            //     console.log('Conectado al servidor');
+
+            //     // // Emitir un evento de prueba
+            //     // socket.emit('mensaje', { texto: 'Hola, servidor!' });
+
+            //     // // Escuchar la respuesta del servidor
+            //     // socket.on('respuesta', (data) => {
+            //     //     console.log('Respuesta del servidor:', data);
+            //     // });
+
+            //     // // Emitir otro evento de prueba
+            //     // socket.emit('otroEvento', { texto: 'Otro evento' });
+            // });
+
+            socket.on('disconnect', () => {
+                console.log('Desconectado del servidor');
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Socket.io Test</h1>
+</body>
+</html>
