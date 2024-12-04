@@ -15,6 +15,8 @@ const { auth_Controller,
 const userRoutes = express.Router();
 const authRoutes = express.Router();
 const viajeRoutes = express.Router();
+const notificacionRoutes = express.Router();
+
 
 authRoutes.post('/login', auth_Controller.login);
 
@@ -26,6 +28,12 @@ userRoutes.post('/getUserById', usuario_Controller.getUserById);
 userRoutes.put('/update/:id', usuario_Controller.update);
 userRoutes.put('/updateModal/:id', usuario_Controller.updateModal);
 
+notificacionRoutes.get('/records', notificacion_Controller.records);
+notificacionRoutes.post('/store', notificacion_Controller.store);
+notificacionRoutes.delete('/delete/:id', notificacion_Controller.delete);
+notificacionRoutes.post('/getNotificacionById', notificacion_Controller.getNotificacionById);
+notificacionRoutes.put('/update/:id', notificacion_Controller.update);
+
 viajeRoutes.get('/records', viaje_Controller.records);
 viajeRoutes.post('/getViajeById', viaje_Controller.getViajeById);
 viajeRoutes.post('/store', viaje_Controller.store);
@@ -35,5 +43,6 @@ viajeRoutes.put('/update/:id', viaje_Controller.update);
 //forma de poner prefijos a las rutas
 router.use('/auth', authRoutes); // prefijo auth
 router.use('/usuario', userRoutes); // prefijo users
-router.use('/viaje', viajeRoutes); // prefijo users
+router.use('/viaje', viajeRoutes); // prefijo 
+router.use('/notificacion', notificacionRoutes); // prefijo 
 module.exports = router;

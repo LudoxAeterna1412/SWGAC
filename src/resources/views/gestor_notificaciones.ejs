@@ -1,1 +1,547 @@
 <%- layout('layout') %>
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestión de Notificaciones</h1>
+            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Generar Reporte
+            </a>
+        </div>
+
+
+        <hr>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Table Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Viajes Existentes</h1>
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="viajeTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ruta_origen</th>
+                                    <th>ruta_destino</th>
+                                    <th>viaje_hora_salida_programado</th>
+                                    <th>viaje_hora_llegada_programado</th>
+                                    <th>viaje_codigo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>ruta_origen</th>
+                                    <th>ruta_destino</th>
+                                    <th>viaje_hora_salida_programado</th>
+                                    <th>viaje_hora_llegada_programado</th>
+                                    <th>viaje_codigo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                            <tbody id="viaje-list">
+                                <!-- Aquí se llenarán los datos dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <hr>
+
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Registrar Notificación</h1>
+            </div>
+            <!-- Begin Form Content -->
+            <form class="notificacion" id="notificationForm" onsubmit="addNotification(event)"
+                style="display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 1000px; margin: auto;">
+                <!-- Campos de notificación alineados horizontalmente -->
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
+                    <input type="text" class="form-control form-control-notificacion" id="notificacion_mensaje"
+                        placeholder="Mensaje de Notificación" required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <input type="datetime-local" class="form-control form-control-notificacion"
+                        id="notificacion_hora_programado" placeholder="Hora Programada" required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <input type="text" class="form-control form-control-notificacion" id="det_vu_id"
+                        placeholder="ID Detalle Viaje Usuario" required
+                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <input type="submit" class="btn btn-primary btn-notificacion" value="Registrar"
+                        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
+                </div>
+                <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
+            </form>
+
+            <hr>
+
+            <!-- Table Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Notificaciones Registradas</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="notificationTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Mensaje</th>
+                                    <th>Hora Programada</th>
+                                    <th>ID Detalle Viaje</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Mensaje</th>
+                                    <th>Hora Programada</th>
+                                    <th>ID Detalle Viaje</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                            <tbody id="notificacion-list">
+                                <!-- Aquí se llenarán los datos dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <!-- Definición del Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Editar Notificación</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <% include modal_gestor_notificaciones %>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/notificacion/records'); // Endpoint para obtener las notificaciones
+                const notifications = await response.json();
+
+                // Limpia la tabla si ya fue inicializada anteriormente
+                if ($.fn.DataTable.isDataTable('#notificationTable')) {
+                    const dataTable = $('#notificationTable').DataTable();
+                    dataTable.clear();
+                    // Agrega filas nuevamente
+                    notifications.forEach(notification => {
+                        dataTable.row.add([
+                            `<div class="searchable" style="display:none;">${notification.notificacion_mensaje}</div>
+                    <input type="text" value="${notification.notificacion_mensaje}" data-id="${notification._id}" class="editable mensaje">`,
+                            `<input type="datetime-local" value="${new Date(notification.notificacion_hora_programado).toISOString().slice(0, 16)}" data-id="${notification._id}" class="editable hora-programado">`,
+                            `<div class="searchable" style="display:none;">${notification.det_vu_id}</div>
+                    <input type="text" value="${notification.det_vu_id}" data-id="${notification._id}" class="editable det-vu-id">`,
+                            `
+                        <button onclick="saveNotification('${notification._id}')">Guardar</button>
+                        <button onclick="editNotification('${notification._id}')">Editar</button>
+                        <button onclick="deleteNotification('${notification._id}')">Eliminar</button>
+                    `
+                        ]);
+                    });
+                    dataTable.draw();
+                } else {
+                    $('#notificationTable').DataTable({
+                        data: notifications.map(function (notification) {
+                            return [
+                                // Columna Mensaje de Notificación
+                                '<div class="searchable" style="display:none;">' + notification.notificacion_mensaje + '</div>' +
+                                '<input type="text" value="' + notification.notificacion_mensaje + '" data-id="' + notification._id + '" class="editable mensaje">',
+                                // Columna Hora Programada
+                                '<input type="datetime-local" value="' + new Date(notification.notificacion_hora_programado).toISOString().slice(0, 16) + '" data-id="' + notification._id + '" class="editable hora-programado">',
+                                // Columna Detalle de Viaje Usuario ID
+                                '<div class="searchable" style="display:none;">' + notification.det_vu_id + '</div>' +
+                                '<input type="text" value="' + notification.det_vu_id + '" data-id="' + notification._id + '" class="editable det-vu-id">',
+                                // Columna Acciones
+                                '<button onclick="saveNotification(\'' + notification._id + '\')">Guardar</button>' +
+                                '<button onclick="editNotification(\'' + notification._id + '\')">Editar</button>' +
+                                '<button onclick="deleteNotification(\'' + notification._id + '\')">Eliminar</button>'
+                            ];
+                        }),
+                        columns: [
+                            { title: "Mensaje de Notificación" },
+                            { title: "Hora Programada" },
+                            { title: "Detalle Viaje Usuario ID" },
+                            { title: "Acciones" }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: [3],
+                                searchable: false,
+                                orderable: false
+                            }
+                        ],
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        autoWidth: false,
+                        language: {
+                            sProcessing: "Procesando...",
+                            sLengthMenu: "Mostrar _MENU_ registros",
+                            sZeroRecords: "No se encontraron resultados",
+                            sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
+                            sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                            sInfoFiltered: "(filtrado de _MAX_ registros en total)",
+                            sSearch: "Buscar:",
+                            oPaginate: {
+                                sFirst: "Primero",
+                                sPrevious: "Anterior",
+                                sNext: "Siguiente",
+                                sLast: "Último"
+                            },
+                            oAria: {
+                                sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                                sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                            }
+                        },
+                        initComplete: function () {
+                            // Configurar la búsqueda por columna
+                            this.api()
+                                .columns([0, 1, 2]) // Aplica la búsqueda a las columnas 0, 1 y 2
+                                .every(function (index) {
+                                    var column = this;
+                                    var title = $(column.footer()).text();
+                                    // Crea un campo de entrada en el pie de tabla
+                                    var input = document.createElement('input');
+                                    input.placeholder = 'Buscar ' + title;
+                                    $(column.footer()).empty().append(input);
+                                    // Agrega el evento de búsqueda
+                                    $(input).on('keyup change', function () {
+                                        if (column.search() !== this.value) {
+                                            column.search(this.value).draw();
+                                        }
+                                    });
+                                });
+                        },
+                        fixedHeader: {
+                            footer: true // Habilita el header y footer fijos
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar las notificaciones:', error);
+                alert('Hubo un problema al cargar las notificaciones');
+                throw error;
+            }
+        };
+
+        // Función para eliminar una notificación
+        async function deleteNotification(notificationId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta notificación?')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/notificacion/delete/${notificationId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (response.ok) {
+                    alert('Notificación eliminada exitosamente');
+                    loadNotifications(); // Recargar la lista de notificaciones
+                } else {
+                    const data = await response.json();
+                    alert(`Error al eliminar la notificación: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al eliminar la notificación:', error);
+                alert('Hubo un problema al eliminar la notificación');
+                throw error;
+            }
+        }
+
+        // Función para actualizar una notificación
+        async function updateNotification(event) {
+            event.preventDefault();
+            const id = document.getElementById('modal_id').value;
+            const mensaje = document.getElementById('modal_mensaje').value;
+            const horaProgramado = document.getElementById('modal_horaProgramado').value;
+            const detalleViajeId = document.getElementById('modal_detalleViajeId').value;
+            const updatedNotification = {
+                notificacion_mensaje: mensaje,
+                notificacion_hora_programado: horaProgramado,
+                det_vu_id: detalleViajeId,
+            };
+            try {
+                const response = await fetch(`/api/notificacion/updateModal/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedNotification),
+                });
+                if (response.ok) {
+                    alert('Notificación actualizada exitosamente');
+                    alert(id + ' ' + updatedNotification.notificacion_mensaje + ' ' + updatedNotification.notificacion_hora_programado + ' ' + updatedNotification.det_vu_id);
+                    document.getElementById('modal_notificationForm').reset(); // Limpiar el formulario
+                    loadNotifications(); // Recargar la lista de notificaciones
+                } else {
+                    const data = await response.json();
+                    alert(`Error al actualizar la notificación: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al actualizar la notificación:', error);
+                alert('Hubo un problema al actualizar la notificación');
+                throw error;
+            }
+        }
+        // Función para guardar los cambios de una notificación
+        async function saveNotification(notificationId) {
+            try {
+                // Recuperar los valores editados directamente de los elementos DOM
+                const mensajeInput = document.querySelector(`input[data-id="${notificationId}"].mensaje`); // Corrige el selector
+                const horaInput = document.querySelector(`input[data-id="${notificationId}"].hora-programado`); // Corrige el selector
+                const detalleViajeSelect = document.querySelector(`input[data-id="${notificationId}"].det-vu-id`); // Corrige el selector
+                if (!mensajeInput || !horaInput || !detalleViajeSelect) {
+                    throw new Error('No se pudieron encontrar los campos editables para esta notificación.');
+                }
+
+                const mensaje = mensajeInput.value.trim();
+                const horaProgramado = horaInput.value.trim();
+                const detalleViajeId = detalleViajeSelect.value;
+
+                // Validar los datos antes de enviarlos
+                if (!mensaje) {
+                    alert('El mensaje de la notificación no puede estar vacío.');
+                    return;
+                }
+
+                if (!horaProgramado) {
+                    alert('La hora programada no puede estar vacía.');
+                    return;
+                }
+
+                // Enviar los datos al servidor
+                const response = await fetch(`/api/notificacion/update/${notificationId}`, {
+                    method: 'PUT', // O el método correspondiente en tu API
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ notificacion_mensaje: mensaje, notificacion_hora_programado: horaProgramado, det_vu_id: detalleViajeId })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al guardar los cambios.');
+                }
+
+                alert('Notificación actualizada correctamente');
+                loadNotifications(); // Recargar la lista de notificaciones para reflejar los cambios
+            } catch (error) {
+                console.error('Error al guardar los cambios:', error);
+                alert(`Hubo un problema al guardar los cambios: ${error.message}`);
+                throw error;
+            }
+        }
+
+
+        // Función para agregar una notificación
+        async function addNotification(event) {
+            event.preventDefault();
+            const mensaje = document.getElementById('notificacion_mensaje').value;
+            const horaProgramado = document.getElementById('notificacion_hora_programado').value;
+            const detalleViajeId = document.getElementById('det_vu_id').value;
+            const notification = {
+                notificacion_mensaje: mensaje,
+                notificacion_hora_programado: horaProgramado,
+                det_vu_id: detalleViajeId
+            };
+            try {
+                const response = await fetch('/api/notificacion/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(notification)
+                });
+                if (response.ok) {
+                    alert('Notificación creada exitosamente');
+                    document.getElementById('notificationForm').reset();  // Limpiar el formulario
+                    loadNotifications();  // Recargar la lista de notificaciones
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al agregar la notificación:', error);
+                alert('Hubo un problema al agregar la notificación');
+                throw error;
+            }
+        }
+
+        // Función para editar una notificación
+        async function editNotification(notificationId) {
+            try {
+                // Realizar la solicitud para obtener los datos de la notificación por ID
+                const response = await fetch(`/api/notificacion/getNotificationById`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _id: notificationId }),
+                });
+                // Verificar si la respuesta fue exitosa
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error al obtener la notificación: ${errorData.message}`);
+                    return;
+                }
+                const notification = await response.json();
+                // Rellenar los campos del modal con los datos de la notificación
+                document.getElementById('modal_id').value = notification._id || '';
+                document.getElementById('modal_mensaje').value = notification.notificacion_mensaje || '';
+                document.getElementById('modal_horaProgramado').value = notification.notificacion_hora_programado || '';
+                document.getElementById('modal_detalleViaje').value = notification.det_vu_id || '';
+                // Abrir el modal (asegúrate de tener implementada esta función)
+                openModal('exampleModal');
+            } catch (error) {
+                console.error('Error al editar la notificación:', error);
+                alert('Hubo un problema al obtener los datos de la notificación.');
+                throw error;
+            }
+        }
+
+
+
+        async function loadViajes() {
+            try {
+                const response = await fetch('/api/viaje/records'); // Endpoint para obtener los viajes
+                const viajes = await response.json();
+        
+                // Limpia la tabla si ya fue inicializada anteriormente
+                if ($.fn.DataTable.isDataTable('#viajeTable')) {
+                    const dataTable = $('#viajeTable').DataTable();
+                    dataTable.clear();
+                    // Agrega filas nuevamente
+                    viajes.forEach(viaje => {
+                        dataTable.row.add([
+                            `<div class="searchable" style="display:none;">${viaje.ruta_origen}</div>
+                            <input type="text" value="${viaje.ruta_origen}" data-id="${viaje._id}" class="editable ruta-origen">`,
+                            `<div class="searchable" style="display:none;">${viaje.ruta_destino}</div>
+                            <input type="text" value="${viaje.ruta_destino}" data-id="${viaje._id}" class="editable ruta-destino">`,
+                            `<input type="datetime-local" value="${new Date(viaje.viaje_hora_salida_programado).toISOString().slice(0, 16)}" data-id="${viaje._id}" class="editable hora-salida-programado">`,
+                            `<input type="datetime-local" value="${new Date(viaje.viaje_hora_llegada_programado).toISOString().slice(0, 16)}" data-id="${viaje._id}" class="editable hora-llegada-programado">`,
+                            `<div class="searchable" style="display:none;">${viaje.viaje_codigo}</div>
+                            <input type="text" value="${viaje.viaje_codigo}" data-id="${viaje._id}" class="editable viaje-codigo">`,
+                            `
+                            <button onclick="saveViaje('${viaje._id}')">Guardar</button>
+                            <button onclick="editViaje('${viaje._id}')">Editar</button>
+                            <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>`
+                        ]);
+                    });
+                    dataTable.draw();
+                } else {
+                    $('#viajeTable').DataTable({
+                        data: viajes.map(function (viaje) {
+                            return [
+                                // Columna Ruta Origen
+                                '<div class="searchable" style="display:none;">' + viaje.ruta_origen + '</div>' +
+                                '<input type="text" value="' + viaje.ruta_origen + '" data-id="' + viaje._id + '" class="editable ruta-origen">',
+                                // Columna Ruta Destino
+                                '<div class="searchable" style="display:none;">' + viaje.ruta_destino + '</div>' +
+                                '<input type="text" value="' + viaje.ruta_destino + '" data-id="' + viaje._id + '" class="editable ruta-destino">',
+                                // Columna Hora Salida Programada
+                                '<input type="datetime-local" value="' + new Date(viaje.viaje_hora_salida_programado).toISOString().slice(0, 16) + '" data-id="' + viaje._id + '" class="editable hora-salida-programado">',
+                                // Columna Hora Llegada Programada
+                                '<input type="datetime-local" value="' + new Date(viaje.viaje_hora_llegada_programado).toISOString().slice(0, 16) + '" data-id="' + viaje._id + '" class="editable hora-llegada-programado">',
+                                // Columna Código de Viaje
+                                '<div class="searchable" style="display:none;">' + viaje.viaje_codigo + '</div>' +
+                                '<input type="text" value="' + viaje.viaje_codigo + '" data-id="' + viaje._id + '" class="editable viaje-codigo">',
+                                // Columna Acciones
+                                '<button onclick="saveViaje(\'' + viaje._id + '\')">Guardar</button>' +
+                                '<button onclick="editViaje(\'' + viaje._id + '\')">Editar</button>' +
+                                '<button onclick="deleteViaje(\'' + viaje._id + '\')">Eliminar</button>'
+                            ];
+                        }),
+                        columns: [
+                            { title: "Ruta Origen" },
+                            { title: "Ruta Destino" },
+                            { title: "Hora Salida Programada" },
+                            { title: "Hora Llegada Programada" },
+                            { title: "Código de Viaje" },
+                            { title: "Acciones" }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: [5],
+                                searchable: false,
+                                orderable: false
+                            }
+                        ],
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        autoWidth: false,
+                        language: {
+                            sProcessing: "Procesando...",
+                            sLengthMenu: "Mostrar _MENU_ registros",
+                            sZeroRecords: "No se encontraron resultados",
+                            sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
+                            sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                            sInfoFiltered: "(filtrado de _MAX_ registros en total)",
+                            sSearch: "Buscar:",
+                            oPaginate: {
+                                sFirst: "Primero",
+                                sPrevious: "Anterior",
+                                sNext: "Siguiente",
+                                sLast: "Último"
+                            },
+                            oAria: {
+                                sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                                sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                            }
+                        },
+                        initComplete: function () {
+                            // Configurar la búsqueda por columna
+                            this.api()
+                                .columns([0, 1, 2, 3, 4]) // Aplica la búsqueda a las columnas 0, 1, 2, 3, y 4
+                                .every(function (index) {
+                                    var column = this;
+                                    var title = $(column.footer()).text();
+                                    // Crea un campo de entrada en el pie de tabla
+                                    var input = document.createElement('input');
+                                    input.placeholder = 'Buscar ' + title;
+                                    $(column.footer()).empty().append(input);
+                                    // Agrega el evento de búsqueda
+                                    $(input).on('keyup change', function () {
+                                        if (column.search() !== this.value) {
+                                            column.search(this.value).draw();
+                                        }
+                                    });
+                                });
+                        },
+                        fixedHeader: {
+                            footer: true // Habilita el header y footer fijos
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar los viajes:', error);
+                alert('Hubo un problema al cargar los viajes');
+                throw error;
+            }
+        }
+     
+        window.onload = function() {
+            loadViajes();
+            loadNotifications();
+        };
+    </script>
