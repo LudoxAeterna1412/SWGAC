@@ -5,6 +5,7 @@ const ejsLocals = require('ejs-locals');
 const http = require('http');
 const logger = require('morgan');
 const { Server } = require('socket.io');
+const socketRoutes = require('./src/routes/sockets');
 
 dotenv.config();
 const app = express();
@@ -24,7 +25,9 @@ const io = new Server(server, {
     },
 });
 
-// Manejo de conexiones de Socket.IO
+// socketRoutes(io);
+
+// // Manejo de conexiones de Socket.IO
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
 
@@ -37,6 +40,7 @@ io.on('connection', (socket) => {
         console.log('Cliente desconectado');
     });
 });
+
 
 // Configuración de Express
 app.use(cors(corsOptions));
