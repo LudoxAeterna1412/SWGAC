@@ -50,31 +50,6 @@
 
             <hr>
 
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Registrar Notificación</h1>
-            </div>
-            <!-- Begin Form Content -->
-            <form class="notificacion" id="notificationForm" onsubmit="addNotification(event)"
-                style="display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 1000px; margin: auto;">
-                <!-- Campos de notificación alineados horizontalmente -->
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
-                    <input type="text" class="form-control form-control-notificacion" id="notificacion_mensaje"
-                        placeholder="Mensaje de Notificación" required
-                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                    <input type="datetime-local" class="form-control form-control-notificacion"
-                        id="notificacion_hora_programado" placeholder="Hora Programada" required
-                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                    <input type="text" class="form-control form-control-notificacion" id="det_vu_id"
-                        placeholder="ID Detalle Viaje Usuario" required
-                        style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                    <input type="submit" class="btn btn-primary btn-notificacion" value="Registrar"
-                        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
-                </div>
-                <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
-            </form>
-
-            <hr>
-
             <!-- Table Heading -->
             <h1 class="h3 mb-2 text-gray-800">Notificaciones Registradas</h1>
             <!-- DataTales Example -->
@@ -108,7 +83,7 @@
 
             <hr>
             <!-- Definición del Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -130,6 +105,92 @@
         </div>
     </div>
     <script>
+
+        async function enviarEmail() {
+            try {
+
+                const viaje = document.getElementById('id_viaje').value; // Cuerpo del correo
+
+
+                if (!viaje) {
+                    console.error("El parámetro 'viaje' es obligatorio");
+                    return;
+                }
+
+                try {
+                    // Realizar la solicitud al endpoint con el parámetro 'viaje'
+                    const emailrecords = await fetch(`/api/det_viaje_usuario/getDetByViaje/${viaje}`, {
+                        method: 'GET', // Método GET para obtener los datos
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!emailrecords.ok) {
+                        throw new Error(`Error al obtener registros: ${emailrecords.statusText}`);
+                    }
+
+                    // Parsear la respuesta a JSON
+                    const contenedor = await emailrecords.json();
+
+                    console.log("Registros obtenidos:", contenedor); // Manejar los datos obtenidos
+
+
+                    // Iterar sobre cada elemento del contenedor
+                    for (const elemento of contenedor) {
+                        try {
+                            // Obtener los detalles del usuario usando el endpoint indicado
+                            const userResponse = await fetch(`/api/usuario/getUserById`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ _id: elemento.usuario_id }), // Enviar usuario_id como _id
+                            });
+
+                            if (!userResponse.ok) {
+                                throw new Error(`No se pudo obtener el usuario ${elemento.usuario_id}: ${userResponse.statusText}`);
+                            }
+
+                            const userData = await userResponse.json(); // Obtener los datos del usuario
+                            const to = userData.usuario_email; // Suponiendo que el email está en el campo "email"
+                            const subject = "Notificación"; // Asunto del correo
+                            const message = document.getElementById('notificacion_mensaje').value; // Cuerpo del correo
+
+                            // Enviar el correo
+                            const response = await fetch('/api/notificacion/sendEmail', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json', // Especificamos el tipo de contenido
+                                },
+                                body: JSON.stringify({
+                                    to: to,
+                                    subject: subject,
+                                    message: message
+                                })
+                            });
+                            if (!response.ok) {
+                                throw new Error(`Error en el envío del correo a ${to}: ${response.statusText}`);
+                            }
+                            const data = await response.json();
+                            console.log(`Correo enviado exitosamente a ${to}: ${data.message || 'Sin mensaje adicional'}`);
+                        } catch (error) {
+                            console.error(`Error procesando usuario con ID ${elemento.usuario_id}:`, error);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error en la solicitud:", error);
+                }
+
+
+            } catch (error) {
+                console.error('Error al obtener registros:', error);
+            }
+        }
+
+
+
+
         async function loadNotifications() {
             try {
                 const response = await fetch('/api/notificacion/records'); // Endpoint para obtener las notificaciones
@@ -151,6 +212,7 @@
                         <button onclick="saveNotification('${notification._id}')">Guardar</button>
                         <button onclick="editNotification('${notification._id}')">Editar</button>
                         <button onclick="deleteNotification('${notification._id}')">Eliminar</button>
+                        <button onclick="sendNotification('${notification._id}')">Enviar</button>
                     `
                         ]);
                     });
@@ -170,7 +232,8 @@
                                 // Columna Acciones
                                 '<button onclick="saveNotification(\'' + notification._id + '\')">Guardar</button>' +
                                 '<button onclick="editNotification(\'' + notification._id + '\')">Editar</button>' +
-                                '<button onclick="deleteNotification(\'' + notification._id + '\')">Eliminar</button>'
+                                '<button onclick="deleteNotification(\'' + notification._id + '\')">Eliminar</button>' +
+                                '<button onclick="sendNotification(\'' + notification._id + '\')">Enviar</button>'
                             ];
                         }),
                         columns: [
@@ -410,21 +473,73 @@
                 document.getElementById('modal_horaProgramado').value = notification.notificacion_hora_programado || '';
                 document.getElementById('modal_detalleViaje').value = notification.det_vu_id || '';
                 // Abrir el modal (asegúrate de tener implementada esta función)
-                openModal('exampleModal');
+                //openModal('exampleModal');
             } catch (error) {
                 console.error('Error al editar la notificación:', error);
                 alert('Hubo un problema al obtener los datos de la notificación.');
                 throw error;
             }
         }
+        //Funcion para llamar modal
+        async function openModal(modalId) {
+            try {
+                // Esperar un pequeño tiempo si necesitas cargar datos antes de mostrar el modal
+                await new Promise(resolve => setTimeout(resolve, 100));
+                // Inicializar el modal usando Bootstrap
+                const modalElement = document.getElementById(modalId);
+                const bootstrapModal = new bootstrap.Modal(modalElement);
+                // Mostrar el modal
+                bootstrapModal.show();
+            } catch (error) {
+                console.error("Error al abrir el modal:", error);
+            }
+        }
 
+        // Función para editar un viaje
+        async function selectViaje(viajeId) {
+            try {
+                // Realizar la solicitud para obtener los datos del viaje por ID
+                const response = await fetch(`/api/viaje/getViajeById`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _id: viajeId }), // Enviar el ID del viaje
+                });
+
+                // Verificar si la respuesta fue exitosa
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error al obtener el viaje: ${errorData.message}`);
+                    return;
+                }
+
+                const viaje = await response.json();
+                console.error('viaje:', viaje);
+
+                // Rellenar los campos del modal con los datos del viaje
+                document.getElementById('det_vu_id').value = viaje.viaje_codigo || '';
+                document.getElementById('id_viaje').value = viaje._id || '';
+                //document.getElementById('modal_origen').value = viaje.viaje_origen || ''; // Campo origen del viaje
+                //document.getElementById('modal_destino').value = viaje.viaje_destino || ''; // Campo destino del viaje
+                //document.getElementById('modal_fecha').value = viaje.viaje_fecha || ''; // Campo fecha del viaje
+                //document.getElementById('modal_hora').value = viaje.viaje_hora || ''; // Campo hora del viaje
+
+                // Abrir el modal (asegúrate de tener implementada esta función)
+                openModal('exampleModal');
+            } catch (error) {
+                console.error('Error al seleccionar el viaje:', error);
+                alert('Hubo un problema al obtener los datos del viaje.');
+                throw error;
+            }
+        }
 
 
         async function loadViajes() {
             try {
                 const response = await fetch('/api/viaje/records'); // Endpoint para obtener los viajes
                 const viajes = await response.json();
-        
+
                 // Limpia la tabla si ya fue inicializada anteriormente
                 if ($.fn.DataTable.isDataTable('#viajeTable')) {
                     const dataTable = $('#viajeTable').DataTable();
@@ -441,9 +556,7 @@
                             `<div class="searchable" style="display:none;">${viaje.viaje_codigo}</div>
                             <input type="text" value="${viaje.viaje_codigo}" data-id="${viaje._id}" class="editable viaje-codigo">`,
                             `
-                            <button onclick="saveViaje('${viaje._id}')">Guardar</button>
-                            <button onclick="editViaje('${viaje._id}')">Editar</button>
-                            <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>`
+                            <button onclick="selectViaje('${viaje._id}')">Seleccionar</button>`
                         ]);
                     });
                     dataTable.draw();
@@ -465,9 +578,7 @@
                                 '<div class="searchable" style="display:none;">' + viaje.viaje_codigo + '</div>' +
                                 '<input type="text" value="' + viaje.viaje_codigo + '" data-id="' + viaje._id + '" class="editable viaje-codigo">',
                                 // Columna Acciones
-                                '<button onclick="saveViaje(\'' + viaje._id + '\')">Guardar</button>' +
-                                '<button onclick="editViaje(\'' + viaje._id + '\')">Editar</button>' +
-                                '<button onclick="deleteViaje(\'' + viaje._id + '\')">Eliminar</button>'
+                                '<button onclick="selectViaje(\'' + viaje._id + '\')">Seleccionar</button>'
                             ];
                         }),
                         columns: [
@@ -539,8 +650,8 @@
                 throw error;
             }
         }
-     
-        window.onload = function() {
+
+        window.onload = function () {
             loadViajes();
             loadNotifications();
         };

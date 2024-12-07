@@ -1,243 +1,419 @@
 <%- layout('layout') %> <!-- Usar el layout principal -->
-
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Gestión de Notificaciones</h1>
-    </div>
-    <hr>
-    <!-- Sección para Operadores -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Operadores: Crear y Modificar Notificaciones</h1>
-    </div>
-    <form class="user" id="notificationForm" onsubmit="addNotification(event)"
-        style="width: 90%; max-width: 1000px; margin: auto;">
-        <!-- Campos alineados horizontalmente -->
-        <div
-            style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; justify-content: space-between;">
-           
-            
-            
-
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestión de Viajes</h1>
+        </div>
+        <hr>
+        <!-- Sección para Operadores -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Operadores: Crear y Modificar Viajes</h1>
+        </div>
+        <form class="user" id="viajeForm" onsubmit="addViaje(event)"
+            style="width: 90%; max-width: 1000px; margin: auto;">
+            <!-- Campos alineados horizontalmente -->
+            <div
+                style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+                <!-- Campo para la ruta origen -->
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
-                    <label for="notificationTime" style="margin-bottom: 5px; font-size: 14px; color: #555;">Mensaje de Notificación:</label>
-                    <input type="text" class="form-control form-control-user" id="notificationMessage"
-                    placeholder="Mensaje de Notificación" required
-                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <label for="rutaOrigen" style="margin-bottom: 5px; font-size: 14px; color: #555;">Ruta
+                        Origen:</label>
+                    <input type="text" class="form-control form-control-user" id="rutaOrigen" placeholder="Ruta Origen"
+                        required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
                 </div>
-
+                <!-- Campo para la ruta destino -->
                 <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
-                <label for="notificationTime" style="margin-bottom: 5px; font-size: 14px; color: #555;">Hora
-                    Programada:</label>
-                <input type="datetime-local" class="form-control form-control-user" id="notificationTime" required
-                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                    <label for="rutaDestino" style="margin-bottom: 5px; font-size: 14px; color: #555;">Ruta
+                        Destino:</label>
+                    <input type="text" class="form-control form-control-user" id="rutaDestino"
+                        placeholder="Ruta Destino" required
+                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+                <!-- Campo para la duración estimada -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="duracionEstimada" style="margin-bottom: 5px; font-size: 14px; color: #555;">Duración
+                        Estimada:</label>
+                    <input type="text" class="form-control form-control-user" id="duracionEstimada"
+                        placeholder="Duración Estimada (HH:MM:SS)" required
+                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+                <!-- Campo para la hora de salida programada -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="horaSalidaProgramada" style="margin-bottom: 5px; font-size: 14px; color: #555;">Hora
+                        Salida
+                        Programada:</label>
+                    <input type="datetime-local" class="form-control form-control-user" id="horaSalidaProgramada"
+                        required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+                <!-- Campo para la hora de llegada programada -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="horaLlegadaProgramada" style="margin-bottom: 5px; font-size: 14px; color: #555;">Hora
+                        Llegada
+                        Programada:</label>
+                    <input type="datetime-local" class="form-control form-control-user" id="horaLlegadaProgramada"
+                        required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+                <!-- Campo para el estado del viaje -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="estadoViaje" style="margin-bottom: 5px; font-size: 14px; color: #555;">Estado del
+                        Viaje:</label>
+                    <select id="estadoViaje" class="form-control form-control-user" required
+                        style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                        <option value="programado">Programado</option>
+                        <option value="en progreso">En Progreso</option>
+                        <option value="completado">Completado</option>
+                    </select>
+                </div>
+                <!-- Campo para el código del viaje -->
+                <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
+                    <label for="codigoViaje" style="margin-bottom: 5px; font-size: 14px; color: #555;">Código del
+                        Viaje:</label>
+                    <input type="text" class="form-control form-control-user" id="codigoViaje"
+                        placeholder="Código del Viaje" required
+                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                </div>
+                <!-- Botón para crear el viaje -->
+                <input type="submit" class="btn btn-primary btn-user" value="Crear Viaje"
+                    style="padding: 10px 20px; background-color: #007bff;
+                     border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; min-width: 150px; max-width: 200px;">
             </div>
-            
-            <div style="display: flex; flex-direction: column; flex: 1; min-width: 200px; max-width: 300px;">
-                <label for="flightDetailId" style="margin-bottom: 5px; font-size: 14px; color: #555;">Detalle de
-                    Viaje-Usuario:</label>
-                <select id="flightDetailId" class="form-control form-control-user" required
-                    style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                    <!-- Opciones dinámicas -->
-                </select>
+        </form>
+        <hr>
+        <!-- Notificaciones Existentes -->
+        <h1 class="h3 mb-2 text-gray-800">Viajes Existentes</h1>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="viajeTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ruta_origen</th>
+                                <th>ruta_destino</th>
+                                <th>viaje_hora_salida_programado</th>
+                                <th>viaje_hora_llegada_programado</th>
+                                <th>viaje_hora_salida_real</th>
+                                <th>viaje_hora_llegada_real</th>
+                                <th>viaje_duracion_real</th>
+                                <th>viaje_prediccion_tiempo</th>
+                                <th>viaje_estado</th>
+                                <th>viaje_codigo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ruta_origen</th>
+                                <th>ruta_destino</th>
+                                <th>viaje_hora_salida_programado</th>
+                                <th>viaje_hora_llegada_programado</th>
+                                <th>viaje_hora_salida_real</th>
+                                <th>viaje_hora_llegada_real</th>
+                                <th>viaje_duracion_real</th>
+                                <th>viaje_prediccion_tiempo</th>
+                                <th>viaje_estado</th>
+                                <th>viaje_codigo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                        <tbody id="notifications-list">
+                            <!-- Aquí se llenarán los datos dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <input type="submit" class="btn btn-primary btn-user" value="Crear Notificación"
-                style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; min-width: 150px; max-width: 200px;">
         </div>
-
-        <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
-    </form>
-    <hr>
-    <!-- Notificaciones Existentes -->
-    <h1 class="h3 mb-2 text-gray-800">Viajes Existentes</h1>
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="viajeTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ruta_origen</th>
-                            <th>ruta_destino</th>
-                            <th>viaje_hora_salida_programado</th>
-                            <th>viaje_hora_llegada_programado</th>
-                            <th>viaje_hora_salida_real</th>
-                            <th>viaje_hora_llegada_real</th>
-                            <th>viaje_duracion_real</th>
-                            <th>viaje_prediccion_tiempo</th>
-                            <th>viaje_estado</th>
-                            <th>viaje_codigo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>ruta_origen</th>
-                            <th>ruta_destino</th>
-                            <th>viaje_hora_salida_programado</th>
-                            <th>viaje_hora_llegada_programado</th>
-                            <th>viaje_hora_salida_real</th>
-                            <th>viaje_hora_llegada_real</th>
-                            <th>viaje_duracion_real</th>
-                            <th>viaje_prediccion_tiempo</th>
-                            <th>viaje_estado</th>
-                            <th>viaje_codigo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </tfoot>
-                    <tbody id="notifications-list">
-                        <!-- Aquí se llenarán los datos dinámicamente -->
-                    </tbody>
-                </table>
+        <hr>
+        <!-- Definición del Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Editar Viaje</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <% include modal_gestor_viaje %>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <hr>
-    <!-- Configuración de Notificaciones -->
-    <h1 class="h3 mb-0 text-gray-800">Pasajeros: Configuración de Notificaciones</h1>
-    <form class="user" id="passengerNotificationForm" onsubmit="setPassengerNotifications(event)"
-        style="width: 90%; max-width: 1000px; margin: auto;">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
-            <input type="checkbox" id="departureAlert" checked> Alerta de Salida
-            <input type="checkbox" id="arrivalAlert" checked> Alerta de Llegada
-            <label for="notificationType" style="flex: 1; min-width: 200px;">Tipo de Notificación:</label>
-            <select id="notificationType" class="form-control form-control-user"
-                style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                <option value="sound">Sonido</option>
-                <option value="visual">Visual</option>
-                <option value="scheduled">Programar</option>
-            </select>
-            <input type="submit" class="btn btn-primary btn-user" value="Guardar Configuración"
-                style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
-        </div>
-    </form>
-    <hr>
-    <!-- Consultas -->
-    <h1 class="h3 mb-0 text-gray-800">Consultar Notificaciones</h1>
-    <button onclick="viewNotifications()" class="btn btn-primary btn-user"
-        style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">Ver
-        Todas las Notificaciones</button>
-</div>
-<script>
-        
-    // Función para cargar todos los usuarios
-    async function loadViajes() {
-        try {
-            const response = await fetch('/api/viaje/records');
-            const viajes = await response.json();
-    
-            // Limpia la tabla si ya fue inicializada anteriormente
-            if ($.fn.DataTable.isDataTable('#viajeTable')) {
-                const dataTable = $('#viajeTable').DataTable();
-                dataTable.clear();
-    
-                // Agrega filas nuevamente
-                viajes.forEach(viaje => {
-                    dataTable.row.add([
-                        viaje.ruta_origen || '-',
-                        viaje.ruta_destino || '-',
-                        viaje.viaje_hora_salida_programado || '-',
-                        viaje.viaje_hora_llegada_programado || '-',
-                        viaje.viaje_hora_salida_real || '-',
-                        viaje.viaje_hora_llegada_real || '-',
-                        viaje.viaje_duracion_real || '-',
-                        viaje.viaje_prediccion_tiempo || '-',
-                        viaje.viaje_estado || '-',
-                        viaje.viaje_codigo || '-',
-                        `
+    <script>
+        //Funcion para llamar modal
+        async function openModal(modalId) {
+            try {
+                // Esperar un pequeño tiempo si necesitas cargar datos antes de mostrar el modal
+                await new Promise(resolve => setTimeout(resolve, 100));
+                // Inicializar el modal usando Bootstrap
+                const modalElement = document.getElementById(modalId);
+                const bootstrapModal = new bootstrap.Modal(modalElement);
+                // Mostrar el modal
+                bootstrapModal.show();
+            } catch (error) {
+                console.error("Error al abrir el modal:", error);
+            }
+        }
+        // Función para cargar todos los usuarios
+        async function loadViajes() {
+            try {
+                const response = await fetch('/api/viaje/records');
+                const viajes = await response.json();
+                // Limpia la tabla si ya fue inicializada anteriormente
+                if ($.fn.DataTable.isDataTable('#viajeTable')) {
+                    const dataTable = $('#viajeTable').DataTable();
+                    dataTable.clear();
+                    // Agrega filas nuevamente
+                    viajes.forEach(viaje => {
+                        dataTable.row.add([
+                            viaje.ruta_origen || '-',
+                            viaje.ruta_destino || '-',
+                            viaje.viaje_hora_salida_programado || '-',
+                            viaje.viaje_hora_llegada_programado || '-',
+                            viaje.viaje_hora_salida_real || '-',
+                            viaje.viaje_hora_llegada_real || '-',
+                            viaje.viaje_duracion_real || '-',
+                            viaje.viaje_prediccion_tiempo || '-',
+                            viaje.viaje_estado || '-',
+                            viaje.viaje_codigo || '-',
+                            `
                         <button onclick="editViaje('${viaje._id}')">Editar</button>
                         <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
                         `
-                    ]);
-                });
-    
-                dataTable.draw();
-            } else {
-                $('#viajeTable').DataTable({
-                    data: viajes.map(viaje => [
-                        viaje.ruta_origen || '-',
-                        viaje.ruta_destino || '-',
-                        viaje.viaje_hora_salida_programado || '-',
-                        viaje.viaje_hora_llegada_programado || '-',
-                        viaje.viaje_hora_salida_real || '-',
-                        viaje.viaje_hora_llegada_real || '-',
-                        viaje.viaje_duracion_real || '-',
-                        viaje.viaje_prediccion_tiempo || '-',
-                        viaje.viaje_estado || '-',
-                        viaje.viaje_codigo || '-',
-                        `
+                        ]);
+                    });
+                    dataTable.draw();
+                } else {
+                    $('#viajeTable').DataTable({
+                        data: viajes.map(viaje => [
+                            viaje.ruta_origen || '-',
+                            viaje.ruta_destino || '-',
+                            viaje.viaje_hora_salida_programado || '-',
+                            viaje.viaje_hora_llegada_programado || '-',
+                            viaje.viaje_hora_salida_real || '-',
+                            viaje.viaje_hora_llegada_real || '-',
+                            viaje.viaje_duracion_real || '-',
+                            viaje.viaje_prediccion_tiempo || '-',
+                            viaje.viaje_estado || '-',
+                            viaje.viaje_codigo || '-',
+                            `
                         <button onclick="editViaje('${viaje._id}')">Editar</button>
                         <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
                         `
-                    ]),
-                    columns: [
-                        { title: "Origen" },
-                        { title: "Destino" },
-                        { title: "Salida Programada" },
-                        { title: "Llegada Programada" },
-                        { title: "Salida Real" },
-                        { title: "Llegada Real" },
-                        { title: "Duración Real" },
-                        { title: "Predicción Tiempo" },
-                        { title: "Estado" },
-                        { title: "Código" },
-                        { title: "Acciones" }
-                    ],
-                    columnDefs: [
-                        {
-                            targets: [10],
-                            searchable: false,
-                            orderable: false
-                        }
-                    ],
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    info: true,
-                    autoWidth: false,
-                    language: {
-                        sProcessing: "Procesando...",
-                        sLengthMenu: "Mostrar _MENU_ registros",
-                        sZeroRecords: "No se encontraron resultados",
-                        sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
-                        sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
-                        sInfoFiltered: "(filtrado de _MAX_ registros en total)",
-                        sSearch: "Buscar:",
-                        oPaginate: {
-                            sFirst: "Primero",
-                            sPrevious: "Anterior",
-                            sNext: "Siguiente",
-                            sLast: "Último"
+                        ]),
+                        columns: [
+                            { title: "Origen" },
+                            { title: "Destino" },
+                            { title: "Salida Programada" },
+                            { title: "Llegada Programada" },
+                            { title: "Salida Real" },
+                            { title: "Llegada Real" },
+                            { title: "Duración Real" },
+                            { title: "Predicción Tiempo" },
+                            { title: "Estado" },
+                            { title: "Código" },
+                            { title: "Acciones" }
+                        ],
+                        columnDefs: [
+                            {
+                                targets: [10],
+                                searchable: false,
+                                orderable: false
+                            }
+                        ],
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        autoWidth: false,
+                        language: {
+                            sProcessing: "Procesando...",
+                            sLengthMenu: "Mostrar _MENU_ registros",
+                            sZeroRecords: "No se encontraron resultados",
+                            sInfo: "Mostrando de _START_ a _END_ de _TOTAL_ registros",
+                            sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                            sInfoFiltered: "(filtrado de _MAX_ registros en total)",
+                            sSearch: "Buscar:",
+                            oPaginate: {
+                                sFirst: "Primero",
+                                sPrevious: "Anterior",
+                                sNext: "Siguiente",
+                                sLast: "Último"
+                            },
+                            oAria: {
+                                sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                                sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                            }
                         },
-                        oAria: {
-                            sSortAscending: ": Activar para ordenar la columna de manera ascendente",
-                            sSortDescending: ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
-                    initComplete: function () {
-                        // Configuración para búsqueda por columna en el pie de tabla
-                        this.api()
-                            .columns([0, 1, 8, 9]) // Aplica búsqueda en columnas específicas
-                            .every(function (index) {
-                                var column = this;
-                                var input = document.createElement('input');
-                                input.placeholder = 'Buscar';
-                                $(column.footer()).empty().append(input);
-                                $(input).on('keyup change', function () {
-                                    if (column.search() !== this.value) {
-                                        column.search(this.value).draw();
-                                    }
+                        initComplete: function () {
+                            // Configuración para búsqueda por columna en el pie de tabla
+                            this.api()
+                                .columns([0, 1, 8, 9]) // Aplica búsqueda en columnas específicas
+                                .every(function (index) {
+                                    var column = this;
+                                    var input = document.createElement('input');
+                                    input.placeholder = 'Buscar';
+                                    $(column.footer()).empty().append(input);
+                                    $(input).on('keyup change', function () {
+                                        if (column.search() !== this.value) {
+                                            column.search(this.value).draw();
+                                        }
+                                    });
                                 });
-                            });
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar los viajes:', error);
+                alert('Hubo un problema al cargar los viajes');
+            }
+        }
+        // Función para agregar un nuevo viaje
+        async function addViaje(event) {
+            event.preventDefault();
+
+            // Obtener los valores de los campos del formulario
+            const rutaOrigen = document.getElementById('rutaOrigen').value.trim();
+            const rutaDestino = document.getElementById('rutaDestino').value.trim();
+            const duracionEstimada = document.getElementById('duracionEstimada').value.trim();
+            const horaSalidaProgramada = document.getElementById('horaSalidaProgramada').value.trim();
+            const horaLlegadaProgramada = document.getElementById('horaLlegadaProgramada').value.trim();
+            const estadoViaje = document.getElementById('estadoViaje').value.trim();
+
+            // Validaciones en el cliente
+            if (
+                !rutaOrigen ||
+                !rutaDestino ||
+                !duracionEstimada ||
+                !horaSalidaProgramada ||
+                !horaLlegadaProgramada ||
+                !estadoViaje
+            ) {
+                alert('Todos los campos son obligatorios.');
+                return;
+            }
+
+            // Validación de formato de duración (HH:MM:SS)
+            const regexTime = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+            if (!regexTime.test(duracionEstimada)) {
+                alert('La duración estimada debe tener el formato correcto (HH:MM:SS).');
+                return;
+            }
+
+            // Crear el objeto con los datos del viaje
+            const viaje = {
+                ruta_origen: rutaOrigen,
+                ruta_destino: rutaDestino,
+                ruta_duracion_estimada: duracionEstimada,
+                viaje_hora_salida_programado: horaSalidaProgramada,
+                viaje_hora_llegada_programado: horaLlegadaProgramada,
+                viaje_estado: estadoViaje,
+            };
+
+            try {
+                // Enviar los datos al servidor usando Fetch API
+                const response = await fetch('/api/viaje/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(viaje)
+                });
+
+                if (response.ok) {
+                    alert('Viaje creado exitosamente');
+                    document.getElementById('viajeForm').reset(); // Limpiar el formulario
+                    loadViajes(); // Recargar la lista de viajes
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al agregar el viaje:', error);
+                alert('Hubo un problema al agregar el viaje');
+            }
+        }
+
+
+        // Función para eliminar un viaje
+        async function deleteViaje(viajeId) {
+            // Confirmación del usuario antes de proceder
+            if (!confirm('¿Estás seguro de que deseas eliminar este viaje? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            try {
+                // Llamada a la API para eliminar el viaje
+                const response = await fetch(`/api/viaje/delete/${viajeId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
                 });
+                if (response.ok) {
+                    alert('Viaje eliminado exitosamente');
+                    loadViajes(); // Recargar la tabla para reflejar los cambios
+                } else {
+                    // Manejo de errores en caso de respuesta negativa
+                    const data = await response.json();
+                    alert(`Error al eliminar el viaje: ${data.message}`);
+                }
+            } catch (error) {
+                // Manejo de errores inesperados
+                console.error('Error al eliminar el viaje:', error);
+                alert('Hubo un problema al eliminar el viaje. Por favor, inténtalo de nuevo más tarde.');
             }
-        } catch (error) {
-            console.error('Error al cargar los viajes:', error);
-            alert('Hubo un problema al cargar los viajes');
         }
-    }
-    
-    
-    // Llamar a la función loadUsers al cargar la página
-    window.onload = loadViajes;
-</script>
+
+        async function editViaje(viajeId) {
+            try {
+                // Realizar la solicitud para obtener los datos del viaje por ID
+                const response = await fetch(`/api/viaje/getViajeById`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _id: viajeId }),
+                });
+        
+                // Verificar si la respuesta fue exitosa
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error al obtener el viaje: ${errorData.message}`);
+                    return;
+                }
+        
+                const viaje = await response.json();
+        
+                // Rellenar los campos del modal con los datos del viaje
+                document.getElementById('modalrutaOrigen').value = viaje.ruta_origen || '';
+                document.getElementById('modalrutaDestino').value = viaje.ruta_destino || '';
+                document.getElementById('modalduracionEstimada').value = viaje.ruta_duracion_estimada || '';
+                document.getElementById('modalhoraSalidaProgramada').value = viaje.viaje_hora_salida_programado ? new Date(viaje.viaje_hora_salida_programado).toISOString().slice(0, 16) : '';
+                document.getElementById('modalhoraLlegadaProgramada').value = viaje.viaje_hora_llegada_programado ? new Date(viaje.viaje_hora_llegada_programado).toISOString().slice(0, 16) : '';
+                document.getElementById('modalestadoViaje').value = viaje.viaje_estado || '';
+        
+                // Campos opcionales
+                document.getElementById('modalhoraSalidaReal').value = viaje.viaje_hora_salida_real ? new Date(viaje.viaje_hora_salida_real).toISOString().slice(0, 16) : '';
+                document.getElementById('modalhoraLlegadaReal').value = viaje.viaje_hora_llegada_real ? new Date(viaje.viaje_hora_llegada_real).toISOString().slice(0, 16) : '';
+                document.getElementById('modalduracionReal').value = viaje.viaje_duracion_real || '';
+                document.getElementById('modalprediccionTiempo').value = viaje.viaje_prediccion_tiempo || '';
+                document.getElementById('modalcodigoViaje').value = viaje.viaje_codigo || '';
+        
+                // Abrir el modal (asegúrate de tener implementada esta función)
+                openModal('exampleModal');
+            } catch (error) {
+                console.error('Error al editar el viaje:', error);
+                alert('Hubo un problema al obtener los datos del viaje.');
+            }
+        }
+        
+
+
+        // Llamar a la función loadUsers al cargar la página
+        window.onload = loadViajes;
+    </script>
