@@ -14,6 +14,36 @@
     <!-- importar google maps para ver las coordenadas -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1MWREdfr51Q8050qnawCWs_bG8lADQpE&callback=initMap"
         async defer></script>
+    <script>
+        function initMap() {
+            const myLatLng = { lat: -18.009419195743774, lng: -70.25304320578451 };
+            console.log(myLatLng);
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                //center mi posicion
+                center: myLatLng,
+            });
+
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: "Bus de la empresa",
+                // //icono
+                // icon: {
+                //     url: "https://cdn.icon-icons.com/icons2/317/PNG/512/bus_28708.png",
+                //     scaledSize: new google.maps.Size(50, 50),
+                // },
+
+
+            });
+
+            // new google.maps.Marker({
+            //     position: myLatLng,
+            //     map,
+            //     title: "Hello World!",
+            // });
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,12 +84,12 @@
 
             </div>
         </div>
-        
+
     </div>
     <!-- poner el mapa aqui con el gps -->
-     <div class="container mt-1 mb-1">
-         <div id="map" style="height: 400px; width: 100%;"></div>
-     </div>
+    <div class="container mt-1 mb-1">
+        <div id="map" style="height: 400px; width: 100%;"></div>
+    </div>
     <br>
     <div class="row">
         <div class="col-12 text-center">
@@ -162,36 +192,7 @@
 
 <body>
 
-    <script>
-        function initMap() {
-            const myLatLng = { lat: -18.009419195743774, lng: -70.25304320578451 };
-            console.log(myLatLng);
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 16,
-                //center mi posicion
-                center: myLatLng,
-            });
 
-            marker = new google.maps.Marker({
-                position: myLatLng,
-                map,
-                title: "Bus de la empresa",
-                // //icono
-                // icon: {
-                //     url: "https://cdn.icon-icons.com/icons2/317/PNG/512/bus_28708.png",
-                //     scaledSize: new google.maps.Size(50, 50),
-                // },
-
-
-            });
-
-            // new google.maps.Marker({
-            //     position: myLatLng,
-            //     map,
-            //     title: "Hello World!",
-            // });
-        }
-    </script>
 </body>
 
 </html>
