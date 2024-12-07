@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const ejsLocals = require('ejs-locals');
+const connectDB = require('./config/db');
 const http = require('http');
 const logger = require('morgan');
 const { Server } = require('socket.io');
@@ -13,8 +14,9 @@ const app = express();
 // Configurar CORS
 const corsOptions = {
     origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    methods: ['*'],
+    allowedHeaders: ['*'],
+    // allowedHeaders: ['Content-Type'],
 };
 
 // Crear servidor HTTP
@@ -26,7 +28,7 @@ const io = new Server(server, {
 });
 
 // socketRoutes(io);
-
+connectDB();
 // // Manejo de conexiones de Socket.IO
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -35,6 +37,15 @@ io.on('connection', (socket) => {
         console.log('Mensaje recibido:', message);
         io.emit('message', message);  // Emitir mensaje a todos los clientes
     });
+
+    socket.on('coordenadas', (latlng) => {
+        console.log('Coordenadas recibidas:', latlng);
+
+        io.emit('coordenadas', latlng);
+    });
+    // socket.on('login', (user) => {});
+    // socket.on('login', (user) => {});
+    // socket.on('login', (user) => {});
 
     socket.on('disconnect', () => {
         console.log('Cliente desconectado');
@@ -71,9 +82,9 @@ app.get('/', (req, res) => {
 
 // Iniciar servidor HTTP
 if (require.main === module) {
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 80;
     server.listen(PORT, () => {
-        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        console.log(`Servidor corriendo en http://192.168.1.47:${PORT}`);
     });
 }
 
