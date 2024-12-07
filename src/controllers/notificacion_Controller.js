@@ -2,7 +2,44 @@
 const Notificacion = require('../model/notificacion_Model');
 const Controller = require('./cls_wraper_Controller');
 const path = require("path");
+const nodemailer = require('nodemailer');
+
+
+// Configurar el transporte de Nodemailer
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+  },
+});
+
+
 class notificacion_Controller extends Controller {
+
+    // Función para enviar el correo
+    async sendEmail(to, subject, message) {
+      try {
+          const info = await transporter.sendMail({
+              from: { name: 'Correo S.W. Transporte Collasuyo', address: process.env.SMTP_USER }, // Remitente
+              to, // Destinatario(s)
+              subject, // Asunto del correo
+              html: `<p>${message}</p>`, // Contenido en HTML
+          });
+  
+          console.log('Correo enviado:', info.messageId);
+          // Asegúrate de que siempre devuelvas un objeto con las propiedades 'success' y 'messageId'
+          return { success: true, messageId: info.messageId };
+      } catch (error) {
+          console.error('Error al enviar el correo:', error);
+          // Si hay un error, devolver un objeto con 'success' como false y el mensaje de error
+          return { success: false, error: error.message };
+      }
+  }
+
+
   // Obtener todas las notificaciones
   async records(req, res) {
     try {

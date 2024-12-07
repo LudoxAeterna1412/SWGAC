@@ -1,36 +1,31 @@
-<form class="viaje" id="modal_viajeForm" 
-    style="display: flex; flex-direction: column; gap: 15px; max-width: 100%; margin: auto; padding: 20px; box-sizing: border-box;">
-    <h1 class="h3 mb-2 text-gray-800" style="text-align: center; margin-bottom: 20px;">Viajes Existentes</h1>
-    <div class="card shadow mb-4" style="max-width: 100%; overflow-x: auto;">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover" id="viajeTable" width="100%" cellspacing="0"
-                    style="min-width: 700px;">
-                    <thead style="background-color: #f8f9fc; color: #4e73df;">
-                        <tr>
-                            <th style="text-align: center;">Ruta Origen</th>
-                            <th style="text-align: center;">Ruta Destino</th>
-                            <th style="text-align: center;">Hora Salida</th>
-                            <th style="text-align: center;">Hora Llegada</th>
-                            <th style="text-align: center;">Código</th>
-                            <th style="text-align: center;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tfoot style="background-color: #f8f9fc; color: #4e73df;">
-                        <tr>
-                            <th style="text-align: center;">Ruta Origen</th>
-                            <th style="text-align: center;">Ruta Destino</th>
-                            <th style="text-align: center;">Hora Salida</th>
-                            <th style="text-align: center;">Hora Llegada</th>
-                            <th style="text-align: center;">Código</th>
-                            <th style="text-align: center;">Acciones</th>
-                        </tr>
-                    </tfoot>
-                    <tbody id="viaje-list">
-                        <!-- Aquí se llenarán los datos dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Registrar Notificación</h1>
+</div>
+<!-- Begin Form Content -->
+<form class="notificacion" id="notificationForm" onsubmit="addNotification(event)"
+    style="display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 1000px; margin: auto;">
+    <!-- Campos de notificación alineados horizontalmente -->
+    <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 800px; margin: auto;">
+        <textarea class="form-control form-control-notificacion" id="notificacion_mensaje"
+            placeholder="Mensaje de Notificación" required
+            style="flex: 1; width: 100%; min-height: 100px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; resize: vertical;"></textarea>
+        <input type="datetime-local" class="form-control form-control-notificacion" id="notificacion_hora_programado"
+            placeholder="Hora Programada" required
+            style="flex: 1; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+        <input type="text" class="form-control form-control-notificacion" id="det_vu_id"
+            placeholder="ID Detalle Viaje Usuario" required
+            style="flex: 1; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+        <input type="text" class="form-control form-control-notificacion" id="id_viaje" placeholder="ID Viaje" required
+            style="flex: 1; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+        <div style="display: flex; justify-content: space-between; gap: 10px;">
+            <input type="submit" class="btn btn-primary btn-notificacion" value="Registrar"
+                style="flex: 1; padding: 12px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 16px; cursor: pointer;">
+            <button class="btn btn-primary btn-notificacion" onclick="enviarEmail()"
+                style="flex: 1; padding: 12px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 16px; cursor: pointer;">
+                Enviar Email
+            </button>
         </div>
     </div>
+
+    <hr style="margin-top: 20px; border: none; border-top: 1px solid #ccc;">
 </form>
