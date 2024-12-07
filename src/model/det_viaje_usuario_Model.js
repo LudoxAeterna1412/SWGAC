@@ -7,7 +7,7 @@ const detViajeUsuarioSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  usuario_id: {
+  usuario_email: {
     type: String,
     required: true
   }

@@ -14,6 +14,7 @@ const { auth_Controller,
 
 router.use('/login', auth_Controller.index);
 router.use('/dashboard', auth_Controller.dashboard);
+router.use('/registrar_usuario', auth_Controller.registrar_usuario);
 router.use('/gestor_usuarios', usuario_Controller.gestor_usuarios);
 router.use('/gestor_viajes', viaje_Controller.gestor_viajes);
 router.use('/gestor_gps', gps_Controller.gestor_gps);

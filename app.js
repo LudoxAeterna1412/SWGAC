@@ -82,9 +82,11 @@ app.get('/', (req, res) => {
 
 // Iniciar servidor HTTP
 if (require.main === module) {
-    const PORT = process.env.PORT || 80;
+    //const PORT = process.env.PORT || 80;
+    const PORT = process.env.PORT || 3000;
     server.listen(PORT, () => {
-        console.log(`Servidor corriendo en http://192.168.1.47:${PORT}`);
+        console.log(`Servidor corriendo en http://http://localhost:${PORT}`);
+        //console.log(`Servidor corriendo en http://192.168.1.47:${PORT}`);
     });
 }
 

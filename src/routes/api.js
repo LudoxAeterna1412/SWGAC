@@ -24,8 +24,9 @@ det_viaje_gpsRoutes.get('/records', det_viaje_gps_Controller.records);
 det_viaje_usuarioRoutes.get('/records', det_viaje_usuario_Controller.records);
 det_viaje_usuarioRoutes.get('/getDetById/:id', det_viaje_usuario_Controller.getDetById);
 
-det_viaje_usuarioRoutes.get('/getDetByUsuario/:usuario_id', det_viaje_usuario_Controller.getDetByUsuario);
+//det_viaje_usuarioRoutes.get('/getDetByUsuario/:usuario_id', det_viaje_usuario_Controller.getDetByUsuario);
 det_viaje_usuarioRoutes.get('/getDetByViaje/:viaje_id', det_viaje_usuario_Controller.getDetByViaje);
+det_viaje_usuarioRoutes.post('/store', det_viaje_usuario_Controller.store);
 
 authRoutes.post('/login', auth_Controller.login);
 
@@ -78,7 +79,6 @@ notificacionRoutes.post('/sendEmail', async (req, res) => {
         });
     }
 });
-
 
 
 viajeRoutes.get('/records', viaje_Controller.records);

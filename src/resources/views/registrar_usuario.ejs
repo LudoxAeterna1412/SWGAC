@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="template/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="template/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-5 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Bienvenido!</h1>
+                                    </div>
+                                    <form class="user" id="userForm" onsubmit="addUser(event)"
+                                        style="width: 100%; margin: auto;">
+                                        <!-- Campos de usuario, contraseña, tipo de usuario y botón alineados -->
+                                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;">
+                                            <input type="text" class="form-control form-control-user" id="username"
+                                                placeholder="Nombre de Usuario" required
+                                                style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                                            <input type="password" class="form-control form-control-user" id="password" placeholder="Contraseña"
+                                                required
+                                                style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                                            <input type="email" class="form-control form-control-user" id="email"
+                                                placeholder="Correo Electronico" required
+                                                style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+                                            <input type="submit" class="btn btn-primary btn-user" value="Registrar"
+                                                style="padding: 10px 20px; background-color: #007bff; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer;">
+                                        </div>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        
+
+</body>
+
+</html>
+<script>
+    async function addUser(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const user = {
+            usuario_email: email,
+            usuario_nombre: username,
+            usuario_password: password,
+            usuario_tipo: "pasajero"
+        };
+        try {
+            alert(`user: ${user.usuario_tipo}`);
+            const response = await fetch('/api/usuario/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+            if (response.ok) {
+                alert('Usuario creado exitosamente');
+                document.getElementById('userForm').reset();  // Limpiar el formulario
+            } else {
+                const data = await response.json();
+                alert(`Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error al agregar el usuario:', error);
+            alert('Hubo un problema al agregar el usuario');
+        }
+    }
+</script>

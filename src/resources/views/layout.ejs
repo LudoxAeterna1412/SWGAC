@@ -28,7 +28,7 @@
     <!-- Sidebar -->
     <ul class="navbar-nav  bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="template/index.html">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fa fa-bus" aria-hidden="true"></i>
         </div>
@@ -38,7 +38,7 @@
       <hr class="sidebar-divider my-0">
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active">
-        <a class="nav-link" href="index.html" aria-expanded="true">
+        <a class="nav-link" href="/dashboard" aria-expanded="true">
           <i class="fas fa-fw fa-cog"></i>
           <span>PAGINA PRINCIPAL</span></a>
       </li>
@@ -435,20 +435,23 @@
       }
       else if (usuarioActivo.user.usuario_tipo == 'pasajero') {
         menu_seguridad.style.display = 'none';
-        //menu_mantenimiento.style.display = 'none';
+        menu_mantenimiento.style.display = 'none';
         //menu_proyecto.style.display = 'none';
+        Gestionar_Notificaciones_y_Alertas.style.display = 'none';
         Controlar_Módulo_de_Monitoreo.style.display = 'none';
         Gestionar_Módulo_de_Predicción.style.display = 'none';
       }
       else if (usuarioActivo.user.usuario_tipo == 'conductor') {
         menu_seguridad.style.display = 'none';
-        //menu_mantenimiento.style.display = 'none';
+        menu_mantenimiento.style.display = 'none';
         //menu_proyecto.style.display = 'none';
+        Gestionar_Notificaciones_y_Alertas.style.display = 'none';
         Controlar_Módulo_de_Rutas.style.display = 'none';
+        Controlar_Módulo_de_Monitoreo.style.display = 'none';
         Gestionar_Módulo_de_Predicción.style.display = 'none';
       }
       else if (usuarioActivo.user.usuario_tipo == 'administrador') {
-        //menu_mantenimiento.style.display = 'none';
+          menu_seguridad.style.display = 'none';
         //menu_mantenimiento.style.display = 'none';
         //menu_mantenimiento.style.display = 'none';
       }

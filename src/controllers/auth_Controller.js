@@ -59,6 +59,11 @@ class auth_Controller extends Controller {
     res.render('dashboard', {  // Usamos res.render para renderizar la vista EJS
     });
   }
+  // Renderizar la vista del gestor de usuarios con EJS
+  registrar_usuario(req, res) {
+    res.render('registrar_usuario', {  // Usamos res.render para renderizar la vista EJS
+    });
+  }
 }
 
 // Esta parte asegura que el controlador tiene todos los métodos envueltos en asyncHandler

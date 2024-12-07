@@ -140,20 +140,20 @@
                     for (const elemento of contenedor) {
                         try {
                             // Obtener los detalles del usuario usando el endpoint indicado
-                            const userResponse = await fetch(`/api/usuario/getUserById`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ _id: elemento.usuario_id }), // Enviar usuario_id como _id
-                            });
+                            //const userResponse = await fetch(`/api/usuario/getUserById`, {
+                            //    method: 'POST',
+                            //    headers: {
+                            //        'Content-Type': 'application/json',
+                            //    },
+                            //    body: JSON.stringify({ _id: elemento.usuario_id }), // Enviar usuario_id como _id
+                            //});
+//
+                            //if (!userResponse.ok) {
+                            //    throw new Error(`No se pudo obtener el usuario ${elemento.usuario_id}: ${userResponse.statusText}`);
+                            //}
 
-                            if (!userResponse.ok) {
-                                throw new Error(`No se pudo obtener el usuario ${elemento.usuario_id}: ${userResponse.statusText}`);
-                            }
-
-                            const userData = await userResponse.json(); // Obtener los datos del usuario
-                            const to = userData.usuario_email; // Suponiendo que el email está en el campo "email"
+                            //const userData = await userResponse.json(); // Obtener los datos del usuario
+                            const to = elemento.usuario_email; // Suponiendo que el email está en el campo "email"
                             const subject = "Notificación"; // Asunto del correo
                             const message = document.getElementById('notificacion_mensaje').value; // Cuerpo del correo
 

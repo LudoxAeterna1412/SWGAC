@@ -6,12 +6,13 @@
         </div>
         <hr>
         <!-- Sección para Operadores -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Operadores: Crear y Modificar Viajes</h1>
-        </div>
         <form class="user" id="viajeForm" onsubmit="addViaje(event)"
             style="width: 90%; max-width: 1000px; margin: auto;">
             <!-- Campos alineados horizontalmente -->
+
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Operadores: Crear y Modificar Viajes</h1>
+            </div>
             <div
                 style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; justify-content: space-between;">
                 <!-- Campo para la ruta origen -->
@@ -145,6 +146,39 @@
         </div>
     </div>
     <script>
+        async function addUser(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            const user = {
+                usuario_email: email,
+                usuario_nombre: username,
+                usuario_password: password,
+                usuario_tipo: userType
+            };
+            try {
+                const response = await fetch('/api/usuario/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+                if (response.ok) {
+                    alert('Usuario creado exitosamente');
+                    document.getElementById('userForm').reset();  // Limpiar el formulario
+                    loadUsers();  // Recargar la lista de usuarios
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al agregar el usuario:', error);
+                alert('Hubo un problema al agregar el usuario');
+            }
+        }
         //Funcion para llamar modal
         async function openModal(modalId) {
             try {
@@ -162,14 +196,32 @@
         // Función para cargar todos los usuarios
         async function loadViajes() {
             try {
+                // Parsear datos del usuario activo
+                const usuarioActivoJSON = localStorage.getItem('usuarioActivo');
+                let usuarioTipo = '';
+                if (usuarioActivoJSON) {
+                    const usuarioActivo = JSON.parse(usuarioActivoJSON);
+                    usuarioTipo = usuarioActivo.user.usuario_tipo; // Obtener tipo de usuario
+                }
+
                 const response = await fetch('/api/viaje/records');
                 const viajes = await response.json();
+
                 // Limpia la tabla si ya fue inicializada anteriormente
                 if ($.fn.DataTable.isDataTable('#viajeTable')) {
                     const dataTable = $('#viajeTable').DataTable();
                     dataTable.clear();
                     // Agrega filas nuevamente
                     viajes.forEach(viaje => {
+                        const acciones = usuarioTipo === 'administrador' || usuarioTipo === 'operador'
+                            ? `
+                                <button onclick="editViaje('${viaje._id}')">Editar</button>
+                                <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
+                              `
+                            : usuarioTipo === 'pasajero' || usuarioTipo === 'conductor'
+                                ? `<button onclick="selectViaje('${viaje._id}')">Seleccionar</button>`
+                                : '-';
+
                         dataTable.row.add([
                             viaje.ruta_origen || '-',
                             viaje.ruta_destino || '-',
@@ -181,31 +233,36 @@
                             viaje.viaje_prediccion_tiempo || '-',
                             viaje.viaje_estado || '-',
                             viaje.viaje_codigo || '-',
-                            `
-                        <button onclick="editViaje('${viaje._id}')">Editar</button>
-                        <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
-                        `
+                            acciones
                         ]);
                     });
                     dataTable.draw();
                 } else {
                     $('#viajeTable').DataTable({
-                        data: viajes.map(viaje => [
-                            viaje.ruta_origen || '-',
-                            viaje.ruta_destino || '-',
-                            viaje.viaje_hora_salida_programado || '-',
-                            viaje.viaje_hora_llegada_programado || '-',
-                            viaje.viaje_hora_salida_real || '-',
-                            viaje.viaje_hora_llegada_real || '-',
-                            viaje.viaje_duracion_real || '-',
-                            viaje.viaje_prediccion_tiempo || '-',
-                            viaje.viaje_estado || '-',
-                            viaje.viaje_codigo || '-',
-                            `
-                        <button onclick="editViaje('${viaje._id}')">Editar</button>
-                        <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
-                        `
-                        ]),
+                        data: viajes.map(viaje => {
+                            const acciones = usuarioTipo === 'administrador' || usuarioTipo === 'operador'
+                                ? `
+                                    <button onclick="editViaje('${viaje._id}')">Editar</button>
+                                    <button onclick="deleteViaje('${viaje._id}')">Eliminar</button>
+                                  `
+                                : usuarioTipo === 'pasajero' || usuarioTipo === 'conductor'
+                                    ? `<button onclick="selectViaje('${viaje._id}')">Seleccionar</button>`
+                                    : '-';
+
+                            return [
+                                viaje.ruta_origen || '-',
+                                viaje.ruta_destino || '-',
+                                viaje.viaje_hora_salida_programado || '-',
+                                viaje.viaje_hora_llegada_programado || '-',
+                                viaje.viaje_hora_salida_real || '-',
+                                viaje.viaje_hora_llegada_real || '-',
+                                viaje.viaje_duracion_real || '-',
+                                viaje.viaje_prediccion_tiempo || '-',
+                                viaje.viaje_estado || '-',
+                                viaje.viaje_codigo || '-',
+                                acciones
+                            ];
+                        }),
                         columns: [
                             { title: "Origen" },
                             { title: "Destino" },
@@ -273,6 +330,64 @@
                 alert('Hubo un problema al cargar los viajes');
             }
         }
+
+        async function updateViaje(event) {
+            event.preventDefault();
+
+            // Obtener los valores de los campos del formulario
+            const id = document.getElementById('modal_id').value; // Asegúrate de tener un campo con id modal_id en tu formulario
+            const rutaOrigen = document.getElementById('modalrutaOrigen').value;
+            const rutaDestino = document.getElementById('modalrutaDestino').value;
+            const duracionEstimada = document.getElementById('modalduracionEstimada').value;
+            const horaSalidaProgramada = document.getElementById('modalhoraSalidaProgramada').value;
+            const horaLlegadaProgramada = document.getElementById('modalhoraLlegadaProgramada').value;
+            const estadoViaje = document.getElementById('modalestadoViaje').value;
+            const horaSalidaReal = document.getElementById('modalhoraSalidaReal').value;
+            const horaLlegadaReal = document.getElementById('modalhoraLlegadaReal').value;
+            const duracionReal = document.getElementById('modalduracionReal').value;
+            const prediccionTiempo = document.getElementById('modalprediccionTiempo').value;
+
+            // Crear el objeto con los datos actualizados
+            const updatedViaje = {
+                viaje_ruta_origen: rutaOrigen,
+                viaje_ruta_destino: rutaDestino,
+                viaje_duracion_estimada: duracionEstimada,
+                viaje_hora_salida_programada: horaSalidaProgramada,
+                viaje_hora_llegada_programada: horaLlegadaProgramada,
+                viaje_estado: estadoViaje,
+                viaje_hora_salida_real: horaSalidaReal,
+                viaje_hora_llegada_real: horaLlegadaReal,
+                viaje_duracion_real: duracionReal,
+                viaje_prediccion_tiempo: prediccionTiempo,
+            };
+
+            console.log('updatedViaje:', updatedViaje);
+
+            try {
+                // Realizar la solicitud PUT para actualizar el viaje
+                const response = await fetch(`/api/viaje/update/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedViaje),
+                });
+
+                if (response.ok) {
+                    alert('Viaje actualizado exitosamente');
+                    document.getElementById('viajeForm').reset(); // Limpiar el formulario
+                    loadViajes(); // Recargar la lista de viajes o realizar alguna acción similar
+                } else {
+                    const data = await response.json();
+                    alert(`Error al actualizar el viaje: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al actualizar el viaje:', error);
+                alert('Hubo un problema al actualizar el viaje');
+            }
+        }
+
+
         // Función para agregar un nuevo viaje
         async function addViaje(event) {
             event.preventDefault();
@@ -379,31 +494,32 @@
                     },
                     body: JSON.stringify({ _id: viajeId }),
                 });
-        
+
                 // Verificar si la respuesta fue exitosa
                 if (!response.ok) {
                     const errorData = await response.json();
                     alert(`Error al obtener el viaje: ${errorData.message}`);
                     return;
                 }
-        
+
                 const viaje = await response.json();
-        
+
                 // Rellenar los campos del modal con los datos del viaje
+                document.getElementById('modal_id').value = viaje._id || '';
                 document.getElementById('modalrutaOrigen').value = viaje.ruta_origen || '';
                 document.getElementById('modalrutaDestino').value = viaje.ruta_destino || '';
                 document.getElementById('modalduracionEstimada').value = viaje.ruta_duracion_estimada || '';
                 document.getElementById('modalhoraSalidaProgramada').value = viaje.viaje_hora_salida_programado ? new Date(viaje.viaje_hora_salida_programado).toISOString().slice(0, 16) : '';
                 document.getElementById('modalhoraLlegadaProgramada').value = viaje.viaje_hora_llegada_programado ? new Date(viaje.viaje_hora_llegada_programado).toISOString().slice(0, 16) : '';
                 document.getElementById('modalestadoViaje').value = viaje.viaje_estado || '';
-        
+
                 // Campos opcionales
                 document.getElementById('modalhoraSalidaReal').value = viaje.viaje_hora_salida_real ? new Date(viaje.viaje_hora_salida_real).toISOString().slice(0, 16) : '';
                 document.getElementById('modalhoraLlegadaReal').value = viaje.viaje_hora_llegada_real ? new Date(viaje.viaje_hora_llegada_real).toISOString().slice(0, 16) : '';
                 document.getElementById('modalduracionReal').value = viaje.viaje_duracion_real || '';
                 document.getElementById('modalprediccionTiempo').value = viaje.viaje_prediccion_tiempo || '';
                 document.getElementById('modalcodigoViaje').value = viaje.viaje_codigo || '';
-        
+
                 // Abrir el modal (asegúrate de tener implementada esta función)
                 openModal('exampleModal');
             } catch (error) {
@@ -411,9 +527,74 @@
                 alert('Hubo un problema al obtener los datos del viaje.');
             }
         }
-        
+
+        async function selectViaje(viajeId) {
+            try {
+                // Obtener el usuario activo desde localStorage
+                const usuarioActivoJSON = localStorage.getItem('usuarioActivo');
+
+                const usuarioActivo = JSON.parse(usuarioActivoJSON);
+                const usuario_email = usuarioActivo.user.usuario_email; // Asegúrate de que el usuario tenga un campo _id
+
+                // Obtener el ID del viaje seleccionado
+                const ViajeId = viajeId;
+
+                // Validaciones en el cliente
+                if (!ViajeId) {
+                    alert('Debe seleccionar un viaje.');
+                    return;
+                }
+                else {
+
+                    console.error('usuarioActivo:', usuario_email);
+                    alert(`Funca: ${ViajeId}  ${usuario_email}`);
+                }
+
+                // Crear el objeto con los datos del detalle del viaje
+                const detViajeUsuario = {
+                    viaje_id: ViajeId,
+                    usuario_email: usuario_email
+                };
+                // Enviar los datos al servidor usando Fetch API
+                const response = await fetch('/api/det_viaje_usuario/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(detViajeUsuario)
+                });
+
+                if (response.ok) {
+                    alert('Viaje asociado exitosamente.');
+                    document.getElementById('viajeForm').reset(); // Limpiar el formulario
+                    loadViajes(); // Recargar la lista de viajes
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error al asociar el viaje:', error);
+                alert('Hubo un problema al asociar el viaje.');
+            }
+        }
 
 
         // Llamar a la función loadUsers al cargar la página
         window.onload = loadViajes;
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Parsear los datos del usuario activo
+            const usuarioActivoJSON = localStorage.getItem('usuarioActivo');
+            if (usuarioActivoJSON) {
+                const usuarioActivo = JSON.parse(usuarioActivoJSON);
+
+                const viajeForm = document.getElementById('viajeForm');
+                if (usuarioActivo.user.usuario_tipo == 'pasajero' || usuarioActivo.user.usuario_tipo == 'conductor') {
+                    viajeForm.style.display = 'none';
+                }
+
+            }
+        });
+
+
     </script>

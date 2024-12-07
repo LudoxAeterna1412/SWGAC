@@ -79,16 +79,32 @@ class viaje_Controller extends Controller {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { viaje_codigo, ruta_origen, ruta_destino, ruta_duracion_estimada, viaje_hora_salida_programado, viaje_hora_llegada_programado, viaje_estado } = req.body;
+      const { viaje_codigo,
+        ruta_origen,
+        ruta_destino,
+        ruta_duracion_estimada,
+        viaje_hora_salida_programado,
+        viaje_hora_llegada_programado,
+        viaje_hora_salida_real,
+        viaje_hora_llegada_real,
+        viaje_duracion_real,
+        viaje_prediccion_tiempo,
+        viaje_estado } = req.body;
       // Validación básica
-      if (!viaje_codigo || !ruta_origen || !ruta_destino || !ruta_duracion_estimada || !viaje_hora_salida_programado || !viaje_hora_llegada_programado || !viaje_estado) {
-        return res.status(400).json({ message: "Todos los campos son obligatorios." });
-      }
+      //if (!viaje_codigo ||
+      //  !ruta_origen ||
+      //  !ruta_destino ||
+      //  !ruta_duracion_estimada ||
+      //  !viaje_hora_salida_programado ||
+      //  !viaje_hora_llegada_programado ||
+      //  !viaje_estado) {
+      //  return res.status(400).json({ message: "Todos los campos son obligatorios." });
+      //}
       // Validación de formato de duración (HH:MM:SS)
-      const regexTime = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
-      if (!regexTime.test(ruta_duracion_estimada)) {
-        return res.status(400).json({ message: "La duración estimada no tiene el formato correcto (HH:MM:SS)." });
-      }
+      //const regexTime = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+      //if (!regexTime.test(ruta_duracion_estimada)) {
+      //  return res.status(400).json({ message: "La duración estimada no tiene el formato correcto (HH:MM:SS)." });
+      //}
       // Actualizar viaje
       const updatedViaje = await Viaje.update(id, {
         viaje_codigo,
@@ -97,6 +113,10 @@ class viaje_Controller extends Controller {
         ruta_duracion_estimada,
         viaje_hora_salida_programado,
         viaje_hora_llegada_programado,
+        viaje_hora_salida_real,
+        viaje_hora_llegada_real,
+        viaje_duracion_real,
+        viaje_prediccion_tiempo,
         viaje_estado,
       });
       if (!updatedViaje) {

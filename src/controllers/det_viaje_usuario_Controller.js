@@ -27,27 +27,27 @@ class det_viaje_usuario_Controller extends Controller {
     }
   }
 
-  async getDetByUsuario(req, res) {
-    try {
-      const { usuario_id } = req.params; // Extraer usuario_id de los parámetros
-      if (!usuario_id) {
-        return res.status(400).json({ message: "El usuario_id es requerido" });
-      }
-
-      // Buscar detalles por usuario_id utilizando el modelo
-      const detalles = await DetViajeUsuario.getByUsuario(usuario_id);
-
-      if (!detalles || detalles.length === 0) {
-        return res.status(404).json({ message: "No se encontraron detalles para este usuario" });
-      }
-
-      return res.status(200).json(detalles); // Retornar los detalles encontrados
-    } catch (error) {
-      console.error("Error en getDetByUsuario:", error);
-      return res.status(500).send(error.message); // Manejo de errores
-    }
-  }
-
+  //async getDetByUsuario(req, res) {
+  //  try {
+  //    const { usuario_email } = req.params; // Extraer usuario_email de los parámetros
+  //    if (!usuario_email) {
+  //      return res.status(400).json({ message: "El usuario_email es requerido" });
+  //    }
+  //
+  //    // Buscar detalles por usuario_email utilizando el modelo
+  //    const detalles = await DetViajeUsuario.getByUsuario(usuario_email);
+  //
+  //    if (!detalles || detalles.length === 0) {
+  //      return res.status(404).json({ message: "No se encontraron detalles para este usuario" });
+  //    }
+  //
+  //    return res.status(200).json(detalles); // Retornar los detalles encontrados
+  //  } catch (error) {
+  //    console.error("Error en getDetByUsuario:", error);
+  //    return res.status(500).send(error.message); // Manejo de errores
+  //  }
+  //}
+  //
   // Obtener el detalle por ID utilizando params
   async getDetById(req, res) {
     try {
@@ -79,17 +79,17 @@ class det_viaje_usuario_Controller extends Controller {
   // Crear un nuevo registro de viaje-usuario
   async store(req, res) {
     try {
-      const { viaje_id, usuario_id } = req.body;
+      const { viaje_id, usuario_email } = req.body;
 
       // Validación básica
-      if (!viaje_id || !usuario_id) {
-        return res.status(400).json({ message: "Ambos campos (viaje_id, usuario_id) son obligatorios." });
+      if (!viaje_id || !usuario_email) {
+        return res.status(400).json({ message: "Ambos campos (viaje_id, usuario_email) son obligatorios." });
       }
 
       // Crear un nuevo registro de viaje-usuario
       const newDetViajeUsuario = await DetViajeUsuario.create({
         viaje_id,
-        usuario_id,
+        usuario_email,
       });
 
       return res.status(201).json(newDetViajeUsuario);
@@ -103,17 +103,17 @@ class det_viaje_usuario_Controller extends Controller {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { viaje_id, usuario_id } = req.body;
+      const { viaje_id, usuario_email } = req.body;
 
       // Validación básica
-      if (!viaje_id || !usuario_id) {
-        return res.status(400).json({ message: "Ambos campos (viaje_id, usuario_id) son obligatorios." });
+      if (!viaje_id || !usuario_email) {
+        return res.status(400).json({ message: "Ambos campos (viaje_id, usuario_email) son obligatorios." });
       }
 
       // Actualizar el registro de viaje-usuario
       const updatedDetViajeUsuario = await DetViajeUsuario.update(id, {
         viaje_id,
-        usuario_id,
+        usuario_email,
       });
 
       if (!updatedDetViajeUsuario) {
