@@ -89,6 +89,4 @@ if (require.main === module) {
         //console.log(`Servidor corriendo en http://192.168.1.47:${PORT}`);
     });
 }
-
-
 module.exports = app;
