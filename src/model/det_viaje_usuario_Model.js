@@ -2,15 +2,14 @@ const mongoose = require('mongoose');
 const Model = require('./cls_wraper_Model');
 
 const detViajeUsuarioSchema = new mongoose.Schema({
-  viaje_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Viaje', 
-    required: true 
+
+  viaje_id: {
+    type: String,
+    required: true
   },
-  usuario_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Usuario', 
-    required: true 
+  usuario_id: {
+    type: String,
+    required: true
   }
 });
 
@@ -19,6 +18,13 @@ const mongo_det_viaje_usuario = mongoose.model('DetViajeUsuario', detViajeUsuari
 class det_viaje_usuario_Model extends Model {
   constructor() {
     super(mongo_det_viaje_usuario);
+  }
+
+  async getByUsuario(usuario) {
+    return await mongo_det_viaje_usuario.find({ usuario_id: usuario });
+  }
+  async getByViaje(viaje) {
+    return await mongo_det_viaje_usuario.find({ viaje_id: viaje });
   }
 }
 
