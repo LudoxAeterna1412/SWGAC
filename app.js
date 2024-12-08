@@ -76,7 +76,7 @@ app.use((err, req, res, next) => {
 });
 
 // Ruta raíz
-app.get('/', (req, res) => {
+app.get('/simulacion', (req, res) => {
     res.sendFile(process.cwd() + '/client/index.html');
 });
 
