@@ -76,9 +76,9 @@ app.use((err, req, res, next) => {
 });
 
 // Ruta raíz
-//app.get('/simulacion', (req, res) => {
-//    res.sendFile(process.cwd() + '/client/index.html');
-//  });
+app.get('/login', (req, res) => {
+    res.sendFile(process.cwd() + '/login');
+  });
   
 
 // Iniciar servidor HTTP
