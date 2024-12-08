@@ -76,8 +76,8 @@ app.use((err, req, res, next) => {
 });
 
 // Ruta raíz
-app.get('/login', (req, res) => {
-    res.sendFile(process.cwd() + '/login');
+app.get('/', (req, res) => {
+    res.sendFile(process.cwd() + '/src/resources/views/auth/login.html');
   });
   
 
