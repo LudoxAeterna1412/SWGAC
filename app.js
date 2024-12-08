@@ -75,6 +75,11 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: err.message, archivo: err.stack });
 });
 
+// Ruta raíz
+//app.get('/simulacion', (req, res) => {
+//    res.sendFile(process.cwd() + '/client/index.html');
+//  });
+  
 
 // Iniciar servidor HTTP
 if (require.main === module) {

@@ -96,6 +96,9 @@ class det_viaje_gps_Controller extends Controller {
   gestor_det_viaje_gps(req, res) {
     res.sendFile(path.join(__dirname, "../resources/views", "gestor_det_viaje_gps.html"));
   }
+  simulacion(req, res) {
+    res.sendFile(path.join(__dirname, "../../client", "index.html"));
+  }
 }
 
 module.exports = new det_viaje_gps_Controller();

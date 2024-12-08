@@ -21,10 +21,7 @@ router.use('/gestor_gps', gps_Controller.gestor_gps);
 router.use('/gestor_rutas', ruta_Controller.gestor_rutas);
 router.use('/gestor_notificaciones', notificacion_Controller.gestor_notificaciones);
 
-// Ruta raíz
-app.get('/simulacion', (req, res) => {
-    res.sendFile(process.cwd() + '/client/index.html');
-});
+router.use('/simulacion', det_viaje_gps_Controller.simulacion);
 
 
 module.exports = router;
