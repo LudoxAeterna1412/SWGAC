@@ -1,0 +1,51 @@
+<form id="modal_cotForm" onsubmit="saveCot(); return false;"
+       style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 1500px; margin: auto;">
+
+       <!-- ========================
+       DATOS DEL CLIENTE
+  ========================= -->
+       <div style="display: flex; flex-direction: column; gap: 10px;">
+              <h4>Datos del Cliente</h4>
+              <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
+                     <!-- ID (solo para edición) -->
+                     <input type="text" id="modal_id" placeholder="ID Cotización" disabled
+                            style="flex:1; min-width:200px;" class="form-control form-control-sm" />
+
+                     <div style="flex: 2 1 300px; min-width: 200px; display: flex; flex-direction: column;">
+                            <label for="modal_cliente">Cliente</label>
+                            <input type="text" id="modal_cliente" required class="form-control form-control-sm">
+                     </div>
+
+                     <div style="flex: 1 1 150px; min-width: 120px; display: flex; flex-direction: column;">
+                            <label for="modal_tipo">Tipo</label>
+                            <select id="modal_tipo" required class="form-control form-control-sm">
+                                   <option value="">Seleccione</option>
+                                   <option value="privado">privado</option>
+                                   <option value="publico">publico</option>
+                            </select>
+                     </div>
+
+                     <div style="flex: 1 1 300px; min-width: 200px; display: flex; gap: 10px;">
+                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                   <label for="modal_dni">DNI</label>
+                                   <input type="text" id="modal_dni" class="form-control form-control-sm">
+                            </div>
+                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                   <label for="modal_ruc">RUC</label>
+                                   <input type="text" id="modal_ruc" class="form-control form-control-sm">
+                            </div>
+                     </div>
+              </div>
+              <h4>Datos de Cotización</h4>
+              <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                     <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
+                            <label for="modal_codigo">Código</label>
+                            <input type="text" id="modal_codigo" required class="form-control form-control-sm">
+                     </div>
+                     <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
+                            <label for="modal_fecha">Fecha</label>
+                            <input type="date" id="modal_fecha" required class="form-control form-control-sm">
+                     </div>
+              </div>
+       </div>
+</form>

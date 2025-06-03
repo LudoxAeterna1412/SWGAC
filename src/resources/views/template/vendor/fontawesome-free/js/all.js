@@ -4,26 +4,21 @@
  */
 (function () {
   'use strict';
-
-  var _WINDOW = {};
+ var _WINDOW = {};
   var _DOCUMENT = {};
-
-  try {
+ try {
     if (typeof window !== 'undefined') _WINDOW = window;
     if (typeof document !== 'undefined') _DOCUMENT = document;
   } catch (e) {}
-
-  var _ref = _WINDOW.navigator || {},
+ var _ref = _WINDOW.navigator || {},
       _ref$userAgent = _ref.userAgent,
       userAgent = _ref$userAgent === void 0 ? '' : _ref$userAgent;
-
-  var WINDOW = _WINDOW;
+ var WINDOW = _WINDOW;
   var DOCUMENT = _DOCUMENT;
   var IS_BROWSER = !!WINDOW.document;
   var IS_DOM = !!DOCUMENT.documentElement && !!DOCUMENT.head && typeof DOCUMENT.addEventListener === 'function' && typeof DOCUMENT.createElement === 'function';
   var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
-
-  var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
+ var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
   var PRODUCTION = function () {
     try {
       return "production" === 'production';
@@ -31,8 +26,7 @@
       return false;
     }
   }();
-
-  function bunker(fn) {
+ function bunker(fn) {
     try {
       fn();
     } catch (e) {
@@ -41,8 +35,7 @@
       }
     }
   }
-
-  function _defineProperty(obj, key, value) {
+ function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value,
@@ -53,54 +46,44 @@
     } else {
       obj[key] = value;
     }
-
-    return obj;
+   return obj;
   }
-
-  function _objectSpread(target) {
+ function _objectSpread(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
       var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
+     if (typeof Object.getOwnPropertySymbols === 'function') {
         ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
           return Object.getOwnPropertyDescriptor(source, sym).enumerable;
         }));
       }
-
-      ownKeys.forEach(function (key) {
+     ownKeys.forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     }
-
-    return target;
+   return target;
   }
-
-  var w = WINDOW || {};
+ var w = WINDOW || {};
   if (!w[NAMESPACE_IDENTIFIER]) w[NAMESPACE_IDENTIFIER] = {};
   if (!w[NAMESPACE_IDENTIFIER].styles) w[NAMESPACE_IDENTIFIER].styles = {};
   if (!w[NAMESPACE_IDENTIFIER].hooks) w[NAMESPACE_IDENTIFIER].hooks = {};
   if (!w[NAMESPACE_IDENTIFIER].shims) w[NAMESPACE_IDENTIFIER].shims = [];
   var namespace = w[NAMESPACE_IDENTIFIER];
-
-  function defineIcons(prefix, icons) {
+ function defineIcons(prefix, icons) {
     var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var _params$skipHooks = params.skipHooks,
         skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
     var normalized = Object.keys(icons).reduce(function (acc, iconName) {
       var icon = icons[iconName];
       var expanded = !!icon.icon;
-
-      if (expanded) {
+     if (expanded) {
         acc[icon.iconName] = icon.icon;
       } else {
         acc[iconName] = icon;
       }
-
-      return acc;
+     return acc;
     }, {});
-
-    if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
+   if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
       namespace.hooks.addPack(prefix, normalized);
     } else {
       namespace.styles[prefix] = _objectSpread({}, namespace.styles[prefix] || {}, normalized);
@@ -111,14 +94,11 @@
      * for `fas` so we'll easy the upgrade process for our users by automatically defining
      * this as well.
      */
-
-
-    if (prefix === 'fas') {
+   if (prefix === 'fas') {
       defineIcons('fa', icons);
     }
   }
-
-  var icons = {
+ var icons = {
     "500px": [448, 512, [], "f26e", "M103.3 344.3c-6.5-14.2-6.9-18.3 7.4-23.1 25.6-8 8 9.2 43.2 49.2h.3v-93.9c1.2-50.2 44-92.2 97.7-92.2 53.9 0 97.7 43.5 97.7 96.8 0 63.4-60.8 113.2-128.5 93.3-10.5-4.2-2.1-31.7 8.5-28.6 53 0 89.4-10.1 89.4-64.4 0-61-77.1-89.6-116.9-44.6-23.5 26.4-17.6 42.1-17.6 157.6 50.7 31 118.3 22 160.4-20.1 24.8-24.8 38.5-58 38.5-93 0-35.2-13.8-68.2-38.8-93.3-24.8-24.8-57.8-38.5-93.3-38.5s-68.8 13.8-93.5 38.5c-.3.3-16 16.5-21.2 23.9l-.5.6c-3.3 4.7-6.3 9.1-20.1 6.1-6.9-1.7-14.3-5.8-14.3-11.8V20c0-5 3.9-10.5 10.5-10.5h241.3c8.3 0 8.3 11.6 8.3 15.1 0 3.9 0 15.1-8.3 15.1H130.3v132.9h.3c104.2-109.8 282.8-36 282.8 108.9 0 178.1-244.8 220.3-310.1 62.8zm63.3-260.8c-.5 4.2 4.6 24.5 14.6 20.6C306 56.6 384 144.5 390.6 144.5c4.8 0 22.8-15.3 14.3-22.8-93.2-89-234.5-57-238.3-38.2zM393 414.7C283 524.6 94 475.5 61 310.5c0-12.2-30.4-7.4-28.9 3.3 24 173.4 246 256.9 381.6 121.3 6.9-7.8-12.6-28.4-20.7-20.4zM213.6 306.6c0 4 4.3 7.3 5.5 8.5 3 3 6.1 4.4 8.5 4.4 3.8 0 2.6.2 22.3-19.5 19.6 19.3 19.1 19.5 22.3 19.5 5.4 0 18.5-10.4 10.7-18.2L265.6 284l18.2-18.2c6.3-6.8-10.1-21.8-16.2-15.7L249.7 268c-18.6-18.8-18.4-19.5-21.5-19.5-5 0-18 11.7-12.4 17.3L234 284c-18.1 17.9-20.4 19.2-20.4 22.6z"],
     "accessible-icon": [448, 512, [], "f368", "M423.9 255.8L411 413.1c-3.3 40.7-63.9 35.1-60.6-4.9l10-122.5-41.1 2.3c10.1 20.7 15.8 43.9 15.8 68.5 0 41.2-16.1 78.7-42.3 106.5l-39.3-39.3c57.9-63.7 13.1-167.2-74-167.2-25.9 0-49.5 9.9-67.2 26L73 243.2c22-20.7 50.1-35.1 81.4-40.2l75.3-85.7-42.6-24.8-51.6 46c-30 26.8-70.6-18.5-40.5-45.4l68-60.7c9.8-8.8 24.1-10.2 35.5-3.6 0 0 139.3 80.9 139.5 81.1 16.2 10.1 20.7 36 6.1 52.6L285.7 229l106.1-5.9c18.5-1.1 33.6 14.4 32.1 32.7zm-64.9-154c28.1 0 50.9-22.8 50.9-50.9C409.9 22.8 387.1 0 359 0c-28.1 0-50.9 22.8-50.9 50.9 0 28.1 22.8 50.9 50.9 50.9zM179.6 456.5c-80.6 0-127.4-90.6-82.7-156.1l-39.7-39.7C36.4 287 24 320.3 24 356.4c0 130.7 150.7 201.4 251.4 122.5l-39.7-39.7c-16 10.9-35.3 17.3-56.1 17.3z"],
     "accusoft": [640, 512, [], "f369", "M322.1 252v-1l-51.2-65.8s-12 1.6-25 15.1c-9 9.3-242.1 239.1-243.4 240.9-7 10 1.6 6.8 15.7 1.7.8 0 114.5-36.6 114.5-36.6.5-.6-.1-.1.6-.6-.4-5.1-.8-26.2-1-27.7-.6-5.2 2.2-6.9 7-8.9l92.6-33.8c.6-.8 88.5-81.7 90.2-83.3zm160.1 120.1c13.3 16.1 20.7 13.3 30.8 9.3 3.2-1.2 115.4-47.6 117.8-48.9 8-4.3-1.7-16.7-7.2-23.4-2.1-2.5-205.1-245.6-207.2-248.3-9.7-12.2-14.3-12.9-38.4-12.8-10.2 0-106.8.5-116.5.6-19.2.1-32.9-.3-19.2 16.9C250 75 476.5 365.2 482.2 372.1zm152.7 1.6c-2.3-.3-24.6-4.7-38-7.2 0 0-115 50.4-117.5 51.6-16 7.3-26.9-3.2-36.7-14.6l-57.1-74c-5.4-.9-60.4-9.6-65.3-9.3-3.1.2-9.6.8-14.4 2.9-4.9 2.1-145.2 52.8-150.2 54.7-5.1 2-11.4 3.6-11.1 7.6.2 2.5 2 2.6 4.6 3.5 2.7.8 300.9 67.6 308 69.1 15.6 3.3 38.5 10.5 53.6 1.7 2.1-1.2 123.8-76.4 125.8-77.8 5.4-4 4.3-6.8-1.7-8.2z"],
@@ -578,34 +558,27 @@
     "youtube-square": [448, 512, [], "f431", "M186.8 202.1l95.2 54.1-95.2 54.1V202.1zM448 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h352c26.5 0 48 21.5 48 48zm-42 176.3s0-59.6-7.6-88.2c-4.2-15.8-16.5-28.2-32.2-32.4C337.9 128 224 128 224 128s-113.9 0-142.2 7.7c-15.7 4.2-28 16.6-32.2 32.4-7.6 28.5-7.6 88.2-7.6 88.2s0 59.6 7.6 88.2c4.2 15.8 16.5 27.7 32.2 31.9C110.1 384 224 384 224 384s113.9 0 142.2-7.7c15.7-4.2 28-16.1 32.2-31.9 7.6-28.5 7.6-88.1 7.6-88.1z"],
     "zhihu": [640, 512, [], "f63f", "M170.54 148.13v217.54l23.43.01 7.71 26.37 42.01-26.37h49.53V148.13H170.54zm97.75 193.93h-27.94l-27.9 17.51-5.08-17.47-11.9-.04V171.75h72.82v170.31zm-118.46-94.39H97.5c1.74-27.1 2.2-51.59 2.2-73.46h51.16s1.97-22.56-8.58-22.31h-88.5c3.49-13.12 7.87-26.66 13.12-40.67 0 0-24.07 0-32.27 21.57-3.39 8.9-13.21 43.14-30.7 78.12 5.89-.64 25.37-1.18 36.84-22.21 2.11-5.89 2.51-6.66 5.14-14.53h28.87c0 10.5-1.2 66.88-1.68 73.44H20.83c-11.74 0-15.56 23.62-15.56 23.62h65.58C66.45 321.1 42.83 363.12 0 396.34c20.49 5.85 40.91-.93 51-9.9 0 0 22.98-20.9 35.59-69.25l53.96 64.94s7.91-26.89-1.24-39.99c-7.58-8.92-28.06-33.06-36.79-41.81L87.9 311.95c4.36-13.98 6.99-27.55 7.87-40.67h61.65s-.09-23.62-7.59-23.62v.01zm412.02-1.6c20.83-25.64 44.98-58.57 44.98-58.57s-18.65-14.8-27.38-4.06c-6 8.15-36.83 48.2-36.83 48.2l19.23 14.43zm-150.09-59.09c-9.01-8.25-25.91 2.13-25.91 2.13s39.52 55.04 41.12 57.45l19.46-13.73s-25.67-37.61-34.66-45.86h-.01zM640 258.35c-19.78 0-130.91.93-131.06.93v-101c4.81 0 12.42-.4 22.85-1.2 40.88-2.41 70.13-4 87.77-4.81 0 0 12.22-27.19-.59-33.44-3.07-1.18-23.17 4.58-23.17 4.58s-165.22 16.49-232.36 18.05c1.6 8.82 7.62 17.08 15.78 19.55 13.31 3.48 22.69 1.7 49.15.89 24.83-1.6 43.68-2.43 56.51-2.43v99.81H351.41s2.82 22.31 25.51 22.85h107.94v70.92c0 13.97-11.19 21.99-24.48 21.12-14.08.11-26.08-1.15-41.69-1.81 1.99 3.97 6.33 14.39 19.31 21.84 9.88 4.81 16.17 6.57 26.02 6.57 29.56 0 45.67-17.28 44.89-45.31v-73.32h122.36c9.68 0 8.7-23.78 8.7-23.78l.03-.01z"]
   };
-
-  bunker(function () {
+ bunker(function () {
     defineIcons('fab', icons);
   });
-
-}());
+());
 (function () {
   'use strict';
-
-  var _WINDOW = {};
+ var _WINDOW = {};
   var _DOCUMENT = {};
-
-  try {
+ try {
     if (typeof window !== 'undefined') _WINDOW = window;
     if (typeof document !== 'undefined') _DOCUMENT = document;
   } catch (e) {}
-
-  var _ref = _WINDOW.navigator || {},
+ var _ref = _WINDOW.navigator || {},
       _ref$userAgent = _ref.userAgent,
       userAgent = _ref$userAgent === void 0 ? '' : _ref$userAgent;
-
-  var WINDOW = _WINDOW;
+ var WINDOW = _WINDOW;
   var DOCUMENT = _DOCUMENT;
   var IS_BROWSER = !!WINDOW.document;
   var IS_DOM = !!DOCUMENT.documentElement && !!DOCUMENT.head && typeof DOCUMENT.addEventListener === 'function' && typeof DOCUMENT.createElement === 'function';
   var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
-
-  var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
+ var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
   var PRODUCTION = function () {
     try {
       return "production" === 'production';
@@ -613,8 +586,7 @@
       return false;
     }
   }();
-
-  function bunker(fn) {
+ function bunker(fn) {
     try {
       fn();
     } catch (e) {
@@ -623,8 +595,7 @@
       }
     }
   }
-
-  function _defineProperty(obj, key, value) {
+ function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value,
@@ -635,54 +606,44 @@
     } else {
       obj[key] = value;
     }
-
-    return obj;
+   return obj;
   }
-
-  function _objectSpread(target) {
+ function _objectSpread(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
       var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
+     if (typeof Object.getOwnPropertySymbols === 'function') {
         ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
           return Object.getOwnPropertyDescriptor(source, sym).enumerable;
         }));
       }
-
-      ownKeys.forEach(function (key) {
+     ownKeys.forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     }
-
-    return target;
+   return target;
   }
-
-  var w = WINDOW || {};
+ var w = WINDOW || {};
   if (!w[NAMESPACE_IDENTIFIER]) w[NAMESPACE_IDENTIFIER] = {};
   if (!w[NAMESPACE_IDENTIFIER].styles) w[NAMESPACE_IDENTIFIER].styles = {};
   if (!w[NAMESPACE_IDENTIFIER].hooks) w[NAMESPACE_IDENTIFIER].hooks = {};
   if (!w[NAMESPACE_IDENTIFIER].shims) w[NAMESPACE_IDENTIFIER].shims = [];
   var namespace = w[NAMESPACE_IDENTIFIER];
-
-  function defineIcons(prefix, icons) {
+ function defineIcons(prefix, icons) {
     var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var _params$skipHooks = params.skipHooks,
         skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
     var normalized = Object.keys(icons).reduce(function (acc, iconName) {
       var icon = icons[iconName];
       var expanded = !!icon.icon;
-
-      if (expanded) {
+     if (expanded) {
         acc[icon.iconName] = icon.icon;
       } else {
         acc[iconName] = icon;
       }
-
-      return acc;
+     return acc;
     }, {});
-
-    if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
+   if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
       namespace.hooks.addPack(prefix, normalized);
     } else {
       namespace.styles[prefix] = _objectSpread({}, namespace.styles[prefix] || {}, normalized);
@@ -693,14 +654,11 @@
      * for `fas` so we'll easy the upgrade process for our users by automatically defining
      * this as well.
      */
-
-
-    if (prefix === 'fas') {
+   if (prefix === 'fas') {
       defineIcons('fa', icons);
     }
   }
-
-  var icons = {
+ var icons = {
     "address-book": [448, 512, [], "f2b9", "M436 160c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20zm-68 304H48V48h320v416zM208 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm-89.6 128h179.2c12.4 0 22.4-8.6 22.4-19.2v-19.2c0-31.8-30.1-57.6-67.2-57.6-10.8 0-18.7 8-44.8 8-26.9 0-33.4-8-44.8-8-37.1 0-67.2 25.8-67.2 57.6v19.2c0 10.6 10 19.2 22.4 19.2z"],
     "address-card": [576, 512, [], "f2bb", "M528 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 400H48V80h480v352zM208 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm-89.6 128h179.2c12.4 0 22.4-8.6 22.4-19.2v-19.2c0-31.8-30.1-57.6-67.2-57.6-10.8 0-18.7 8-44.8 8-26.9 0-33.4-8-44.8-8-37.1 0-67.2 25.8-67.2 57.6v19.2c0 10.6 10 19.2 22.4 19.2zM360 320h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0-64h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0-64h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8z"],
     "angry": [496, 512, [], "f556", "M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm0-144c-33.6 0-65.2 14.8-86.8 40.6-8.5 10.2-7.1 25.3 3.1 33.8s25.3 7.2 33.8-3c24.8-29.7 75-29.7 99.8 0 8.1 9.7 23.2 11.9 33.8 3 10.2-8.5 11.5-23.6 3.1-33.8-21.6-25.8-53.2-40.6-86.8-40.6zm-48-72c10.3 0 19.9-6.7 23-17.1 3.8-12.7-3.4-26.1-16.1-29.9l-80-24c-12.8-3.9-26.1 3.4-29.9 16.1-3.8 12.7 3.4 26.1 16.1 29.9l28.2 8.5c-3.1 4.9-5.3 10.4-5.3 16.6 0 17.7 14.3 32 32 32s32-14.4 32-32.1zm199-54.9c-3.8-12.7-17.1-19.9-29.9-16.1l-80 24c-12.7 3.8-19.9 17.2-16.1 29.9 3.1 10.4 12.7 17.1 23 17.1 0 17.7 14.3 32 32 32s32-14.3 32-32c0-6.2-2.2-11.7-5.3-16.6l28.2-8.5c12.7-3.7 19.9-17.1 16.1-29.8z"],
@@ -854,34 +812,27 @@
     "window-minimize": [512, 512, [], "f2d1", "M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32z"],
     "window-restore": [512, 512, [], "f2d2", "M464 0H144c-26.5 0-48 21.5-48 48v48H48c-26.5 0-48 21.5-48 48v320c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h48c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-96 464H48V256h320v208zm96-96h-48V144c0-26.5-21.5-48-48-48H144V48h320v320z"]
   };
-
-  bunker(function () {
+ bunker(function () {
     defineIcons('far', icons);
   });
-
-}());
+());
 (function () {
   'use strict';
-
-  var _WINDOW = {};
+ var _WINDOW = {};
   var _DOCUMENT = {};
-
-  try {
+ try {
     if (typeof window !== 'undefined') _WINDOW = window;
     if (typeof document !== 'undefined') _DOCUMENT = document;
   } catch (e) {}
-
-  var _ref = _WINDOW.navigator || {},
+ var _ref = _WINDOW.navigator || {},
       _ref$userAgent = _ref.userAgent,
       userAgent = _ref$userAgent === void 0 ? '' : _ref$userAgent;
-
-  var WINDOW = _WINDOW;
+ var WINDOW = _WINDOW;
   var DOCUMENT = _DOCUMENT;
   var IS_BROWSER = !!WINDOW.document;
   var IS_DOM = !!DOCUMENT.documentElement && !!DOCUMENT.head && typeof DOCUMENT.addEventListener === 'function' && typeof DOCUMENT.createElement === 'function';
   var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
-
-  var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
+ var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
   var PRODUCTION = function () {
     try {
       return "production" === 'production';
@@ -889,8 +840,7 @@
       return false;
     }
   }();
-
-  function bunker(fn) {
+ function bunker(fn) {
     try {
       fn();
     } catch (e) {
@@ -899,8 +849,7 @@
       }
     }
   }
-
-  function _defineProperty(obj, key, value) {
+ function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value,
@@ -911,54 +860,44 @@
     } else {
       obj[key] = value;
     }
-
-    return obj;
+   return obj;
   }
-
-  function _objectSpread(target) {
+ function _objectSpread(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
       var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
+     if (typeof Object.getOwnPropertySymbols === 'function') {
         ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
           return Object.getOwnPropertyDescriptor(source, sym).enumerable;
         }));
       }
-
-      ownKeys.forEach(function (key) {
+     ownKeys.forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     }
-
-    return target;
+   return target;
   }
-
-  var w = WINDOW || {};
+ var w = WINDOW || {};
   if (!w[NAMESPACE_IDENTIFIER]) w[NAMESPACE_IDENTIFIER] = {};
   if (!w[NAMESPACE_IDENTIFIER].styles) w[NAMESPACE_IDENTIFIER].styles = {};
   if (!w[NAMESPACE_IDENTIFIER].hooks) w[NAMESPACE_IDENTIFIER].hooks = {};
   if (!w[NAMESPACE_IDENTIFIER].shims) w[NAMESPACE_IDENTIFIER].shims = [];
   var namespace = w[NAMESPACE_IDENTIFIER];
-
-  function defineIcons(prefix, icons) {
+ function defineIcons(prefix, icons) {
     var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var _params$skipHooks = params.skipHooks,
         skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
     var normalized = Object.keys(icons).reduce(function (acc, iconName) {
       var icon = icons[iconName];
       var expanded = !!icon.icon;
-
-      if (expanded) {
+     if (expanded) {
         acc[icon.iconName] = icon.icon;
       } else {
         acc[iconName] = icon;
       }
-
-      return acc;
+     return acc;
     }, {});
-
-    if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
+   if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
       namespace.hooks.addPack(prefix, normalized);
     } else {
       namespace.styles[prefix] = _objectSpread({}, namespace.styles[prefix] || {}, normalized);
@@ -969,14 +908,11 @@
      * for `fas` so we'll easy the upgrade process for our users by automatically defining
      * this as well.
      */
-
-
-    if (prefix === 'fas') {
+   if (prefix === 'fas') {
       defineIcons('fa', icons);
     }
   }
-
-  var icons = {
+ var icons = {
     "ad": [512, 512, [], "f641", "M157.52 272h36.96L176 218.78 157.52 272zM352 256c-13.23 0-24 10.77-24 24s10.77 24 24 24 24-10.77 24-24-10.77-24-24-24zM464 64H48C21.5 64 0 85.5 0 112v288c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM250.58 352h-16.94c-6.81 0-12.88-4.32-15.12-10.75L211.15 320h-70.29l-7.38 21.25A16 16 0 0 1 118.36 352h-16.94c-11.01 0-18.73-10.85-15.12-21.25L140 176.12A23.995 23.995 0 0 1 162.67 160h26.66A23.99 23.99 0 0 1 212 176.13l53.69 154.62c3.61 10.4-4.11 21.25-15.11 21.25zM424 336c0 8.84-7.16 16-16 16h-16c-4.85 0-9.04-2.27-11.98-5.68-8.62 3.66-18.09 5.68-28.02 5.68-39.7 0-72-32.3-72-72s32.3-72 72-72c8.46 0 16.46 1.73 24 4.42V176c0-8.84 7.16-16 16-16h16c8.84 0 16 7.16 16 16v160z"],
     "address-book": [448, 512, [], "f2b9", "M436 160c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20zm-228-32c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zm112 236.8c0 10.6-10 19.2-22.4 19.2H118.4C106 384 96 375.4 96 364.8v-19.2c0-31.8 30.1-57.6 67.2-57.6h5c12.3 5.1 25.7 8 39.8 8s27.6-2.9 39.8-8h5c37.1 0 67.2 25.8 67.2 57.6v19.2z"],
     "address-card": [576, 512, [], "f2bb", "M528 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-352 96c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zm112 236.8c0 10.6-10 19.2-22.4 19.2H86.4C74 384 64 375.4 64 364.8v-19.2c0-31.8 30.1-57.6 67.2-57.6h5c12.3 5.1 25.7 8 39.8 8s27.6-2.9 39.8-8h5c37.1 0 67.2 25.8 67.2 57.6v19.2zM512 312c0 4.4-3.6 8-8 8H360c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-64c0 4.4-3.6 8-8 8H360c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-64c0 4.4-3.6 8-8 8H360c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16z"],
@@ -1980,16 +1916,13 @@
     "yen-sign": [384, 512, [], "f157", "M351.2 32h-65.3c-4.6 0-8.8 2.6-10.8 6.7l-55.4 113.2c-14.5 34.7-27.1 71.9-27.1 71.9h-1.3s-12.6-37.2-27.1-71.9L108.8 38.7c-2-4.1-6.2-6.7-10.8-6.7H32.8c-9.1 0-14.8 9.7-10.6 17.6L102.3 200H44c-6.6 0-12 5.4-12 12v32c0 6.6 5.4 12 12 12h88.2l19.8 37.2V320H44c-6.6 0-12 5.4-12 12v32c0 6.6 5.4 12 12 12h108v92c0 6.6 5.4 12 12 12h56c6.6 0 12-5.4 12-12v-92h108c6.6 0 12-5.4 12-12v-32c0-6.6-5.4-12-12-12H232v-26.8l19.8-37.2H340c6.6 0 12-5.4 12-12v-32c0-6.6-5.4-12-12-12h-58.3l80.1-150.4c4.3-7.9-1.5-17.6-10.6-17.6z"],
     "yin-yang": [496, 512, [], "f6ad", "M248 8C111.03 8 0 119.03 0 256s111.03 248 248 248 248-111.03 248-248S384.97 8 248 8zm0 376c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm0-128c-53.02 0-96 42.98-96 96s42.98 96 96 96c-106.04 0-192-85.96-192-192S141.96 64 248 64c53.02 0 96 42.98 96 96s-42.98 96-96 96zm0-128c-17.67 0-32 14.33-32 32s14.33 32 32 32 32-14.33 32-32-14.33-32-32-32z"]
   };
-
-  bunker(function () {
+ bunker(function () {
     defineIcons('fas', icons);
   });
-
-}());
+());
 (function () {
   'use strict';
-
-  function _typeof(obj) {
+ function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -1999,17 +1932,14 @@
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
       };
     }
-
-    return _typeof(obj);
+   return _typeof(obj);
   }
-
-  function _classCallCheck(instance, Constructor) {
+ function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   }
-
-  function _defineProperties(target, props) {
+ function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
       descriptor.enumerable = descriptor.enumerable || false;
@@ -2018,14 +1948,12 @@
       Object.defineProperty(target, descriptor.key, descriptor);
     }
   }
-
-  function _createClass(Constructor, protoProps, staticProps) {
+ function _createClass(Constructor, protoProps, staticProps) {
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
   }
-
-  function _defineProperty(obj, key, value) {
+ function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value,
@@ -2036,64 +1964,50 @@
     } else {
       obj[key] = value;
     }
-
-    return obj;
+   return obj;
   }
-
-  function _objectSpread(target) {
+ function _objectSpread(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
       var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
+     if (typeof Object.getOwnPropertySymbols === 'function') {
         ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
           return Object.getOwnPropertyDescriptor(source, sym).enumerable;
         }));
       }
-
-      ownKeys.forEach(function (key) {
+     ownKeys.forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     }
-
-    return target;
+   return target;
   }
-
-  function _slicedToArray(arr, i) {
+ function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
   }
-
-  function _toConsumableArray(arr) {
+ function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
   }
-
-  function _arrayWithoutHoles(arr) {
+ function _arrayWithoutHoles(arr) {
     if (Array.isArray(arr)) {
       for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
+     return arr2;
     }
   }
-
-  function _arrayWithHoles(arr) {
+ function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
   }
-
-  function _iterableToArray(iter) {
+ function _iterableToArray(iter) {
     if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
   }
-
-  function _iterableToArrayLimit(arr, i) {
+ function _iterableToArrayLimit(arr, i) {
     var _arr = [];
     var _n = true;
     var _d = false;
     var _e = undefined;
-
-    try {
+   try {
       for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
         _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
+       if (i && _arr.length === i) break;
       }
     } catch (err) {
       _d = true;
@@ -2105,48 +2019,39 @@
         if (_d) throw _e;
       }
     }
-
-    return _arr;
+   return _arr;
   }
-
-  function _nonIterableSpread() {
+ function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
-
-  function _nonIterableRest() {
+ function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
-
-  var noop = function noop() {};
-
-  var _WINDOW = {};
+ var noop = function noop() {};
+ var _WINDOW = {};
   var _DOCUMENT = {};
   var _MUTATION_OBSERVER = null;
   var _PERFORMANCE = {
     mark: noop,
     measure: noop
   };
-
-  try {
+ try {
     if (typeof window !== 'undefined') _WINDOW = window;
     if (typeof document !== 'undefined') _DOCUMENT = document;
     if (typeof MutationObserver !== 'undefined') _MUTATION_OBSERVER = MutationObserver;
     if (typeof performance !== 'undefined') _PERFORMANCE = performance;
   } catch (e) {}
-
-  var _ref = _WINDOW.navigator || {},
+ var _ref = _WINDOW.navigator || {},
       _ref$userAgent = _ref.userAgent,
       userAgent = _ref$userAgent === void 0 ? '' : _ref$userAgent;
-
-  var WINDOW = _WINDOW;
+ var WINDOW = _WINDOW;
   var DOCUMENT = _DOCUMENT;
   var MUTATION_OBSERVER = _MUTATION_OBSERVER;
   var PERFORMANCE = _PERFORMANCE;
   var IS_BROWSER = !!WINDOW.document;
   var IS_DOM = !!DOCUMENT.documentElement && !!DOCUMENT.head && typeof DOCUMENT.addEventListener === 'function' && typeof DOCUMENT.createElement === 'function';
   var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
-
-  var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
+ var NAMESPACE_IDENTIFIER = '___FONT_AWESOME___';
   var UNITS_IN_GRID = 16;
   var DEFAULT_FAMILY_PREFIX = 'fa';
   var DEFAULT_REPLACEMENT_CLASS = 'svg-inline--fa';
@@ -2184,8 +2089,7 @@
   };
   var LAYERS_TEXT_CLASSNAME = 'fa-layers-text';
   var FONT_FAMILY_PATTERN = /Font Awesome ([5 ]*)(Solid|Regular|Light|Duotone|Brands|Free|Pro|Kit).*/; // TODO: do we need to handle font-weight for kit SVG pseudo-elements?
-
-  var FONT_WEIGHT_TO_PREFIX = {
+ var FONT_WEIGHT_TO_PREFIX = {
     '900': 'fas',
     '400': 'far',
     'normal': 'far',
@@ -2205,18 +2109,14 @@
   })).concat(oneToTwenty.map(function (n) {
     return "w-".concat(n);
   }));
-
-  var initial = WINDOW.FontAwesomeConfig || {};
-
-  function getAttrConfig(attr) {
+ var initial = WINDOW.FontAwesomeConfig || {};
+ function getAttrConfig(attr) {
     var element = DOCUMENT.querySelector('script[' + attr + ']');
-
-    if (element) {
+   if (element) {
       return element.getAttribute(attr);
     }
   }
-
-  function coerce(val) {
+ function coerce(val) {
     // Getting an empty string will occur if the attribute is set on the HTML tag but without a value
     // We'll assume that this is an indication that it should be toggled to true
     // For example <script data-search-pseudo-elements src="..."></script>
@@ -2225,23 +2125,19 @@
     if (val === 'true') return true;
     return val;
   }
-
-  if (DOCUMENT && typeof DOCUMENT.querySelector === 'function') {
+ if (DOCUMENT && typeof DOCUMENT.querySelector === 'function') {
     var attrs = [['data-family-prefix', 'familyPrefix'], ['data-replacement-class', 'replacementClass'], ['data-auto-replace-svg', 'autoReplaceSvg'], ['data-auto-add-css', 'autoAddCss'], ['data-auto-a11y', 'autoA11y'], ['data-search-pseudo-elements', 'searchPseudoElements'], ['data-observe-mutations', 'observeMutations'], ['data-mutate-approach', 'mutateApproach'], ['data-keep-original-source', 'keepOriginalSource'], ['data-measure-performance', 'measurePerformance'], ['data-show-missing-icons', 'showMissingIcons']];
     attrs.forEach(function (_ref) {
       var _ref2 = _slicedToArray(_ref, 2),
           attr = _ref2[0],
           key = _ref2[1];
-
-      var val = coerce(getAttrConfig(attr));
-
-      if (val !== undefined && val !== null) {
+     var val = coerce(getAttrConfig(attr));
+     if (val !== undefined && val !== null) {
         initial[key] = val;
       }
     });
   }
-
-  var _default = {
+ var _default = {
     familyPrefix: DEFAULT_FAMILY_PREFIX,
     replacementClass: DEFAULT_REPLACEMENT_CLASS,
     autoReplaceSvg: true,
@@ -2254,138 +2150,107 @@
     measurePerformance: false,
     showMissingIcons: true
   };
-
-  var _config = _objectSpread({}, _default, initial);
-
-  if (!_config.autoReplaceSvg) _config.observeMutations = false;
-
-  var config = _objectSpread({}, _config);
-
-  WINDOW.FontAwesomeConfig = config;
-
-  var w = WINDOW || {};
+ var _config = _objectSpread({}, _default, initial);
+ if (!_config.autoReplaceSvg) _config.observeMutations = false;
+ var config = _objectSpread({}, _config);
+ WINDOW.FontAwesomeConfig = config;
+ var w = WINDOW || {};
   if (!w[NAMESPACE_IDENTIFIER]) w[NAMESPACE_IDENTIFIER] = {};
   if (!w[NAMESPACE_IDENTIFIER].styles) w[NAMESPACE_IDENTIFIER].styles = {};
   if (!w[NAMESPACE_IDENTIFIER].hooks) w[NAMESPACE_IDENTIFIER].hooks = {};
   if (!w[NAMESPACE_IDENTIFIER].shims) w[NAMESPACE_IDENTIFIER].shims = [];
   var namespace = w[NAMESPACE_IDENTIFIER];
-
-  var functions = [];
-
-  var listener = function listener() {
+ var functions = [];
+ var listener = function listener() {
     DOCUMENT.removeEventListener('DOMContentLoaded', listener);
     loaded = 1;
     functions.map(function (fn) {
       return fn();
     });
   };
-
-  var loaded = false;
-
-  if (IS_DOM) {
+ var loaded = false;
+ if (IS_DOM) {
     loaded = (DOCUMENT.documentElement.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/).test(DOCUMENT.readyState);
     if (!loaded) DOCUMENT.addEventListener('DOMContentLoaded', listener);
   }
-
-  function domready (fn) {
+ function domready (fn) {
     if (!IS_DOM) return;
     loaded ? setTimeout(fn, 0) : functions.push(fn);
   }
-
-  var PENDING = 'pending';
+ var PENDING = 'pending';
   var SETTLED = 'settled';
   var FULFILLED = 'fulfilled';
   var REJECTED = 'rejected';
-
-  var NOOP = function NOOP() {};
-
-  var isNode = typeof global !== 'undefined' && typeof global.process !== 'undefined' && typeof global.process.emit === 'function';
+ var NOOP = function NOOP() {};
+ var isNode = typeof global !== 'undefined' && typeof global.process !== 'undefined' && typeof global.process.emit === 'function';
   var asyncSetTimer = typeof setImmediate === 'undefined' ? setTimeout : setImmediate;
   var asyncQueue = [];
   var asyncTimer;
-
-  function asyncFlush() {
+ function asyncFlush() {
     // run promise callbacks
     for (var i = 0; i < asyncQueue.length; i++) {
       asyncQueue[i][0](asyncQueue[i][1]);
     } // reset async asyncQueue
-
-
-    asyncQueue = [];
+   asyncQueue = [];
     asyncTimer = false;
   }
-
-  function asyncCall(callback, arg) {
+ function asyncCall(callback, arg) {
     asyncQueue.push([callback, arg]);
-
-    if (!asyncTimer) {
+   if (!asyncTimer) {
       asyncTimer = true;
       asyncSetTimer(asyncFlush, 0);
     }
   }
-
-  function invokeResolver(resolver, promise) {
+ function invokeResolver(resolver, promise) {
     function resolvePromise(value) {
       resolve(promise, value);
     }
-
-    function rejectPromise(reason) {
+   function rejectPromise(reason) {
       reject(promise, reason);
     }
-
-    try {
+   try {
       resolver(resolvePromise, rejectPromise);
     } catch (e) {
       rejectPromise(e);
     }
   }
-
-  function invokeCallback(subscriber) {
+ function invokeCallback(subscriber) {
     var owner = subscriber.owner;
     var settled = owner._state;
     var value = owner._data;
     var callback = subscriber[settled];
     var promise = subscriber.then;
-
-    if (typeof callback === 'function') {
+   if (typeof callback === 'function') {
       settled = FULFILLED;
-
-      try {
+     try {
         value = callback(value);
       } catch (e) {
         reject(promise, e);
       }
     }
-
-    if (!handleThenable(promise, value)) {
+   if (!handleThenable(promise, value)) {
       if (settled === FULFILLED) {
         resolve(promise, value);
       }
-
-      if (settled === REJECTED) {
+     if (settled === REJECTED) {
         reject(promise, value);
       }
     }
   }
-
-  function handleThenable(promise, value) {
+ function handleThenable(promise, value) {
     var resolved;
-
-    try {
+   try {
       if (promise === value) {
         throw new TypeError('A promises callback cannot return that same promise.');
       }
-
-      if (value && (typeof value === 'function' || _typeof(value) === 'object')) {
+     if (value && (typeof value === 'function' || _typeof(value) === 'object')) {
         // then should be retrieved only once
         var then = value.then;
-
-        if (typeof then === 'function') {
+       if (typeof then === 'function') {
           then.call(value, function (val) {
             if (!resolved) {
               resolved = true;
-
-              if (value === val) {
+             if (value === val) {
                 fulfill(promise, val);
               } else {
                 resolve(promise, val);
@@ -2404,75 +2269,60 @@
       if (!resolved) {
         reject(promise, e);
       }
-
-      return true;
+     return true;
     }
-
-    return false;
+   return false;
   }
-
-  function resolve(promise, value) {
+ function resolve(promise, value) {
     if (promise === value || !handleThenable(promise, value)) {
       fulfill(promise, value);
     }
   }
-
-  function fulfill(promise, value) {
+ function fulfill(promise, value) {
     if (promise._state === PENDING) {
       promise._state = SETTLED;
       promise._data = value;
       asyncCall(publishFulfillment, promise);
     }
   }
-
-  function reject(promise, reason) {
+ function reject(promise, reason) {
     if (promise._state === PENDING) {
       promise._state = SETTLED;
       promise._data = reason;
       asyncCall(publishRejection, promise);
     }
   }
-
-  function publish(promise) {
+ function publish(promise) {
     promise._then = promise._then.forEach(invokeCallback);
   }
-
-  function publishFulfillment(promise) {
+ function publishFulfillment(promise) {
     promise._state = FULFILLED;
     publish(promise);
   }
-
-  function publishRejection(promise) {
+ function publishRejection(promise) {
     promise._state = REJECTED;
     publish(promise);
-
-    if (!promise._handled && isNode) {
+   if (!promise._handled && isNode) {
       global.process.emit('unhandledRejection', promise._data, promise);
     }
   }
-
-  function notifyRejectionHandled(promise) {
+ function notifyRejectionHandled(promise) {
     global.process.emit('rejectionHandled', promise);
   }
   /**
    * @class
    */
-
-
-  function P(resolver) {
+ function P(resolver) {
     if (typeof resolver !== 'function') {
       throw new TypeError('Promise resolver ' + resolver + ' is not a function');
     }
-
-    if (this instanceof P === false) {
+   if (this instanceof P === false) {
       throw new TypeError('Failed to construct \'Promise\': Please use the \'new\' operator, this object constructor cannot be called as a function.');
     }
-
-    this._then = [];
+   this._then = [];
     invokeResolver(resolver, this);
   }
-
-  P.prototype = {
+ P.prototype = {
     constructor: P,
     _state: PENDING,
     _then: null,
@@ -2485,76 +2335,62 @@
         fulfilled: onFulfillment,
         rejected: onRejection
       };
-
-      if ((onRejection || onFulfillment) && !this._handled) {
+     if ((onRejection || onFulfillment) && !this._handled) {
         this._handled = true;
-
-        if (this._state === REJECTED && isNode) {
+       if (this._state === REJECTED && isNode) {
           asyncCall(notifyRejectionHandled, this);
         }
       }
-
-      if (this._state === FULFILLED || this._state === REJECTED) {
+     if (this._state === FULFILLED || this._state === REJECTED) {
         // already resolved, call callback async
         asyncCall(invokeCallback, subscriber);
       } else {
         // subscribe
         this._then.push(subscriber);
       }
-
-      return subscriber.then;
+     return subscriber.then;
     },
     catch: function _catch(onRejection) {
       return this.then(null, onRejection);
     }
   };
-
-  P.all = function (promises) {
+ P.all = function (promises) {
     if (!Array.isArray(promises)) {
       throw new TypeError('You must pass an array to Promise.all().');
     }
-
-    return new P(function (resolve, reject) {
+   return new P(function (resolve, reject) {
       var results = [];
       var remaining = 0;
-
-      function resolver(index) {
+     function resolver(index) {
         remaining++;
         return function (value) {
           results[index] = value;
-
-          if (! --remaining) {
+         if (! --remaining) {
             resolve(results);
           }
         };
       }
-
-      for (var i = 0, promise; i < promises.length; i++) {
+     for (var i = 0, promise; i < promises.length; i++) {
         promise = promises[i];
-
-        if (promise && typeof promise.then === 'function') {
+       if (promise && typeof promise.then === 'function') {
           promise.then(resolver(i), reject);
         } else {
           results[i] = promise;
         }
       }
-
-      if (!remaining) {
+     if (!remaining) {
         resolve(results);
       }
     });
   };
-
-  P.race = function (promises) {
+ P.race = function (promises) {
     if (!Array.isArray(promises)) {
       throw new TypeError('You must pass an array to Promise.race().');
     }
-
-    return new P(function (resolve, reject) {
+   return new P(function (resolve, reject) {
       for (var i = 0, promise; i < promises.length; i++) {
         promise = promises[i];
-
-        if (promise && typeof promise.then === 'function') {
+       if (promise && typeof promise.then === 'function') {
           promise.then(resolve, reject);
         } else {
           resolve(promise);
@@ -2562,26 +2398,21 @@
       }
     });
   };
-
-  P.resolve = function (value) {
+ P.resolve = function (value) {
     if (value && _typeof(value) === 'object' && value.constructor === P) {
       return value;
     }
-
-    return new P(function (resolve) {
+   return new P(function (resolve) {
       resolve(value);
     });
   };
-
-  P.reject = function (reason) {
+ P.reject = function (reason) {
     return new P(function (resolve, reject) {
       reject(reason);
     });
   };
-
-  var picked = typeof Promise === 'function' ? Promise : P;
-
-  var d = UNITS_IN_GRID;
+ var picked = typeof Promise === 'function' ? Promise : P;
+ var d = UNITS_IN_GRID;
   var meaninglessTransform = {
     size: 16,
     x: 0,
@@ -2590,12 +2421,10 @@
     flipX: false,
     flipY: false
   };
-
-  function isReserved(name) {
+ function isReserved(name) {
     return ~RESERVED_CLASSES.indexOf(name);
   }
-
-  function bunker(fn) {
+ function bunker(fn) {
     try {
       fn();
     } catch (e) {
@@ -2608,44 +2437,36 @@
     if (!css || !IS_DOM) {
       return;
     }
-
-    var style = DOCUMENT.createElement('style');
+   var style = DOCUMENT.createElement('style');
     style.setAttribute('type', 'text/css');
     style.innerHTML = css;
     var headChildren = DOCUMENT.head.childNodes;
     var beforeChild = null;
-
-    for (var i = headChildren.length - 1; i > -1; i--) {
+   for (var i = headChildren.length - 1; i > -1; i--) {
       var child = headChildren[i];
       var tagName = (child.tagName || '').toUpperCase();
-
-      if (['STYLE', 'LINK'].indexOf(tagName) > -1) {
+     if (['STYLE', 'LINK'].indexOf(tagName) > -1) {
         beforeChild = child;
       }
     }
-
-    DOCUMENT.head.insertBefore(style, beforeChild);
+   DOCUMENT.head.insertBefore(style, beforeChild);
     return css;
   }
   var idPool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   function nextUniqueId() {
     var size = 12;
     var id = '';
-
-    while (size-- > 0) {
+   while (size-- > 0) {
       id += idPool[Math.random() * 62 | 0];
     }
-
-    return id;
+   return id;
   }
   function toArray(obj) {
     var array = [];
-
-    for (var i = (obj || []).length >>> 0; i--;) {
+   for (var i = (obj || []).length >>> 0; i--;) {
       array[i] = obj[i];
     }
-
-    return array;
+   return array;
   }
   function classArray(node) {
     if (node.classList) {
@@ -2660,8 +2481,7 @@
     var parts = cls.split('-');
     var prefix = parts[0];
     var iconName = parts.slice(1).join('-');
-
-    if (prefix === familyPrefix && iconName !== '' && !isReserved(iconName)) {
+   if (prefix === familyPrefix && iconName !== '' && !isReserved(iconName)) {
       return iconName;
     } else {
       return null;
@@ -2714,46 +2534,38 @@
         _ref2$startCentered = _ref2.startCentered,
         startCentered = _ref2$startCentered === void 0 ? false : _ref2$startCentered;
     var val = '';
-
-    if (startCentered && IS_IE) {
+   if (startCentered && IS_IE) {
       val += "translate(".concat(transform.x / d - width / 2, "em, ").concat(transform.y / d - height / 2, "em) ");
     } else if (startCentered) {
       val += "translate(calc(-50% + ".concat(transform.x / d, "em), calc(-50% + ").concat(transform.y / d, "em)) ");
     } else {
       val += "translate(".concat(transform.x / d, "em, ").concat(transform.y / d, "em) ");
     }
-
-    val += "scale(".concat(transform.size / d * (transform.flipX ? -1 : 1), ", ").concat(transform.size / d * (transform.flipY ? -1 : 1), ") ");
+   val += "scale(".concat(transform.size / d * (transform.flipX ? -1 : 1), ", ").concat(transform.size / d * (transform.flipY ? -1 : 1), ") ");
     val += "rotate(".concat(transform.rotate, "deg) ");
     return val;
   }
-
-  var ALL_SPACE = {
+ var ALL_SPACE = {
     x: 0,
     y: 0,
     width: '100%',
     height: '100%'
   };
-
-  function fillBlack(abstract) {
+ function fillBlack(abstract) {
     var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-    if (abstract.attributes && (abstract.attributes.fill || force)) {
+   if (abstract.attributes && (abstract.attributes.fill || force)) {
       abstract.attributes.fill = 'black';
     }
-
-    return abstract;
+   return abstract;
   }
-
-  function deGroup(abstract) {
+ function deGroup(abstract) {
     if (abstract.tag === 'g') {
       return abstract.children;
     } else {
       return [abstract];
     }
   }
-
-  function makeIconMasking (_ref) {
+ function makeIconMasking (_ref) {
     var children = _ref.children,
         attributes = _ref.attributes,
         main = _ref.main,
@@ -2825,20 +2637,17 @@
       attributes: attributes
     };
   }
-
-  function makeIconStandard (_ref) {
+ function makeIconStandard (_ref) {
     var children = _ref.children,
         attributes = _ref.attributes,
         main = _ref.main,
         transform = _ref.transform,
         styles = _ref.styles;
     var styleString = joinStyles(styles);
-
-    if (styleString.length > 0) {
+   if (styleString.length > 0) {
       attributes['style'] = styleString;
     }
-
-    if (transformIsMeaningful(transform)) {
+   if (transformIsMeaningful(transform)) {
       var trans = transformForSvg({
         transform: transform,
         containerWidth: main.width,
@@ -2860,22 +2669,19 @@
     } else {
       children.push(main.icon);
     }
-
-    return {
+   return {
       children: children,
       attributes: attributes
     };
   }
-
-  function asIcon (_ref) {
+ function asIcon (_ref) {
     var children = _ref.children,
         main = _ref.main,
         mask = _ref.mask,
         attributes = _ref.attributes,
         styles = _ref.styles,
         transform = _ref.transform;
-
-    if (transformIsMeaningful(transform) && main.found && !mask.found) {
+   if (transformIsMeaningful(transform) && main.found && !mask.found) {
       var width = main.width,
           height = main.height;
       var offset = {
@@ -2886,15 +2692,13 @@
         'transform-origin': "".concat(offset.x + transform.x / 16, "em ").concat(offset.y + transform.y / 16, "em")
       }));
     }
-
-    return [{
+   return [{
       tag: 'svg',
       attributes: attributes,
       children: children
     }];
   }
-
-  function asSymbol (_ref) {
+ function asSymbol (_ref) {
     var prefix = _ref.prefix,
         iconName = _ref.iconName,
         children = _ref.children,
@@ -2915,8 +2719,7 @@
       }]
     }];
   }
-
-  function makeInlineSvgAbstract(params) {
+ function makeInlineSvgAbstract(params) {
     var _params$icons = params.icons,
         main = _params$icons.main,
         mask = _params$icons.mask,
@@ -2930,12 +2733,10 @@
         extra = params.extra,
         _params$watchable = params.watchable,
         watchable = _params$watchable === void 0 ? false : _params$watchable;
-
-    var _ref = mask.found ? mask : main,
+   var _ref = mask.found ? mask : main,
         width = _ref.width,
         height = _ref.height;
-
-    var isUploadedIcon = prefix === 'fak';
+   var isUploadedIcon = prefix === 'fak';
     var widthClass = isUploadedIcon ? '' : "fa-w-".concat(Math.ceil(width / height * 16));
     var attrClass = [config.replacementClass, iconName ? "".concat(config.familyPrefix, "-").concat(iconName) : '', widthClass].filter(function (c) {
       return extra.classes.indexOf(c) === -1;
@@ -2956,20 +2757,17 @@
     var uploadedIconWidthStyle = isUploadedIcon && !~extra.classes.indexOf('fa-fw') ? {
       width: "".concat(width / height * 16 * 0.0625, "em")
     } : {};
-
-    if (watchable) {
+   if (watchable) {
       content.attributes[DATA_FA_I2SVG] = '';
     }
-
-    if (title) content.children.push({
+   if (title) content.children.push({
       tag: 'title',
       attributes: {
         id: content.attributes['aria-labelledby'] || "title-".concat(titleId || nextUniqueId())
       },
       children: [title]
     });
-
-    var args = _objectSpread({}, content, {
+   var args = _objectSpread({}, content, {
       prefix: prefix,
       iconName: iconName,
       main: main,
@@ -2979,15 +2777,12 @@
       symbol: symbol,
       styles: _objectSpread({}, uploadedIconWidthStyle, extra.styles)
     });
-
-    var _ref2 = mask.found && main.found ? makeIconMasking(args) : makeIconStandard(args),
+   var _ref2 = mask.found && main.found ? makeIconMasking(args) : makeIconStandard(args),
         children = _ref2.children,
         attributes = _ref2.attributes;
-
-    args.children = children;
+   args.children = children;
     args.attributes = attributes;
-
-    if (symbol) {
+   if (symbol) {
       return asSymbol(args);
     } else {
       return asIcon(args);
@@ -3002,20 +2797,16 @@
         extra = params.extra,
         _params$watchable2 = params.watchable,
         watchable = _params$watchable2 === void 0 ? false : _params$watchable2;
-
-    var attributes = _objectSpread({}, extra.attributes, title ? {
+   var attributes = _objectSpread({}, extra.attributes, title ? {
       'title': title
     } : {}, {
       'class': extra.classes.join(' ')
     });
-
-    if (watchable) {
+   if (watchable) {
       attributes[DATA_FA_I2SVG] = '';
     }
-
-    var styles = _objectSpread({}, extra.styles);
-
-    if (transformIsMeaningful(transform)) {
+   var styles = _objectSpread({}, extra.styles);
+   if (transformIsMeaningful(transform)) {
       styles['transform'] = transformForCss({
         transform: transform,
         startCentered: true,
@@ -3024,21 +2815,17 @@
       });
       styles['-webkit-transform'] = styles['transform'];
     }
-
-    var styleString = joinStyles(styles);
-
-    if (styleString.length > 0) {
+   var styleString = joinStyles(styles);
+   if (styleString.length > 0) {
       attributes['style'] = styleString;
     }
-
-    var val = [];
+   var val = [];
     val.push({
       tag: 'span',
       attributes: attributes,
       children: [content]
     });
-
-    if (title) {
+   if (title) {
       val.push({
         tag: 'span',
         attributes: {
@@ -3047,34 +2834,28 @@
         children: [title]
       });
     }
-
-    return val;
+   return val;
   }
   function makeLayersCounterAbstract(params) {
     var content = params.content,
         title = params.title,
         extra = params.extra;
-
-    var attributes = _objectSpread({}, extra.attributes, title ? {
+   var attributes = _objectSpread({}, extra.attributes, title ? {
       'title': title
     } : {}, {
       'class': extra.classes.join(' ')
     });
-
-    var styleString = joinStyles(extra.styles);
-
-    if (styleString.length > 0) {
+   var styleString = joinStyles(extra.styles);
+   if (styleString.length > 0) {
       attributes['style'] = styleString;
     }
-
-    var val = [];
+   var val = [];
     val.push({
       tag: 'span',
       attributes: attributes,
       children: [content]
     });
-
-    if (title) {
+   if (title) {
       val.push({
         tag: 'span',
         attributes: {
@@ -3083,47 +2864,38 @@
         children: [title]
       });
     }
-
-    return val;
+   return val;
   }
-
-  var noop$1 = function noop() {};
-
-  var p = config.measurePerformance && PERFORMANCE && PERFORMANCE.mark && PERFORMANCE.measure ? PERFORMANCE : {
+ var noop$1 = function noop() {};
+ var p = config.measurePerformance && PERFORMANCE && PERFORMANCE.mark && PERFORMANCE.measure ? PERFORMANCE : {
     mark: noop$1,
     measure: noop$1
   };
   var preamble = "FA \"5.15.3\"";
-
-  var begin = function begin(name) {
+ var begin = function begin(name) {
     p.mark("".concat(preamble, " ").concat(name, " begins"));
     return function () {
       return end(name);
     };
   };
-
-  var end = function end(name) {
+ var end = function end(name) {
     p.mark("".concat(preamble, " ").concat(name, " ends"));
     p.measure("".concat(preamble, " ").concat(name), "".concat(preamble, " ").concat(name, " begins"), "".concat(preamble, " ").concat(name, " ends"));
   };
-
-  var perf = {
+ var perf = {
     begin: begin,
     end: end
   };
-
-  /**
+ /**
    * Internal helper to bind a function known to have 4 arguments
    * to a given context.
    */
-
-  var bindInternal4 = function bindInternal4(func, thisContext) {
+ var bindInternal4 = function bindInternal4(func, thisContext) {
     return function (a, b, c, d) {
       return func.call(thisContext, a, b, c, d);
     };
   };
-
-  /**
+ /**
    * # Reduce
    *
    * A fast object `.reduce()` implementation.
@@ -3134,61 +2906,49 @@
    * @param  {Object}   thisContext  The context for the reducer.
    * @return {mixed}                 The final result.
    */
-
-
-  var reduce = function fastReduceObject(subject, fn, initialValue, thisContext) {
+ var reduce = function fastReduceObject(subject, fn, initialValue, thisContext) {
     var keys = Object.keys(subject),
         length = keys.length,
         iterator = thisContext !== undefined ? bindInternal4(fn, thisContext) : fn,
         i,
         key,
         result;
-
-    if (initialValue === undefined) {
+   if (initialValue === undefined) {
       i = 1;
       result = subject[keys[0]];
     } else {
       i = 0;
       result = initialValue;
     }
-
-    for (; i < length; i++) {
+   for (; i < length; i++) {
       key = keys[i];
       result = iterator(result, subject[key], key, subject);
     }
-
-    return result;
+   return result;
   };
-
-  function toHex(unicode) {
+ function toHex(unicode) {
     var result = '';
-
-    for (var i = 0; i < unicode.length; i++) {
+   for (var i = 0; i < unicode.length; i++) {
       var hex = unicode.charCodeAt(i).toString(16);
       result += ('000' + hex).slice(-4);
     }
-
-    return result;
+   return result;
   }
-
-  function defineIcons(prefix, icons) {
+ function defineIcons(prefix, icons) {
     var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var _params$skipHooks = params.skipHooks,
         skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
     var normalized = Object.keys(icons).reduce(function (acc, iconName) {
       var icon = icons[iconName];
       var expanded = !!icon.icon;
-
-      if (expanded) {
+     if (expanded) {
         acc[icon.iconName] = icon.icon;
       } else {
         acc[iconName] = icon;
       }
-
-      return acc;
+     return acc;
     }, {});
-
-    if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
+   if (typeof namespace.hooks.addPack === 'function' && !skipHooks) {
       namespace.hooks.addPack(prefix, normalized);
     } else {
       namespace.styles[prefix] = _objectSpread({}, namespace.styles[prefix] || {}, normalized);
@@ -3199,14 +2959,11 @@
      * for `fas` so we'll easy the upgrade process for our users by automatically defining
      * this as well.
      */
-
-
-    if (prefix === 'fas') {
+   if (prefix === 'fas') {
       defineIcons('fa', icons);
     }
   }
-
-  var styles = namespace.styles,
+ var styles = namespace.styles,
       shims = namespace.shims;
   var _byUnicode = {};
   var _byLigature = {};
@@ -3218,13 +2975,11 @@
         return o;
       }, {});
     };
-
-    _byUnicode = lookup(function (acc, icon, iconName) {
+   _byUnicode = lookup(function (acc, icon, iconName) {
       if (icon[3]) {
         acc[icon[3]] = iconName;
       }
-
-      return acc;
+     return acc;
     });
     _byLigature = lookup(function (acc, icon, iconName) {
       var ligatures = icon[2];
@@ -3239,12 +2994,10 @@
       var oldName = shim[0];
       var prefix = shim[1];
       var iconName = shim[2];
-
-      if (prefix === 'far' && !hasRegular) {
+     if (prefix === 'far' && !hasRegular) {
         prefix = 'fas';
       }
-
-      acc[oldName] = {
+     acc[oldName] = {
         prefix: prefix,
         iconName: iconName
       };
@@ -3264,8 +3017,7 @@
       iconName: null
     };
   }
-
-  var styles$1 = namespace.styles;
+ var styles$1 = namespace.styles;
   var emptyCanonicalIcon = function emptyCanonicalIcon() {
     return {
       prefix: null,
@@ -3276,8 +3028,7 @@
   function getCanonicalIcon(values) {
     return values.reduce(function (acc, cls) {
       var iconName = getIconName(config.familyPrefix, cls);
-
-      if (styles$1[cls]) {
+     if (styles$1[cls]) {
         acc.prefix = cls;
       } else if (config.autoFetchSvg && Object.keys(PREFIX_TO_STYLE).indexOf(cls) > -1) {
         acc.prefix = cls;
@@ -3288,8 +3039,7 @@
       } else if (cls !== config.replacementClass && cls.indexOf('fa-w-') !== 0) {
         acc.rest.push(cls);
       }
-
-      return acc;
+     return acc;
     }, emptyCanonicalIcon());
   }
   function iconFromMapping(mapping, prefix, iconName) {
@@ -3301,46 +3051,38 @@
       };
     }
   }
-
-  function toHtml(abstractNodes) {
+ function toHtml(abstractNodes) {
     var tag = abstractNodes.tag,
         _abstractNodes$attrib = abstractNodes.attributes,
         attributes = _abstractNodes$attrib === void 0 ? {} : _abstractNodes$attrib,
         _abstractNodes$childr = abstractNodes.children,
         children = _abstractNodes$childr === void 0 ? [] : _abstractNodes$childr;
-
-    if (typeof abstractNodes === 'string') {
+   if (typeof abstractNodes === 'string') {
       return htmlEscape(abstractNodes);
     } else {
       return "<".concat(tag, " ").concat(joinAttributes(attributes), ">").concat(children.map(toHtml).join(''), "</").concat(tag, ">");
     }
   }
-
-  var noop$2 = function noop() {};
-
-  function isWatched(node) {
+ var noop$2 = function noop() {};
+ function isWatched(node) {
     var i2svg = node.getAttribute ? node.getAttribute(DATA_FA_I2SVG) : null;
     return typeof i2svg === 'string';
   }
-
-  function getMutator() {
+ function getMutator() {
     if (config.autoReplaceSvg === true) {
       return mutators.replace;
     }
-
-    var mutator = mutators[config.autoReplaceSvg];
+   var mutator = mutators[config.autoReplaceSvg];
     return mutator || mutators.replace;
   }
-
-  var mutators = {
+ var mutators = {
     replace: function replace(mutation) {
       var node = mutation[0];
       var abstract = mutation[1];
       var newOuterHTML = abstract.map(function (a) {
         return toHtml(a);
       }).join('\n');
-
-      if (node.parentNode && node.outerHTML) {
+     if (node.parentNode && node.outerHTML) {
         node.outerHTML = newOuterHTML + (config.keepOriginalSource && node.tagName.toLowerCase() !== 'svg' ? "<!-- ".concat(node.outerHTML, " Font Awesome fontawesome.com -->") : '');
       } else if (node.parentNode) {
         var newNode = document.createElement('span');
@@ -3352,12 +3094,10 @@
       var node = mutation[0];
       var abstract = mutation[1]; // If we already have a replaced node we do not want to continue nesting within it.
       // Short-circuit to the standard replacement
-
-      if (~classArray(node).indexOf(config.replacementClass)) {
+     if (~classArray(node).indexOf(config.replacementClass)) {
         return mutators.replace(mutation);
       }
-
-      var forSvg = new RegExp("".concat(config.familyPrefix, "-.*"));
+     var forSvg = new RegExp("".concat(config.familyPrefix, "-.*"));
       delete abstract[0].attributes.style;
       delete abstract[0].attributes.id;
       var splitClasses = abstract[0].attributes.class.split(' ').reduce(function (acc, cls) {
@@ -3366,8 +3106,7 @@
         } else {
           acc.toNode.push(cls);
         }
-
-        return acc;
+       return acc;
       }, {
         toNode: [],
         toSvg: []
@@ -3381,24 +3120,19 @@
       node.innerHTML = newInnerHTML;
     }
   };
-
-  function performOperationSync(op) {
+ function performOperationSync(op) {
     op();
   }
-
-  function perform(mutations, callback) {
+ function perform(mutations, callback) {
     var callbackFunction = typeof callback === 'function' ? callback : noop$2;
-
-    if (mutations.length === 0) {
+   if (mutations.length === 0) {
       callbackFunction();
     } else {
       var frame = performOperationSync;
-
-      if (config.mutateApproach === MUTATION_APPROACH_ASYNC) {
+     if (config.mutateApproach === MUTATION_APPROACH_ASYNC) {
         frame = WINDOW.requestAnimationFrame || performOperationSync;
       }
-
-      frame(function () {
+     frame(function () {
         var mutator = getMutator();
         var mark = perf.begin('mutate');
         mutations.map(mutator);
@@ -3419,12 +3153,10 @@
     if (!MUTATION_OBSERVER) {
       return;
     }
-
-    if (!config.observeMutations) {
+   if (!config.observeMutations) {
       return;
     }
-
-    var treeCallback = options.treeCallback,
+   var treeCallback = options.treeCallback,
         nodeCallback = options.nodeCallback,
         pseudoElementsCallback = options.pseudoElementsCallback,
         _options$observeMutat = options.observeMutationsRoot,
@@ -3436,21 +3168,17 @@
           if (config.searchPseudoElements) {
             pseudoElementsCallback(mutationRecord.target);
           }
-
-          treeCallback(mutationRecord.target);
+         treeCallback(mutationRecord.target);
         }
-
-        if (mutationRecord.type === 'attributes' && mutationRecord.target.parentNode && config.searchPseudoElements) {
+       if (mutationRecord.type === 'attributes' && mutationRecord.target.parentNode && config.searchPseudoElements) {
           pseudoElementsCallback(mutationRecord.target.parentNode);
         }
-
-        if (mutationRecord.type === 'attributes' && isWatched(mutationRecord.target) && ~ATTRIBUTES_WATCHED_FOR_MUTATION.indexOf(mutationRecord.attributeName)) {
+       if (mutationRecord.type === 'attributes' && isWatched(mutationRecord.target) && ~ATTRIBUTES_WATCHED_FOR_MUTATION.indexOf(mutationRecord.attributeName)) {
           if (mutationRecord.attributeName === 'class') {
             var _getCanonicalIcon = getCanonicalIcon(classArray(mutationRecord.target)),
                 prefix = _getCanonicalIcon.prefix,
                 iconName = _getCanonicalIcon.iconName;
-
-            if (prefix) mutationRecord.target.setAttribute('data-prefix', prefix);
+           if (prefix) mutationRecord.target.setAttribute('data-prefix', prefix);
             if (iconName) mutationRecord.target.setAttribute('data-icon', iconName);
           } else {
             nodeCallback(mutationRecord.target);
@@ -3470,49 +3198,39 @@
     if (!mo) return;
     mo.disconnect();
   }
-
-  function styleParser (node) {
+ function styleParser (node) {
     var style = node.getAttribute('style');
     var val = [];
-
-    if (style) {
+   if (style) {
       val = style.split(';').reduce(function (acc, style) {
         var styles = style.split(':');
         var prop = styles[0];
         var value = styles.slice(1);
-
-        if (prop && value.length > 0) {
+       if (prop && value.length > 0) {
           acc[prop] = value.join(':').trim();
         }
-
-        return acc;
+       return acc;
       }, {});
     }
-
-    return val;
+   return val;
   }
-
-  function classParser (node) {
+ function classParser (node) {
     var existingPrefix = node.getAttribute('data-prefix');
     var existingIconName = node.getAttribute('data-icon');
     var innerText = node.innerText !== undefined ? node.innerText.trim() : '';
     var val = getCanonicalIcon(classArray(node));
-
-    if (existingPrefix && existingIconName) {
+   if (existingPrefix && existingIconName) {
       val.prefix = existingPrefix;
       val.iconName = existingIconName;
     }
-
-    if (val.prefix && innerText.length > 1) {
+   if (val.prefix && innerText.length > 1) {
       val.iconName = byLigature(val.prefix, node.innerText);
     } else if (val.prefix && innerText.length === 1) {
       val.iconName = byUnicode(val.prefix, toHex(node.innerText));
     }
-
-    return val;
+   return val;
   }
-
-  var parseTransformString = function parseTransformString(transformString) {
+ var parseTransformString = function parseTransformString(transformString) {
     var transform = {
       size: 16,
       x: 0,
@@ -3521,86 +3239,69 @@
       flipY: false,
       rotate: 0
     };
-
-    if (!transformString) {
+   if (!transformString) {
       return transform;
     } else {
       return transformString.toLowerCase().split(' ').reduce(function (acc, n) {
         var parts = n.toLowerCase().split('-');
         var first = parts[0];
         var rest = parts.slice(1).join('-');
-
-        if (first && rest === 'h') {
+       if (first && rest === 'h') {
           acc.flipX = true;
           return acc;
         }
-
-        if (first && rest === 'v') {
+       if (first && rest === 'v') {
           acc.flipY = true;
           return acc;
         }
-
-        rest = parseFloat(rest);
-
-        if (isNaN(rest)) {
+       rest = parseFloat(rest);
+       if (isNaN(rest)) {
           return acc;
         }
-
-        switch (first) {
+       switch (first) {
           case 'grow':
             acc.size = acc.size + rest;
             break;
-
-          case 'shrink':
+         case 'shrink':
             acc.size = acc.size - rest;
             break;
-
-          case 'left':
+         case 'left':
             acc.x = acc.x - rest;
             break;
-
-          case 'right':
+         case 'right':
             acc.x = acc.x + rest;
             break;
-
-          case 'up':
+         case 'up':
             acc.y = acc.y - rest;
             break;
-
-          case 'down':
+         case 'down':
             acc.y = acc.y + rest;
             break;
-
-          case 'rotate':
+         case 'rotate':
             acc.rotate = acc.rotate + rest;
             break;
         }
-
-        return acc;
+       return acc;
       }, transform);
     }
   };
   function transformParser (node) {
     return parseTransformString(node.getAttribute('data-fa-transform'));
   }
-
-  function symbolParser (node) {
+ function symbolParser (node) {
     var symbol = node.getAttribute('data-fa-symbol');
     return symbol === null ? false : symbol === '' ? true : symbol;
   }
-
-  function attributesParser (node) {
+ function attributesParser (node) {
     var extraAttributes = toArray(node.attributes).reduce(function (acc, attr) {
       if (acc.name !== 'class' && acc.name !== 'style') {
         acc[attr.name] = attr.value;
       }
-
-      return acc;
+     return acc;
     }, {});
     var title = node.getAttribute('title');
     var titleId = node.getAttribute('data-fa-title-id');
-
-    if (config.autoA11y) {
+   if (config.autoA11y) {
       if (title) {
         extraAttributes['aria-labelledby'] = "".concat(config.replacementClass, "-title-").concat(titleId || nextUniqueId());
       } else {
@@ -3608,14 +3309,11 @@
         extraAttributes['focusable'] = 'false';
       }
     }
-
-    return extraAttributes;
+   return extraAttributes;
   }
-
-  function maskParser (node) {
+ function maskParser (node) {
     var mask = node.getAttribute('data-fa-mask');
-
-    if (!mask) {
+   if (!mask) {
       return emptyCanonicalIcon();
     } else {
       return getCanonicalIcon(mask.split(' ').map(function (i) {
@@ -3623,8 +3321,7 @@
       }));
     }
   }
-
-  function blankMeta() {
+ function blankMeta() {
     return {
       iconName: null,
       title: null,
@@ -3646,8 +3343,7 @@
         iconName = _classParser.iconName,
         prefix = _classParser.prefix,
         extraClasses = _classParser.rest;
-
-    var extraStyles = styleParser(node);
+   var extraStyles = styleParser(node);
     var transform = transformParser(node);
     var symbol = symbolParser(node);
     var extraAttributes = attributesParser(node);
@@ -3668,16 +3364,14 @@
       }
     };
   }
-
-  function MissingIcon(error) {
+ function MissingIcon(error) {
     this.name = 'MissingIcon';
     this.message = error || 'Icon unavailable';
     this.stack = new Error().stack;
   }
   MissingIcon.prototype = Object.create(Error.prototype);
   MissingIcon.prototype.constructor = MissingIcon;
-
-  var FILL = {
+ var FILL = {
     fill: 'currentColor'
   };
   var ANIMATION_BASE = {
@@ -3691,12 +3385,10 @@
       d: 'M156.5,447.7l-12.6,29.5c-18.7-9.5-35.9-21.2-51.5-34.9l22.7-22.7C127.6,430.5,141.5,440,156.5,447.7z M40.6,272H8.5 c1.4,21.2,5.4,41.7,11.7,61.1L50,321.2C45.1,305.5,41.8,289,40.6,272z M40.6,240c1.4-18.8,5.2-37,11.1-54.1l-29.5-12.6 C14.7,194.3,10,216.7,8.5,240H40.6z M64.3,156.5c7.8-14.9,17.2-28.8,28.1-41.5L69.7,92.3c-13.7,15.6-25.5,32.8-34.9,51.5 L64.3,156.5z M397,419.6c-13.9,12-29.4,22.3-46.1,30.4l11.9,29.8c20.7-9.9,39.8-22.6,56.9-37.6L397,419.6z M115,92.4 c13.9-12,29.4-22.3,46.1-30.4l-11.9-29.8c-20.7,9.9-39.8,22.6-56.8,37.6L115,92.4z M447.7,355.5c-7.8,14.9-17.2,28.8-28.1,41.5 l22.7,22.7c13.7-15.6,25.5-32.9,34.9-51.5L447.7,355.5z M471.4,272c-1.4,18.8-5.2,37-11.1,54.1l29.5,12.6 c7.5-21.1,12.2-43.5,13.6-66.8H471.4z M321.2,462c-15.7,5-32.2,8.2-49.2,9.4v32.1c21.2-1.4,41.7-5.4,61.1-11.7L321.2,462z M240,471.4c-18.8-1.4-37-5.2-54.1-11.1l-12.6,29.5c21.1,7.5,43.5,12.2,66.8,13.6V471.4z M462,190.8c5,15.7,8.2,32.2,9.4,49.2h32.1 c-1.4-21.2-5.4-41.7-11.7-61.1L462,190.8z M92.4,397c-12-13.9-22.3-29.4-30.4-46.1l-29.8,11.9c9.9,20.7,22.6,39.8,37.6,56.9 L92.4,397z M272,40.6c18.8,1.4,36.9,5.2,54.1,11.1l12.6-29.5C317.7,14.7,295.3,10,272,8.5V40.6z M190.8,50 c15.7-5,32.2-8.2,49.2-9.4V8.5c-21.2,1.4-41.7,5.4-61.1,11.7L190.8,50z M442.3,92.3L419.6,115c12,13.9,22.3,29.4,30.5,46.1 l29.8-11.9C470,128.5,457.3,109.4,442.3,92.3z M397,92.4l22.7-22.7c-15.6-13.7-32.8-25.5-51.5-34.9l-12.6,29.5 C370.4,72.1,384.4,81.5,397,92.4z'
     })
   };
-
-  var OPACITY_ANIMATE = _objectSpread({}, ANIMATION_BASE, {
+ var OPACITY_ANIMATE = _objectSpread({}, ANIMATION_BASE, {
     attributeName: 'opacity'
   });
-
-  var DOT = {
+ var DOT = {
     tag: 'circle',
     attributes: _objectSpread({}, FILL, {
       cx: '256',
@@ -3746,19 +3438,15 @@
     tag: 'g',
     children: [RING, DOT, QUESTION, EXCLAMATION]
   };
-
-  var styles$2 = namespace.styles;
+ var styles$2 = namespace.styles;
   function asFoundIcon(icon) {
     var width = icon[0];
     var height = icon[1];
-
-    var _icon$slice = icon.slice(4),
+   var _icon$slice = icon.slice(4),
         _icon$slice2 = _slicedToArray(_icon$slice, 1),
         vectorData = _icon$slice2[0];
-
-    var element = null;
-
-    if (Array.isArray(vectorData)) {
+   var element = null;
+   if (Array.isArray(vectorData)) {
       element = {
         tag: 'g',
         attributes: {
@@ -3789,8 +3477,7 @@
         }
       };
     }
-
-    return {
+   return {
       found: true,
       width: width,
       height: height,
@@ -3805,23 +3492,19 @@
         height: 512,
         icon: missing
       };
-
-      if (iconName && prefix && styles$2[prefix] && styles$2[prefix][iconName]) {
+     if (iconName && prefix && styles$2[prefix] && styles$2[prefix][iconName]) {
         var icon = styles$2[prefix][iconName];
         return resolve(asFoundIcon(icon));
       }
-
-      if (iconName && prefix && !config.showMissingIcons) {
+     if (iconName && prefix && !config.showMissingIcons) {
         reject(new MissingIcon("Icon is missing for prefix ".concat(prefix, " with icon name ").concat(iconName)));
       } else {
         resolve(val);
       }
     });
   }
-
-  var styles$3 = namespace.styles;
-
-  function generateSvgReplacementMutation(node, nodeMeta) {
+ var styles$3 = namespace.styles;
+ function generateSvgReplacementMutation(node, nodeMeta) {
     var iconName = nodeMeta.iconName,
         title = nodeMeta.title,
         titleId = nodeMeta.titleId,
@@ -3836,8 +3519,7 @@
         var _ref2 = _slicedToArray(_ref, 2),
             main = _ref2[0],
             mask = _ref2[1];
-
-        resolve([node, makeInlineSvgAbstract({
+       resolve([node, makeInlineSvgAbstract({
           icons: {
             main: main,
             mask: mask
@@ -3856,26 +3538,22 @@
       });
     });
   }
-
-  function generateLayersText(node, nodeMeta) {
+ function generateLayersText(node, nodeMeta) {
     var title = nodeMeta.title,
         transform = nodeMeta.transform,
         extra = nodeMeta.extra;
     var width = null;
     var height = null;
-
-    if (IS_IE) {
+   if (IS_IE) {
       var computedFontSize = parseInt(getComputedStyle(node).fontSize, 10);
       var boundingClientRect = node.getBoundingClientRect();
       width = boundingClientRect.width / computedFontSize;
       height = boundingClientRect.height / computedFontSize;
     }
-
-    if (config.autoA11y && !title) {
+   if (config.autoA11y && !title) {
       extra.attributes['aria-hidden'] = 'true';
     }
-
-    return picked.resolve([node, makeLayersTextAbstract({
+   return picked.resolve([node, makeLayersTextAbstract({
       content: node.innerHTML,
       width: width,
       height: height,
@@ -3885,59 +3563,47 @@
       watchable: true
     })]);
   }
-
-  function generateMutation(node) {
+ function generateMutation(node) {
     var nodeMeta = parseMeta(node);
-
-    if (~nodeMeta.extra.classes.indexOf(LAYERS_TEXT_CLASSNAME)) {
+   if (~nodeMeta.extra.classes.indexOf(LAYERS_TEXT_CLASSNAME)) {
       return generateLayersText(node, nodeMeta);
     } else {
       return generateSvgReplacementMutation(node, nodeMeta);
     }
   }
-
-  function onTree(root) {
+ function onTree(root) {
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     if (!IS_DOM) return;
     var htmlClassList = DOCUMENT.documentElement.classList;
-
-    var hclAdd = function hclAdd(suffix) {
+   var hclAdd = function hclAdd(suffix) {
       return htmlClassList.add("".concat(HTML_CLASS_I2SVG_BASE_CLASS, "-").concat(suffix));
     };
-
-    var hclRemove = function hclRemove(suffix) {
+   var hclRemove = function hclRemove(suffix) {
       return htmlClassList.remove("".concat(HTML_CLASS_I2SVG_BASE_CLASS, "-").concat(suffix));
     };
-
-    var prefixes = config.autoFetchSvg ? Object.keys(PREFIX_TO_STYLE) : Object.keys(styles$3);
+   var prefixes = config.autoFetchSvg ? Object.keys(PREFIX_TO_STYLE) : Object.keys(styles$3);
     var prefixesDomQuery = [".".concat(LAYERS_TEXT_CLASSNAME, ":not([").concat(DATA_FA_I2SVG, "])")].concat(prefixes.map(function (p) {
       return ".".concat(p, ":not([").concat(DATA_FA_I2SVG, "])");
     })).join(', ');
-
-    if (prefixesDomQuery.length === 0) {
+   if (prefixesDomQuery.length === 0) {
       return;
     }
-
-    var candidates = [];
-
-    try {
+   var candidates = [];
+   try {
       candidates = toArray(root.querySelectorAll(prefixesDomQuery));
     } catch (e) {// noop
     }
-
-    if (candidates.length > 0) {
+   if (candidates.length > 0) {
       hclAdd('pending');
       hclRemove('complete');
     } else {
       return;
     }
-
-    var mark = perf.begin('onTree');
+   var mark = perf.begin('onTree');
     var mutations = candidates.reduce(function (acc, node) {
       try {
         var mutation = generateMutation(node);
-
-        if (mutation) {
+       if (mutation) {
           acc.push(mutation);
         }
       } catch (e) {
@@ -3947,8 +3613,7 @@
           }
         }
       }
-
-      return acc;
+     return acc;
     }, []);
     return new picked(function (resolve, reject) {
       picked.all(mutations).then(function (resolvedMutations) {
@@ -3974,16 +3639,14 @@
       }
     });
   }
-
-  function replaceForPosition(node, position) {
+ function replaceForPosition(node, position) {
     var pendingAttribute = "".concat(DATA_FA_PSEUDO_ELEMENT_PENDING).concat(position.replace(':', '-'));
     return new picked(function (resolve, reject) {
       if (node.getAttribute(pendingAttribute) !== null) {
         // This node is already being processed
         return resolve();
       }
-
-      var children = toArray(node.children);
+     var children = toArray(node.children);
       var alreadyProcessedPseudoElement = children.filter(function (c) {
         return c.getAttribute(DATA_FA_PSEUDO_ELEMENT) === position;
       })[0];
@@ -3991,8 +3654,7 @@
       var fontFamily = styles.getPropertyValue('font-family').match(FONT_FAMILY_PATTERN);
       var fontWeight = styles.getPropertyValue('font-weight');
       var content = styles.getPropertyValue('content');
-
-      if (alreadyProcessedPseudoElement && !fontFamily) {
+     if (alreadyProcessedPseudoElement && !fontFamily) {
         // If we've already processed it but the current computed style does not result in a font-family,
         // that probably means that a class name that was previously present to make the icon has been
         // removed. So we now should delete the icon.
@@ -4000,22 +3662,18 @@
         return resolve();
       } else if (fontFamily && content !== 'none' && content !== '') {
         var _content = styles.getPropertyValue('content');
-
-        var prefix = ~['Solid', 'Regular', 'Light', 'Duotone', 'Brands', 'Kit'].indexOf(fontFamily[2]) ? STYLE_TO_PREFIX[fontFamily[2].toLowerCase()] : FONT_WEIGHT_TO_PREFIX[fontWeight];
+       var prefix = ~['Solid', 'Regular', 'Light', 'Duotone', 'Brands', 'Kit'].indexOf(fontFamily[2]) ? STYLE_TO_PREFIX[fontFamily[2].toLowerCase()] : FONT_WEIGHT_TO_PREFIX[fontWeight];
         var hexValue = toHex(_content.length === 3 ? _content.substr(1, 1) : _content);
         var iconName = byUnicode(prefix, hexValue);
         var iconIdentifier = iconName; // Only convert the pseudo element in this :before/:after position into an icon if we haven't
         // already done so with the same prefix and iconName
-
-        if (iconName && (!alreadyProcessedPseudoElement || alreadyProcessedPseudoElement.getAttribute(DATA_PREFIX) !== prefix || alreadyProcessedPseudoElement.getAttribute(DATA_ICON) !== iconIdentifier)) {
+       if (iconName && (!alreadyProcessedPseudoElement || alreadyProcessedPseudoElement.getAttribute(DATA_PREFIX) !== prefix || alreadyProcessedPseudoElement.getAttribute(DATA_ICON) !== iconIdentifier)) {
           node.setAttribute(pendingAttribute, iconIdentifier);
-
-          if (alreadyProcessedPseudoElement) {
+         if (alreadyProcessedPseudoElement) {
             // Delete the old one, since we're replacing it with a new one
             node.removeChild(alreadyProcessedPseudoElement);
           }
-
-          var meta = blankMeta();
+         var meta = blankMeta();
           var extra = meta.extra;
           extra.attributes[DATA_FA_PSEUDO_ELEMENT] = position;
           findIcon(iconName, prefix).then(function (main) {
@@ -4030,14 +3688,12 @@
               watchable: true
             }));
             var element = DOCUMENT.createElement('svg');
-
-            if (position === ':before') {
+           if (position === ':before') {
               node.insertBefore(element, node.firstChild);
             } else {
               node.appendChild(element);
             }
-
-            element.outerHTML = abstract.map(function (a) {
+           element.outerHTML = abstract.map(function (a) {
               return toHtml(a);
             }).join('\n');
             node.removeAttribute(pendingAttribute);
@@ -4051,16 +3707,13 @@
       }
     });
   }
-
-  function replace(node) {
+ function replace(node) {
     return picked.all([replaceForPosition(node, ':before'), replaceForPosition(node, ':after')]);
   }
-
-  function processable(node) {
+ function processable(node) {
     return node.parentNode !== document.head && !~TAGNAMES_TO_SKIP_FOR_PSEUDOELEMENTS.indexOf(node.tagName.toUpperCase()) && !node.getAttribute(DATA_FA_PSEUDO_ELEMENT) && (!node.parentNode || node.parentNode.tagName !== 'svg');
   }
-
-  function searchPseudoElements (root) {
+ function searchPseudoElements (root) {
     if (!IS_DOM) return;
     return new picked(function (resolve, reject) {
       var operations = toArray(root.querySelectorAll('*')).filter(processable).map(replace);
@@ -4077,45 +3730,36 @@
       });
     });
   }
-
-  var baseStyles = "svg:not(:root).svg-inline--fa{overflow:visible}.svg-inline--fa{display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em}.svg-inline--fa.fa-lg{vertical-align:-.225em}.svg-inline--fa.fa-w-1{width:.0625em}.svg-inline--fa.fa-w-2{width:.125em}.svg-inline--fa.fa-w-3{width:.1875em}.svg-inline--fa.fa-w-4{width:.25em}.svg-inline--fa.fa-w-5{width:.3125em}.svg-inline--fa.fa-w-6{width:.375em}.svg-inline--fa.fa-w-7{width:.4375em}.svg-inline--fa.fa-w-8{width:.5em}.svg-inline--fa.fa-w-9{width:.5625em}.svg-inline--fa.fa-w-10{width:.625em}.svg-inline--fa.fa-w-11{width:.6875em}.svg-inline--fa.fa-w-12{width:.75em}.svg-inline--fa.fa-w-13{width:.8125em}.svg-inline--fa.fa-w-14{width:.875em}.svg-inline--fa.fa-w-15{width:.9375em}.svg-inline--fa.fa-w-16{width:1em}.svg-inline--fa.fa-w-17{width:1.0625em}.svg-inline--fa.fa-w-18{width:1.125em}.svg-inline--fa.fa-w-19{width:1.1875em}.svg-inline--fa.fa-w-20{width:1.25em}.svg-inline--fa.fa-pull-left{margin-right:.3em;width:auto}.svg-inline--fa.fa-pull-right{margin-left:.3em;width:auto}.svg-inline--fa.fa-border{height:1.5em}.svg-inline--fa.fa-li{width:2em}.svg-inline--fa.fa-fw{width:1.25em}.fa-layers svg.svg-inline--fa{bottom:0;left:0;margin:auto;position:absolute;right:0;top:0}.fa-layers{display:inline-block;height:1em;position:relative;text-align:center;vertical-align:-.125em;width:1em}.fa-layers svg.svg-inline--fa{-webkit-transform-origin:center center;transform-origin:center center}.fa-layers-counter,.fa-layers-text{display:inline-block;position:absolute;text-align:center}.fa-layers-text{left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-transform-origin:center center;transform-origin:center center}.fa-layers-counter{background-color:#ff253a;border-radius:1em;-webkit-box-sizing:border-box;box-sizing:border-box;color:#fff;height:1.5em;line-height:1;max-width:5em;min-width:1.5em;overflow:hidden;padding:.25em;right:0;text-overflow:ellipsis;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top right;transform-origin:top right}.fa-layers-bottom-right{bottom:0;right:0;top:auto;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:bottom right;transform-origin:bottom right}.fa-layers-bottom-left{bottom:0;left:0;right:auto;top:auto;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:bottom left;transform-origin:bottom left}.fa-layers-top-right{right:0;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top right;transform-origin:top right}.fa-layers-top-left{left:0;right:auto;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top left;transform-origin:top left}.fa-lg{font-size:1.3333333333em;line-height:.75em;vertical-align:-.0667em}.fa-xs{font-size:.75em}.fa-sm{font-size:.875em}.fa-1x{font-size:1em}.fa-2x{font-size:2em}.fa-3x{font-size:3em}.fa-4x{font-size:4em}.fa-5x{font-size:5em}.fa-6x{font-size:6em}.fa-7x{font-size:7em}.fa-8x{font-size:8em}.fa-9x{font-size:9em}.fa-10x{font-size:10em}.fa-fw{text-align:center;width:1.25em}.fa-ul{list-style-type:none;margin-left:2.5em;padding-left:0}.fa-ul>li{position:relative}.fa-li{left:-2em;position:absolute;text-align:center;width:2em;line-height:inherit}.fa-border{border:solid .08em #eee;border-radius:.1em;padding:.2em .25em .15em}.fa-pull-left{float:left}.fa-pull-right{float:right}.fa.fa-pull-left,.fab.fa-pull-left,.fal.fa-pull-left,.far.fa-pull-left,.fas.fa-pull-left{margin-right:.3em}.fa.fa-pull-right,.fab.fa-pull-right,.fal.fa-pull-right,.far.fa-pull-right,.fas.fa-pull-right{margin-left:.3em}.fa-spin{-webkit-animation:fa-spin 2s infinite linear;animation:fa-spin 2s infinite linear}.fa-pulse{-webkit-animation:fa-spin 1s infinite steps(8);animation:fa-spin 1s infinite steps(8)}@-webkit-keyframes fa-spin{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes fa-spin{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.fa-rotate-90{-webkit-transform:rotate(90deg);transform:rotate(90deg)}.fa-rotate-180{-webkit-transform:rotate(180deg);transform:rotate(180deg)}.fa-rotate-270{-webkit-transform:rotate(270deg);transform:rotate(270deg)}.fa-flip-horizontal{-webkit-transform:scale(-1,1);transform:scale(-1,1)}.fa-flip-vertical{-webkit-transform:scale(1,-1);transform:scale(1,-1)}.fa-flip-both,.fa-flip-horizontal.fa-flip-vertical{-webkit-transform:scale(-1,-1);transform:scale(-1,-1)}:root .fa-flip-both,:root .fa-flip-horizontal,:root .fa-flip-vertical,:root .fa-rotate-180,:root .fa-rotate-270,:root .fa-rotate-90{-webkit-filter:none;filter:none}.fa-stack{display:inline-block;height:2em;position:relative;width:2.5em}.fa-stack-1x,.fa-stack-2x{bottom:0;left:0;margin:auto;position:absolute;right:0;top:0}.svg-inline--fa.fa-stack-1x{height:1em;width:1.25em}.svg-inline--fa.fa-stack-2x{height:2em;width:2.5em}.fa-inverse{color:#fff}.sr-only{border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.sr-only-focusable:active,.sr-only-focusable:focus{clip:auto;height:auto;margin:0;overflow:visible;position:static;width:auto}.svg-inline--fa .fa-primary{fill:var(--fa-primary-color,currentColor);opacity:1;opacity:var(--fa-primary-opacity,1)}.svg-inline--fa .fa-secondary{fill:var(--fa-secondary-color,currentColor);opacity:.4;opacity:var(--fa-secondary-opacity,.4)}.svg-inline--fa.fa-swap-opacity .fa-primary{opacity:.4;opacity:var(--fa-secondary-opacity,.4)}.svg-inline--fa.fa-swap-opacity .fa-secondary{opacity:1;opacity:var(--fa-primary-opacity,1)}.svg-inline--fa mask .fa-primary,.svg-inline--fa mask .fa-secondary{fill:#000}.fad.fa-inverse{color:#fff}";
-
-  function css () {
+ var baseStyles = "svg:not(:root).svg-inline--fa{overflow:visible}.svg-inline--fa{display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em}.svg-inline--fa.fa-lg{vertical-align:-.225em}.svg-inline--fa.fa-w-1{width:.0625em}.svg-inline--fa.fa-w-2{width:.125em}.svg-inline--fa.fa-w-3{width:.1875em}.svg-inline--fa.fa-w-4{width:.25em}.svg-inline--fa.fa-w-5{width:.3125em}.svg-inline--fa.fa-w-6{width:.375em}.svg-inline--fa.fa-w-7{width:.4375em}.svg-inline--fa.fa-w-8{width:.5em}.svg-inline--fa.fa-w-9{width:.5625em}.svg-inline--fa.fa-w-10{width:.625em}.svg-inline--fa.fa-w-11{width:.6875em}.svg-inline--fa.fa-w-12{width:.75em}.svg-inline--fa.fa-w-13{width:.8125em}.svg-inline--fa.fa-w-14{width:.875em}.svg-inline--fa.fa-w-15{width:.9375em}.svg-inline--fa.fa-w-16{width:1em}.svg-inline--fa.fa-w-17{width:1.0625em}.svg-inline--fa.fa-w-18{width:1.125em}.svg-inline--fa.fa-w-19{width:1.1875em}.svg-inline--fa.fa-w-20{width:1.25em}.svg-inline--fa.fa-pull-left{margin-right:.3em;width:auto}.svg-inline--fa.fa-pull-right{margin-left:.3em;width:auto}.svg-inline--fa.fa-border{height:1.5em}.svg-inline--fa.fa-li{width:2em}.svg-inline--fa.fa-fw{width:1.25em}.fa-layers svg.svg-inline--fa{bottom:0;left:0;margin:auto;position:absolute;right:0;top:0}.fa-layers{display:inline-block;height:1em;position:relative;text-align:center;vertical-align:-.125em;width:1em}.fa-layers svg.svg-inline--fa{-webkit-transform-origin:center center;transform-origin:center center}.fa-layers-counter,.fa-layers-text{display:inline-block;position:absolute;text-align:center}.fa-layers-text{left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-transform-origin:center center;transform-origin:center center}.fa-layers-counter{background-color:#ff253a;border-radius:1em;-webkit-box-sizing:border-box;box-sizing:border-box;color:#fff;height:1.5em;line-height:1;max-width:5em;min-width:1.5em;overflow:hidden;padding:.25em;right:0;text-overflow:ellipsis;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top right;transform-origin:top right}.fa-layers-bottom-right{bottom:0;right:0;top:auto;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:bottom right;transform-origin:bottom right}.fa-layers-bottom-left{bottom:0;left:0;right:auto;top:auto;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:bottom left;transform-origin:bottom left}.fa-layers-top-right{right:0;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top right;transform-origin:top right}.fa-layers-top-left{left:0;right:auto;top:0;-webkit-transform:scale(.25);transform:scale(.25);-webkit-transform-origin:top left;transform-origin:top left}.fa-lg{font-size:1.3333333333em;line-height:.75em;vertical-align:-.0667em}.fa-xs{font-size:.75em}.fa-sm{font-size:.875em}.fa-1x{font-size:1em}.fa-2x{font-size:2em}.fa-3x{font-size:3em}.fa-4x{font-size:4em}.fa-5x{font-size:5em}.fa-6x{font-size:6em}.fa-7x{font-size:7em}.fa-8x{font-size:8em}.fa-9x{font-size:9em}.fa-10x{font-size:10em}.fa-fw{text-align:center;width:1.25em}.fa-ul{list-style-type:none;margin-left:2.5em;padding-left:0}.fa-ul>li{position:relative}.fa-li{left:-2em;position:absolute;text-align:center;width:2em;line-height:inherit}.fa-border{border:solid .08em #eee;border-radius:.1em;padding:.2em .25em .15em}.fa-pull-left{float:left}.fa-pull-right{float:right}.fa.fa-pull-left,.fab.fa-pull-left,.fal.fa-pull-left,.far.fa-pull-left,.fas.fa-pull-left{margin-right:.3em}.fa.fa-pull-right,.fab.fa-pull-right,.fal.fa-pull-right,.far.fa-pull-right,.fas.fa-pull-right{margin-left:.3em}.fa-spin{-webkit-animation:fa-spin 2s infinite linear;animation:fa-spin 2s infinite linear}.fa-pulse{-webkit-animation:fa-spin 1s infinite steps(8);animation:fa-spin 1s infinite steps(8)}@-webkit-keyframes fa-spin{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes fa-spin{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.fa-rotate-90{-webkit-transform:rotate(90deg);transform:rotate(90deg)}.fa-rotate-180{-webkit-transform:rotate(180deg);transform:rotate(180deg)}.fa-rotate-270{-webkit-transform:rotate(270deg);transform:rotate(270deg)}.fa-flip-horizontal{-webkit-transform:scale(-1,1);transform:scale(-1,1)}.fa-flip-vertical{-webkit-transform:scale(1,-1);transform:scale(1,-1)}.fa-flip-both,.fa-flip-horizontal.fa-flip-vertical{-webkit-transform:scale(-1,-1);transform:scale(-1,-1)}:root .fa-flip-both,:root .fa-flip-horizontal,:root .fa-flip-vertical,:root .fa-rotate-180,:root .fa-rotate-270,:root .fa-rotate-90{-webkit-filter:none;filter:none}.fa-stack{display:inline-block;height:2em;position:relative;width:2.5em}.fa-stack-1x,.fa-stack-2x{bottom:0;left:0;margin:auto;position:absolute;right:0;top:0}.svg-inline--fa.fa-stack-1x{height:1em;width:1.25em}.svg-inline--fa.fa-stack-2x{height:2em;width:2.5em}.fa-inverse{color:#fff}.sr-only{border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.sr-only-focusable:active,.sr-only-focusable:focus{clip:auto;height:auto;margin:0;overflow:visible;position:static;width:auto}.svg-inline--fa .fa-primary{fill:var(--fa-primary-color,currentColor);opacity:1;opacity:var(--fa-primary-opacity,1)}.svg-inline--fa .fa-secondary{fill:var(--fa-secondary-color,currentColor);opacity:.4;opacity:var(--fa-secondary-opacity,.4)}.svg-inline--fa.fa-swap-opacity .fa-primary{opacity:.4;opacity:var(--fa-secondary-opacity,.4)}.svg-inline--fa.fa-swap-opacity .fa-secondary{opacity:1;opacity:var(--fa-primary-opacity,1)}.svg-inline--fa mask .fa-primary,.svg-inline--fa mask .fa-secondary{fill:#000}.fad.fa-inverse{color:#fff}";
+ function css () {
     var dfp = DEFAULT_FAMILY_PREFIX;
     var drc = DEFAULT_REPLACEMENT_CLASS;
     var fp = config.familyPrefix;
     var rc = config.replacementClass;
     var s = baseStyles;
-
-    if (fp !== dfp || rc !== drc) {
+   if (fp !== dfp || rc !== drc) {
       var dPatt = new RegExp("\\.".concat(dfp, "\\-"), 'g');
       var customPropPatt = new RegExp("\\--".concat(dfp, "\\-"), 'g');
       var rPatt = new RegExp("\\.".concat(drc), 'g');
       s = s.replace(dPatt, ".".concat(fp, "-")).replace(customPropPatt, "--".concat(fp, "-")).replace(rPatt, ".".concat(rc));
     }
-
-    return s;
+   return s;
   }
-
-  var Library =
+ var Library =
   /*#__PURE__*/
   function () {
     function Library() {
       _classCallCheck(this, Library);
-
-      this.definitions = {};
+     this.definitions = {};
     }
-
-    _createClass(Library, [{
+   _createClass(Library, [{
       key: "add",
       value: function add() {
         var _this = this;
-
-        for (var _len = arguments.length, definitions = new Array(_len), _key = 0; _key < _len; _key++) {
+       for (var _len = arguments.length, definitions = new Array(_len), _key = 0; _key < _len; _key++) {
           definitions[_key] = arguments[_key];
         }
-
-        var additions = definitions.reduce(this._pullDefinitions, {});
+       var additions = definitions.reduce(this._pullDefinitions, {});
         Object.keys(additions).forEach(function (key) {
           _this.definitions[key] = _objectSpread({}, _this.definitions[key] || {}, additions[key]);
           defineIcons(key, additions[key]);
@@ -4144,19 +3788,15 @@
         return additions;
       }
     }]);
-
-    return Library;
+   return Library;
   }();
-
-  function ensureCss() {
+ function ensureCss() {
     if (config.autoAddCss && !_cssInserted) {
       insertCss(css());
-
-      _cssInserted = true;
+     _cssInserted = true;
     }
   }
-
-  function apiObject(val, abstractCreator) {
+ function apiObject(val, abstractCreator) {
     Object.defineProperty(val, 'abstract', {
       get: abstractCreator
     });
@@ -4177,32 +3817,27 @@
     });
     return val;
   }
-
-  function findIconDefinition(iconLookup) {
+ function findIconDefinition(iconLookup) {
     var _iconLookup$prefix = iconLookup.prefix,
         prefix = _iconLookup$prefix === void 0 ? 'fa' : _iconLookup$prefix,
         iconName = iconLookup.iconName;
     if (!iconName) return;
     return iconFromMapping(library.definitions, prefix, iconName) || iconFromMapping(namespace.styles, prefix, iconName);
   }
-
-  function resolveIcons(next) {
+ function resolveIcons(next) {
     return function (maybeIconDefinition) {
       var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var iconDefinition = (maybeIconDefinition || {}).icon ? maybeIconDefinition : findIconDefinition(maybeIconDefinition || {});
       var mask = params.mask;
-
-      if (mask) {
+     if (mask) {
         mask = (mask || {}).icon ? mask : findIconDefinition(mask || {});
       }
-
-      return next(iconDefinition, _objectSpread({}, params, {
+     return next(iconDefinition, _objectSpread({}, params, {
         mask: mask
       }));
     };
   }
-
-  var library = new Library();
+ var library = new Library();
   var noAuto = function noAuto() {
     config.autoReplaceSvg = false;
     config.observeMutations = false;
@@ -4212,19 +3847,16 @@
   var dom = {
     i2svg: function i2svg() {
       var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      if (IS_DOM) {
+     if (IS_DOM) {
         ensureCss();
         var _params$node = params.node,
             node = _params$node === void 0 ? DOCUMENT : _params$node,
             _params$callback = params.callback,
             callback = _params$callback === void 0 ? function () {} : _params$callback;
-
-        if (config.searchPseudoElements) {
+       if (config.searchPseudoElements) {
           searchPseudoElements(node);
         }
-
-        return onTree(node, callback);
+       return onTree(node, callback);
       } else {
         return picked.reject('Operation requires a DOM of some kind.');
       }
@@ -4233,20 +3865,17 @@
     insertCss: function insertCss$$1() {
       if (!_cssInserted) {
         insertCss(css());
-
-        _cssInserted = true;
+       _cssInserted = true;
       }
     },
     watch: function watch() {
       var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var autoReplaceSvgRoot = params.autoReplaceSvgRoot,
           observeMutationsRoot = params.observeMutationsRoot;
-
-      if (config.autoReplaceSvg === false) {
+     if (config.autoReplaceSvg === false) {
         config.autoReplaceSvg = true;
       }
-
-      config.observeMutations = true;
+     config.observeMutations = true;
       domready(function () {
         autoReplace({
           autoReplaceSvgRoot: autoReplaceSvgRoot
@@ -4293,8 +3922,7 @@
       type: 'icon'
     }, iconDefinition), function () {
       ensureCss();
-
-      if (config.autoA11y) {
+     if (config.autoA11y) {
         if (title) {
           attributes['aria-labelledby'] = "".concat(config.replacementClass, "-title-").concat(titleId || nextUniqueId());
         } else {
@@ -4302,8 +3930,7 @@
           attributes['focusable'] = 'false';
         }
       }
-
-      return makeInlineSvgAbstract({
+     return makeInlineSvgAbstract({
         icons: {
           main: asFoundIcon(icon),
           mask: mask ? asFoundIcon(mask.icon) : {
@@ -4419,8 +4046,7 @@
     layer: layer,
     toHtml: toHtml
   };
-
-  var autoReplace = function autoReplace() {
+ var autoReplace = function autoReplace() {
     var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var _params$autoReplaceSv = params.autoReplaceSvgRoot,
         autoReplaceSvgRoot = _params$autoReplaceSv === void 0 ? DOCUMENT : _params$autoReplaceSv;
@@ -4428,14 +4054,12 @@
       node: autoReplaceSvgRoot
     });
   };
-
-  function bootstrap() {
+ function bootstrap() {
     if (IS_BROWSER) {
       if (!WINDOW.FontAwesome) {
         WINDOW.FontAwesome = api;
       }
-
-      domready(function () {
+     domready(function () {
         autoReplace();
         observe({
           treeCallback: onTree,
@@ -4444,8 +4068,7 @@
         });
       });
     }
-
-    namespace.hooks = _objectSpread({}, namespace.hooks, {
+   namespace.hooks = _objectSpread({}, namespace.hooks, {
       addPack: function addPack(prefix, icons) {
         namespace.styles[prefix] = _objectSpread({}, namespace.styles[prefix] || {}, icons);
         build();
@@ -4453,15 +4076,11 @@
       },
       addShims: function addShims(shims) {
         var _namespace$shims;
-
-        (_namespace$shims = namespace.shims).push.apply(_namespace$shims, _toConsumableArray(shims));
-
-        build();
+       (_namespace$shims = namespace.shims).push.apply(_namespace$shims, _toConsumableArray(shims));
+       build();
         autoReplace();
       }
     });
   }
-
-  bunker(bootstrap);
-
-}());
+ bunker(bootstrap);
+());

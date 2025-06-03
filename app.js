@@ -28,7 +28,15 @@ const io = new Server(server, {
 });
 
 // socketRoutes(io);
-connectDB();
+connectDB()
+.then(() => {
+  console.log('Conexión a la base de datos exitosa');
+})
+.catch((err) => {
+  console.error('Error al conectar a la base de datos:', err);
+  process.exit(1); // Salir de la app si la DB no levanta
+})
+;
 // // Manejo de conexiones de Socket.IO
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -86,7 +94,7 @@ if (require.main === module) {
     //const PORT = process.env.PORT || 80;
     const PORT = process.env.PORT || 3000;
     server.listen(PORT, () => {
-        console.log(`Servidor corriendo en http://http://localhost:${PORT}`);
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
         //console.log(`Servidor corriendo en http://192.168.1.47:${PORT}`);
     });
 }

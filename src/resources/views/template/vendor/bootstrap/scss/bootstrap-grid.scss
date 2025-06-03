@@ -4,27 +4,22 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-
-html {
+tml {
   box-sizing: border-box;
   -ms-overflow-style: scrollbar;
 }
-
-*,
+,
 *::before,
 *::after {
   box-sizing: inherit;
 }
-
-@import "functions";
+import "functions";
 @import "variables";
-
-@import "mixins/deprecate";
+import "mixins/deprecate";
 @import "mixins/breakpoints";
 @import "mixins/grid-framework";
 @import "mixins/grid";
-
-@import "grid";
+import "grid";
 @import "utilities/display";
 @import "utilities/flex";
 @import "utilities/spacing";

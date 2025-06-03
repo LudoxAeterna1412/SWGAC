@@ -8,21 +8,18 @@
   background-color: $breadcrumb-bg;
   @include border-radius($breadcrumb-border-radius);
 }
-
-.breadcrumb-item {
+breadcrumb-item {
   // The separator between breadcrumbs (by default, a forward-slash: "/")
   + .breadcrumb-item {
     padding-left: $breadcrumb-item-padding;
-
-    &::before {
+   &::before {
       float: left; // Suppress inline spacings and underlining of the separator
       padding-right: $breadcrumb-item-padding;
       color: $breadcrumb-divider-color;
       content: escape-svg($breadcrumb-divider);
     }
   }
-
-  // IE9-11 hack to properly handle hyperlink underlines for breadcrumbs built
+ // IE9-11 hack to properly handle hyperlink underlines for breadcrumbs built
   // without `<ul>`s. The `::before` pseudo-element generates an element
   // *within* the .breadcrumb-item and thereby inherits the `text-decoration`.
   //
@@ -35,8 +32,7 @@
   + .breadcrumb-item:hover::before {
     text-decoration: none;
   }
-
-  &.active {
+ &.active {
     color: $breadcrumb-active-color;
   }
 }

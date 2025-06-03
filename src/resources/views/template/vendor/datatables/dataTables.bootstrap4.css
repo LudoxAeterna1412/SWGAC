@@ -20,8 +20,7 @@ table.dataTable.nowrap th,
 table.dataTable.nowrap td {
   white-space: nowrap;
 }
-
-div.dataTables_wrapper div.dataTables_length label {
+iv.dataTables_wrapper div.dataTables_length label {
   font-weight: normal;
   text-align: left;
   white-space: nowrap;
@@ -66,8 +65,7 @@ div.dataTables_wrapper div.dataTables_processing {
   text-align: center;
   padding: 1em 0;
 }
-
-table.dataTable > thead > tr > th:active,
+able.dataTable > thead > tr > th:active,
 table.dataTable > thead > tr > td:active {
   outline: none;
 }
@@ -121,12 +119,10 @@ table.dataTable > thead .sorting_asc_disabled:before,
 table.dataTable > thead .sorting_desc_disabled:after {
   opacity: 0;
 }
-
-div.dataTables_scrollHead table.dataTable {
+iv.dataTables_scrollHead table.dataTable {
   margin-bottom: 0 !important;
 }
-
-div.dataTables_scrollBody table {
+iv.dataTables_scrollBody table {
   border-top: none;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
@@ -143,16 +139,14 @@ div.dataTables_scrollBody table tbody tr:first-child th,
 div.dataTables_scrollBody table tbody tr:first-child td {
   border-top: none;
 }
-
-div.dataTables_scrollFoot > .dataTables_scrollFootInner {
+iv.dataTables_scrollFoot > .dataTables_scrollFootInner {
   box-sizing: content-box;
 }
 div.dataTables_scrollFoot > .dataTables_scrollFootInner > table {
   margin-top: 0 !important;
   border-top: none;
 }
-
-@media screen and (max-width: 767px) {
+media screen and (max-width: 767px) {
   div.dataTables_wrapper div.dataTables_length,
 div.dataTables_wrapper div.dataTables_filter,
 div.dataTables_wrapper div.dataTables_info,
@@ -177,8 +171,7 @@ table.dataTable.table-sm .sorting_asc:after,
 table.dataTable.table-sm .sorting_desc:after {
   top: 5px;
 }
-
-table.table-bordered.dataTable {
+able.table-bordered.dataTable {
   border-right-width: 0;
 }
 table.table-bordered.dataTable th,
@@ -194,12 +187,10 @@ table.table-bordered.dataTable tbody th,
 table.table-bordered.dataTable tbody td {
   border-bottom-width: 0;
 }
-
-div.dataTables_scrollHead table.table-bordered {
+iv.dataTables_scrollHead table.table-bordered {
   border-bottom-width: 0;
 }
-
-div.table-responsive > div.dataTables_wrapper > div.row {
+iv.table-responsive > div.dataTables_wrapper > div.row {
   margin: 0;
 }
 div.table-responsive > div.dataTables_wrapper > div.row > div[class^=col-]:first-child {

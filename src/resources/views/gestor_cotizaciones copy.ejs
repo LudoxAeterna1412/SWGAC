@@ -1,0 +1,597 @@
+<%- layout('layout') %>
+
+  <div class="container-fluid">
+
+    <!-- ===========================
+       ENCABEZADO DE PÁGINA
+  ============================ -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Gestión de Cotizaciones</h1>
+      <!-- Botón de reporte (comentado) -->
+      <!-- 
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <i class="fas fa-download fa-sm text-white-50"></i> Generar Reporte
+    </a> 
+    -->
+    </div>
+
+    <!-- ===========================
+       SUBTÍTULO: REGISTRAR COTIZACIÓN
+  ============================ -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h2 class="h4 mb-0 text-gray-800">Registrar Cotización</h2>
+    </div>
+
+    <!-- ===========================
+       FORMULARIO DE COTIZACIÓN
+  ============================ -->
+    <form id="cotizacionForm" style="display: flex; flex-direction: column; gap: 20px;">
+
+      <!-- Sección 1: Datos de la cotización -->
+      <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
+        <legend style="padding: 0 10px;">Datos de la cotización</legend>
+        <div
+          style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: flex-start;">
+
+          <div style="flex: 1 1 200px; display: flex; flex-direction: column;">
+            <label for="codigo">Código</label>
+            <input type="text" id="codigo" class="form-control form-control-sm" required>
+          </div>
+
+          <div style="flex: 1 1 200px; display: flex; flex-direction: column;">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" class="form-control form-control-sm" required>
+          </div>
+
+          <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
+            <label for="cliente">Cliente</label>
+            <input type="text" id="cliente" class="form-control form-control-sm" required>
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" class="form-control form-control-sm" required>
+              <option value="">Seleccione</option>
+              <option value="publico">publico</option>
+              <option value="privado">privado</option>
+            </select>
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="ruc">RUC</label>
+            <input type="text" id="ruc" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="total">Total</label>
+            <input type="number" id="total" class="form-control form-control-sm" required step="0.01">
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Sección 2: Ítems de la cotización -->
+      <fieldset class="border p-3 rounded">
+        <legend class="px-2">Ítems</legend>
+
+        <!-- Contenedor vacío: aquí solo se añadirán bloques horizontales -->
+        <div id="itemsContainer" class="d-flex flex-column gap-3"></div>
+
+        <!-- Botón para agregar nuevos ítems -->
+        <div class="text-end mt-2">
+          <button type="button" id="addItemBtn" class="btn btn-secondary btn-sm">
+            Agregar ítem
+          </button>
+        </div>
+      </fieldset>
+
+      <!-- Botón de envío general -->
+      <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+        <input type="submit" class="btn btn-primary btn-sm" value="Registrar">
+      </div>
+
+    </form>
+
+
+    <!-- ===========================
+       TEMPLATE DE ITEMS
+  ============================ -->
+    <template id="item-block-template">
+      <!-- <div class="modal-item-row item-row"
+        style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: flex-start;"> -->
+
+
+      <div class="item-block">
+        <div style="flex: 1 1 80px; min-width: 150px; display: flex; flex-direction: column;">
+          <label>Código</label>
+          <input name="items[__IDX__][codigo]" required>
+        </div>
+
+
+        <div style="flex: 1 1 80px; min-width: 150px; display: flex; flex-direction: column;">
+          <label>Código Diseño</label>
+          <select name="items[__IDX__][codigo_diseno]" class="form-control form-control-sm" required>
+            <option value="">Seleccione</option>
+            <option value="100HE">100HE</option>
+            <option value="100HS">100HS</option>
+            <option value="140IP">140IP</option>
+            <option value="140HE">140HE</option>
+            <option value="140HS">140HS</option>
+            <option value="175IP">175IP</option>
+            <option value="175HE">175HE</option>
+            <option value="175HS">175HS</option>
+            <option value="210IP">210IP</option>
+            <option value="210HE">210HE</option>
+            <option value="210HS">210HS</option>
+            <option value="245IP">245IP</option>
+            <option value="245HE">245HE</option>
+            <option value="245HS">245HS</option>
+            <option value="280IP">280IP</option>
+            <option value="280HE">280HE</option>
+            <option value="280HS">280HS</option>
+            <option value="310IP">310IP</option>
+            <option value="310HE">310HE</option>
+            <option value="310HS">310HS</option>
+            <option value="315IP">315IP</option>
+            <option value="315HE">315HE</option>
+            <option value="315HS">315HS</option>
+            <option value="350IP">350IP</option>
+            <option value="350HE">350HE</option>
+            <option value="350HS">350HS</option>
+            <option value="420IP">420IP</option>
+            <option value="420HE">420HE</option>
+            <option value="420HS">420HS</option>
+            <option value="M145IP">M145IP</option>
+            <option value="M145HE">M145HE</option>
+            <option value="M145HS">M145HS</option>
+            <option value="M140IP">M140IP</option>
+            <option value="M140HE">M140HE</option>
+            <option value="M140HS">M140HS</option>
+            <option value="M175IP">M175IP</option>
+            <option value="M175HE">M175HE</option>
+            <option value="M175HS">M175HS</option>
+          </select>
+        </div>
+
+        <div style="flex: 2 1 250px; min-width: 200px; display: flex; flex-direction: column;">
+          <label>Descripción</label>
+          <input type="text" name="items[__IDX__][descripcion]" class="form-control form-control-sm" required>
+        </div>
+        <div style="flex: 1 1 80px; min-width: 100px; display: flex; flex-direction: column;">
+          <label>Colocado</label>
+          <select name="items[__IDX__][colocado]" class="form-control form-control-sm" required>
+            <option value="No bombeable">No bombeable</option>
+            <option value="bombeable">bombeable</option>
+          </select>
+        </div>
+
+        <div style="flex: 1 1 80px; min-width: 150px; display: flex; flex-direction: column;">
+          <label>Metros Cúbicos (m³)</label>
+          <input type="number" step="0.01" name="items[__IDX__][metros_cubicos]" class="form-control form-control-sm"
+            required>
+        </div>
+
+        <div style="flex: 1 1 80px; min-width: 100px; display: flex; flex-direction: column;">
+          <label>Precio Unitario</label>
+          <input type="number" step="0.01" name="items[__IDX__][precio_unitario]" class="form-control form-control-sm"
+            required>
+        </div>
+
+        <div style="flex: 1 1 80px; min-width: 100px; display: flex; flex-direction: column;">
+          <label>Total</label>
+          <input type="number" step="0.01" name="items[__IDX__][total_item]" class="form-control form-control-sm"
+            required>
+        </div>
+
+
+        <div class="field remove">
+          <label class="visually-hidden">Eliminar</label>
+          <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Eliminar ítem">×</button>
+        </div>
+      </div>
+    </template>
+
+    <style>
+      /* Cada fila horizontal */
+      .item-block {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        align-items: flex-end;
+      }
+
+      /* Asignación de anchos fijos porcentuales */
+      .item-block .field {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .item-block .field.code {
+        flex: 0 0 10%;
+      }
+
+      .item-block .field.design {
+        flex: 0 0 10%;
+      }
+
+      .item-block .field.desc {
+        flex: 0 0 30%;
+      }
+
+      .item-block .field.coloc {
+        flex: 0 0 13%;
+      }
+
+      .item-block .field.m3 {
+        flex: 0 0 9%;
+      }
+
+      .item-block .field.price {
+        flex: 0 0 9%;
+      }
+
+      .item-block .field.total {
+        flex: 0 0 9%;
+      }
+
+      /* Input styling */
+      .item-block input {
+        width: 100%;
+        padding: .25rem .5rem;
+        font-size: .875rem;
+        border: 1px solid #ccc;
+        border-radius: .25rem;
+      }
+
+      /* Botón de eliminar */
+      .item-block .btn-remove {
+        flex: 0 0 auto;
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1;
+        border-radius: .25rem;
+        cursor: pointer;
+        align-self: flex-end;
+      }
+    </style>
+    <!-- ===========================
+       TABLA DE ITEMS
+  ============================ -->
+    <script>
+      (function () {
+        let idx = 0;
+        const container = document.getElementById('itemsContainer');
+        const addBtn = document.getElementById('addItemBtn');
+        const tpl = document.getElementById('item-block-template').innerHTML;
+
+        // Añade una nueva fila horizontal
+        function addItem() {
+          const html = tpl.replace(/__IDX__/g, idx);
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = html.trim();
+          container.appendChild(wrapper.firstElementChild);
+          idx++;
+        }
+
+        // Delegación: escucha clicks en .btn-remove (no .remove-item)
+        container.addEventListener('click', e => {
+          if (e.target.matches('.btn-remove')) {
+            const block = e.target.closest('.item-block');
+            if (block) block.remove();
+          }
+        });
+
+        // Al hacer clic, solo se crea la fila horizontal
+        addBtn.addEventListener('click', addItem);
+
+        // Si quieres un bloque inicial al cargar, descomenta:
+        // addItem();
+      })();
+    </script>
+
+    <!-- ===========================
+       TABLA DE COTIZACIONES
+  ============================ -->
+    <h2 class="h4 mb-2 text-gray-800">Cotizaciones Registradas</h2>
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="cotizacionTable" class="table table-bordered" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Colocado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Colocado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </tfoot>
+            <tbody id="cot-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===========================
+     MODAL PARA EDITAR COTIZACIÓN
+============================ -->
+    <div class="modal fade" id="cotModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog" style="max-width: 2000px; width: 95%;" modal-dialog-scrollable>
+        <div class="modal-content">
+
+          <form id="modal_cotForm" onsubmit="saveCot(); return false;">
+            <div class="modal-header">
+              <h5 class="modal-title">Editar Cotización</h5>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+              <% include modal_gestor_cotizaciones %>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <input type="submit" class="btn btn-primary" value="Actualizar Cotización">
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    <!-- ===========================
+     SCRIPTS: Operaciones de Cotización
+============================ -->
+    <script>
+      // 1) Eliminar cotización de la vista
+      function eliminarItem(button) {
+        const itemRow = button.closest('.item-row');
+        if (itemRow) itemRow.remove();
+      }
+
+      // 2) Exportar cotizaciones a Excel
+      async function expCot(nro) {
+        const codigo = nro;
+        let url = '/api/cotizacion/export';
+        if (codigo) url += `?codigo=${encodeURIComponent(codigo)}`;
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'cotizaciones.xlsx';
+        a.click();
+        URL.revokeObjectURL(downloadUrl);
+      }
+
+      // 3) Cargar y desplegar cotizaciones en la tabla
+      async function loadCotizaciones() {
+        try {
+          const res = await fetch('/api/cotizacion/records');
+          const cotizaciones = await res.json();
+          $('#cotizacionTable').DataTable({
+            data: cotizaciones.map(c => [
+              c.codigo,
+              new Date(c.fecha).toLocaleDateString(),
+              c.cliente,
+              c.tipo,
+              c.colocado ? 'Sí' : 'No',
+              c.total,
+              `<button onclick="editCot('${c._id}')">Editar</button>
+           <button onclick="delCot('${c._id}')">Eliminar</button>
+           <button onclick="expCot('${c.codigo}')">Exportar</button>`
+            ]),
+            destroy: true,
+            columns: [
+              { title: "Código" }, { title: "Fecha" }, { title: "Cliente" },
+              { title: "Tipo" }, { title: "Colocado" }, { title: "Total" },
+              { title: "Acciones", orderable: false, searchable: false }
+            ]
+          });
+        } catch (e) {
+          console.error(e);
+          alert('Error cargando cotizaciones');
+        }
+      }
+
+      // 4) Inicializar carga de cotizaciones al iniciar la página
+      window.onload = loadCotizaciones;
+    </script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('cotizacionForm');
+        const submitBtn = form.querySelector('input[type="submit"]');
+
+        // Al enviar el formulario de cotización
+        form.addEventListener('submit', addCotizacion);
+
+        async function addCotizacion(ev) {
+          ev.preventDefault();
+          submitBtn.disabled = true;
+
+          // 1) Construir y enviar la cabecera de la cotización
+          const cabecera = {
+            codigo: document.getElementById('codigo').value.trim(),
+            fecha: document.getElementById('fecha').value,
+            cliente: document.getElementById('cliente').value.trim(),
+            tipo: document.getElementById('tipo').value,
+            dni: document.getElementById('dni').value.trim(),
+            ruc: document.getElementById('ruc').value.trim(),
+            total: +document.getElementById('total').value
+          };
+
+          let cotID;
+          try {
+            const resCab = await fetch('/api/cotizacion/store', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(cabecera)
+            });
+            const bodyCab = await resCab.json();
+            if (!resCab.ok) {
+              if (bodyCab.message?.includes('duplicate key')) {
+                alert(`El código "${cabecera.codigo}" ya existe. Usa otro diferente.`);
+              } else {
+                alert(`Error al crear cotización: ${bodyCab.message || JSON.stringify(bodyCab)}`);
+              }
+              return;
+            }
+            cotID = bodyCab._id;
+            alert('Cotización creada (ID: ' + cotID + ')');
+
+            // 2) Recolectar y enviar cada ítem por separado
+            const bloques = Array.from(document.querySelectorAll('.item-block'));
+            const promesasItems = bloques.map(block => {
+              const itemData = {
+                codigo: block.querySelector('[name$="[codigo]"]').value.trim(),
+                codigo_diseno: block.querySelector('[name$="[codigo_diseno]"]').value.trim(),
+                descripcion: block.querySelector('[name$="[descripcion]"]').value.trim(),
+                colocado: block.querySelector('[name$="[colocado]"]').value.trim(),
+                metros_cubicos: +block.querySelector('[name$="[metros_cubicos]"]').value,
+                precio_unitario: +block.querySelector('[name$="[precio_unitario]"]').value,
+                total_item: +block.querySelector('[name$="[total_item]"]').value,
+              };
+              return fetch('/api/items_cotizacion/store', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(itemData)
+              }).then(async res => {
+                if (!res.ok) {
+                  const err = await res.json();
+                  return Promise.reject(err.message || 'Error en ítem');
+                }
+                return res.json();
+              });
+            });
+
+            const results = await Promise.allSettled(promesasItems);
+            const exitos = results.filter(r => r.status === 'fulfilled').length;
+            if (bloques.length) {
+              alert(`Se guardaron ${exitos}/${bloques.length} ítems.`);
+            }
+
+            // 3) Limpiar formulario y recargar lista
+            form.reset();
+            document.getElementById('itemsContainer').innerHTML = '';
+            if (typeof loadCotizaciones === 'function') {
+              loadCotizaciones();
+            }
+          } catch (err) {
+            console.error('Error inesperado:', err);
+            alert('Ocurrió un error. Revisa la consola.');
+          } finally {
+            submitBtn.disabled = false;
+          }
+        }
+      });
+    </script>
+
+
+
+
+    <!-- ===========================
+     SCRIPTS: Funciones de Cotización
+=========================== -->
+    <script>
+      // 1) Abrir modal de Bootstrap genérico
+      async function openModal(modalId) {
+        try {
+          // pequeño delay para que el navegador pinte el interior del modal
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const modalEl = document.getElementById(modalId);
+          new bootstrap.Modal(modalEl).show();
+          // otro pequeño delay opcional antes de rellenar campos
+          await new Promise(resolve => setTimeout(resolve, 50));
+        } catch (error) {
+          console.error("Error al abrir el modal:", error);
+        }
+      }
+
+      // 2) Eliminar cotización
+      async function delCot(id) {
+        if (!confirm('¿Eliminar cotización?')) return;
+        const res = await fetch(`/api/cotizacion/delete/${id}`, { method: 'DELETE' });
+        if (res.ok) loadCotizaciones();
+        else alert('Error eliminando');
+      }
+
+      // 3) Editar cotización: abrir modal y poblar sólo campos principales
+      async function editCot(id) {
+        try {
+          const res = await fetch('/api/cotizacion/getById', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ _id: id })
+          });
+          if (!res.ok) throw new Error('Cotización no encontrada');
+          const c = await res.json();
+
+          console.log(c);
+          // 3.1 Abrir el modal y esperar que esté listo
+          await openModal('cotModal');
+
+          // 3.2 Rellenar los datos una vez el modal está visible
+          document.getElementById('modal_id').value = c._id;
+          document.getElementById('modal_codigo').value = c.codigo;
+          document.getElementById('modal_fecha').value = c.fecha.split('T')[0];
+          document.getElementById('modal_cliente').value = c.cliente;
+          document.getElementById('modal_tipo').value = c.tipo;
+          document.getElementById('modal_dni').value = c.dni || '';
+          document.getElementById('modal_ruc').value = c.ruc || '';
+        }
+        catch (err) {
+          console.error('Error en editCot:', err);
+          alert(err.message || 'Error al cargar datos de cotización');
+        }
+      }
+
+      // 4) Guardar actualización de cotización (sin manejar ítems)
+      async function saveCot() {
+        const id = document.getElementById('modal_id').value;
+        const data = {
+          codigo: document.getElementById('modal_codigo').value,
+          fecha: document.getElementById('modal_fecha').value,
+          cliente: document.getElementById('modal_cliente').value,
+          tipo: document.getElementById('modal_tipo').value,
+          dni: document.getElementById('modal_dni').value,
+          ruc: document.getElementById('modal_ruc').value
+        };
+
+        const res = await fetch(`/api/cotizacion/updateModal/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('Cotización actualizada');
+          loadCotizaciones();
+        } else {
+          alert('Error actualizando');
+        }
+      }
+
+      // Asegurar que al cargar la página se recarguen las cotizaciones
+      window.onload = loadCotizaciones;
+    </script>

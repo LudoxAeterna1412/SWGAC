@@ -1,6 +1,5 @@
 // stylelint-disable declaration-no-important
-
-@mixin float-left() {
+mixin float-left() {
   float: left !important;
   @include deprecate("The `float-left` mixin", "v4.3.0", "v5");
 }

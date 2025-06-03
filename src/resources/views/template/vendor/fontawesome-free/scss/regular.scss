@@ -3,8 +3,7 @@
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @import 'variables';
-
-@font-face {
+font-face {
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
@@ -16,8 +15,7 @@
   url('#{$fa-font-path}/fa-regular-400.ttf') format('truetype'),
   url('#{$fa-font-path}/fa-regular-400.svg#fontawesome') format('svg');
 }
-
-.far {
+far {
   font-family: 'Font Awesome 5 Free';
   font-weight: 400;
 }

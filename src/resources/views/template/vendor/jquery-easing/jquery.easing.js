@@ -5,8 +5,7 @@
  * All rights reserved.
  * https://raw.github.com/gdsmith/jquery-easing/master/LICENSE
 */
-
-(function (factory) {
+function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(['jquery'], function ($) {
 			return factory($);
@@ -17,11 +16,9 @@
 		factory(jQuery);
 	}
 })(function($){
-
-// Preserve the original jQuery "swing" easing as "jswing"
+/ Preserve the original jQuery "swing" easing as "jswing"
 $.easing.jswing = $.easing.swing;
-
-var pow = Math.pow,
+ar pow = Math.pow,
 	sqrt = Math.sqrt,
 	sin = Math.sin,
 	cos = Math.cos,
@@ -31,8 +28,7 @@ var pow = Math.pow,
 	c3 = c1 + 1,
 	c4 = ( 2 * PI ) / 3,
 	c5 = ( 2 * PI ) / 4.5;
-
-// x is the fraction of animation progress, in the range 0..1
+/ x is the fraction of animation progress, in the range 0..1
 function bounceOut(x) {
 	var n1 = 7.5625,
 		d1 = 2.75;
@@ -46,8 +42,7 @@ function bounceOut(x) {
 		return n1*(x-=(2.625/d1))*x + 0.984375;
 	}
 }
-
-$.extend( $.easing,
+.extend( $.easing,
 {
 	def: 'easeOutQuad',
 	swing: function (x) {
@@ -162,5 +157,4 @@ $.extend( $.easing,
 			( 1 + bounceOut( 2 * x - 1 ) ) / 2;
 	}
 });
-
-});
+);

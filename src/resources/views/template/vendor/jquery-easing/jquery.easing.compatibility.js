@@ -7,8 +7,7 @@
  * Licensed under the MIT License:
  *   http://www.opensource.org/licenses/mit-license.php
  */
-
-(function($){
+function($){
 $.extend( $.easing,
 {
 	easeIn: function (x, t, b, c, d) {

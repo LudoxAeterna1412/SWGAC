@@ -1,7 +1,6 @@
 // Base Class Definition
 // -------------------------
-
-.#{$fa-css-prefix},
+#{$fa-css-prefix},
 .fas,
 .far,
 .fal,
@@ -15,7 +14,6 @@
   text-rendering: auto;
   line-height: 1;
 }
-
-%fa-icon {
+fa-icon {
   @include fa-icon;
 }

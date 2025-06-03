@@ -5,31 +5,27 @@ const crypto = require('crypto');
 const finalizarSesionActiva = require("../middleware/finalizarSesionActiva");
 
 class auth_Controller extends Controller {
-
-  // Método de login que usa finalizarSesionActiva
+ // Método de login que usa finalizarSesionActiva
   async login(req, res) {
     try {
       const { usuario_email, usuario_password } = req.body;
-
-      // Buscar usuario por correo electrónico
+     // Buscar usuario por correo electrónico
       const user = await User.getByEmail(usuario_email);
-
-      if (!user) {
+     if (!user) {
         return res.status(400).json({ message: "Usuario no encontrado" });
       }
-
-      // Verificar contraseña
+     // Verificar contraseña
       if (user.usuario_password !== usuario_password) {
         return res.status(400).json({ message: "Contraseña incorrecta" });
       }
-
-      // Finalizar cualquier sesión activa previa
+     ////////////////////////
+      //aqui va codigo para captcha
+      ////////////////////////
+     // Finalizar cualquier sesión activa previa
       await finalizarSesionActiva(user);
-
-      // Generar un token único para la nueva sesión
+     // Generar un token único para la nueva sesión
       const sessionToken = crypto.randomBytes(16).toString("hex");
-
-      // Actualizar la sesión y última fecha de inicio de sesión
+     // Actualizar la sesión y última fecha de inicio de sesión
       const updatedUser = await User.update(user._id, {
         usuario_sesion: sessionToken,
         usuario_ultimasesion: new Date(),
@@ -44,8 +40,7 @@ class auth_Controller extends Controller {
           usuario_sesion: updatedUser.usuario_sesion, // Token de sesión
         },
       });
-
-    } catch (error) {
+   } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error interno del servidor" });
     }
@@ -53,8 +48,7 @@ class auth_Controller extends Controller {
   index(req, res) {
     res.sendFile(path.join(__dirname, "../resources/views/auth", "login.html"));
   }
-
-  // Renderizar la vista del gestor de usuarios con EJS
+ // Renderizar la vista del gestor de usuarios con EJS
   dashboard(req, res) {
     res.render('dashboard', {  // Usamos res.render para renderizar la vista EJS
     });
@@ -65,6 +59,5 @@ class auth_Controller extends Controller {
     });
   }
 }
-
 // Esta parte asegura que el controlador tiene todos los métodos envueltos en asyncHandler
 module.exports = new auth_Controller();

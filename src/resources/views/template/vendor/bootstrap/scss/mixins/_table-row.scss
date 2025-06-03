@@ -1,6 +1,5 @@
 // Tables
-
-@mixin table-row-variant($state, $background, $border: null) {
+mixin table-row-variant($state, $background, $border: null) {
   // Exact selectors below required to override `.table-striped` and prevent
   // inheritance to nested tables.
   .table-#{$state} {
@@ -9,8 +8,7 @@
     > td {
       background-color: $background;
     }
-
-    @if $border != null {
+   @if $border != null {
       th,
       td,
       thead th,
@@ -19,17 +17,14 @@
       }
     }
   }
-
-  // Hover states for `.table-hover`
+ // Hover states for `.table-hover`
   // Note: this is not available for cells or rows within `thead` or `tfoot`.
   .table-hover {
     $hover-background: darken($background, 5%);
-
-    .table-#{$state} {
+   .table-#{$state} {
       @include hover() {
         background-color: $hover-background;
-
-        > td,
+       > td,
         > th {
           background-color: $hover-background;
         }

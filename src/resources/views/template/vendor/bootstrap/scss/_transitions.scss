@@ -1,18 +1,15 @@
 .fade {
   @include transition($transition-fade);
-
-  &:not(.show) {
+ &:not(.show) {
     opacity: 0;
   }
 }
-
-.collapse {
+collapse {
   &:not(.show) {
     display: none;
   }
 }
-
-.collapsing {
+collapsing {
   position: relative;
   height: 0;
   overflow: hidden;

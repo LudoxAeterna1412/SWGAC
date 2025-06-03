@@ -26,84 +26,94 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar -->
-    <ul class="navbar-nav  bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fa fa-bus" aria-hidden="true"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">S.W.T.I.C. <sup>v.2.0</sup></div>
+        <div class="sidebar-brand-text mx-3">S.W.G.A.C. <sup>v.1.0</sup></div>
       </a>
+    
       <!-- Divider -->
       <hr class="sidebar-divider my-0">
+    
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active">
-        <a class="nav-link" href="/dashboard" aria-expanded="true">
+        <a class="nav-link" href="/dashboard">
           <i class="fas fa-fw fa-cog"></i>
-          <span>PAGINA PRINCIPAL</span></a>
+          <span>PAGINA PRINCIPAL</span>
+        </a>
       </li>
+    
       <!-- Divider -->
       <hr class="sidebar-divider">
-      <!-- Nav Item - Pages Collapse Menu -->
-      <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item" id="menu_seguridad">
-        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapse_SEGURIDAD" aria-expanded="true"
-          aria-controls="collapse_SEGURIDAD">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>SEGURIDAD</span>
+    
+      <!-- Módulo - Usuarios -->
+      <li class="nav-item">
+        <a class="nav-link" href="/gestor_usuarios">
+          <i class="fas fa-fw fa-file-invoice-dollar"></i>
+          <span>Usuarios</span>
         </a>
-        <div id="collapse_SEGURIDAD" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Modulos:</h6>
-            <a class="collapse-item" id="link_rf01">Historial</a>
-          </div>
-        </div>
       </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading --> <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item" id="menu_mantenimiento">
-        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapse_MANTENIMIENTO" aria-expanded="true"
-          aria-controls="collapse_MANTENIMIENTO">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>MANTENIMIENTO</span>
+    
+      <!-- Módulo - Cotizaciones -->
+      <li class="nav-item">
+        <a class="nav-link" href="/gestor_cotizaciones">
+          <i class="fas fa-fw fa-file-invoice-dollar"></i>
+          <span>Cotizaciones</span>
         </a>
-        <div id="collapse_MANTENIMIENTO" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Modulos:</h6>
-            <a class="collapse-item" id="link_rf02">Gestionar Usuario</a>
-          </div>
-        </div>
       </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading --> <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item dropdown" id="menu_proyecto">
-        <a class="nav-link dropdown-toggle" href="#" id="dropdown_PROYECTO" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>PROYECTO</span>
+    
+      <!-- Módulo - Despachos -->
+      <li class="nav-item">
+        <a class="nav-link" href="/despachos">
+          <i class="fas fa-fw fa-truck-loading"></i>
+          <span>Despachos</span>
         </a>
-        <div class="dropdown-menu bg-white rounded shadow" aria-labelledby="dropdown_PROYECTO">
-          <h6 class="dropdown-header text-muted">Modulos:</h6>
-          <a class="dropdown-item" id="link_rf03">Controlar Módulo de Rutas</a>
-          <a class="dropdown-item" id="link_rf04">Gestionar Notificaciones y Alertas en Tiempo Real</a>
-          <a class="dropdown-item" id="link_rf05">Controlar Módulo de Monitoreo GPS</a>
-          <a class="dropdown-item" id="link_rf06">Gestionar Módulo de Predicción de tiempo y Distancia de
-            Viaje</a>
-        </div>
       </li>
+    
+      <!-- Módulo - Control GPS -->
+      <li class="nav-item">
+        <a class="nav-link" href="/control-gps">
+          <i class="fas fa-fw fa-map-marker-alt"></i>
+          <span>Control GPS</span>
+        </a>
+      </li>
+    
+      <!-- Módulo - Flujos (Ingreso/Egreso) -->
+      <li class="nav-item">
+        <a class="nav-link" href="/flujos">
+          <i class="fas fa-fw fa-exchange-alt"></i>
+          <span>Flujos (Ingreso/Egreso)</span>
+        </a>
+      </li>
+    
+      <!-- Módulo - Historial -->
+      <li class="nav-item">
+        <a class="nav-link" href="/historial">
+          <i class="fas fa-fw fa-history"></i>
+          <span>Historial</span>
+        </a>
+      </li>
+    
+      <!-- Módulo - Reportes -->
+      <li class="nav-item">
+        <a class="nav-link" href="/reportes">
+          <i class="fas fa-fw fa-chart-line"></i>
+          <span>Reportes</span>
+        </a>
+      </li>
+    
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
-      <!-- Sidebar Toggler (Sidebar) -->
+    
+      <!-- Sidebar Toggler -->
       <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
       </div>
     </ul>
+    
     <!-- End of Sidebar -->
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
@@ -421,38 +431,18 @@
       const menu_seguridad = document.getElementById('menu_seguridad');
       const menu_mantenimiento = document.getElementById('menu_mantenimiento');
       const menu_proyecto = document.getElementById('menu_proyecto');
+      
       const Controlar_Módulo_de_Rutas = document.getElementById('link_rf03');
       const Gestionar_Notificaciones_y_Alertas = document.getElementById('link_rf04');
       const Controlar_Módulo_de_Monitoreo = document.getElementById('link_rf05');
       const Gestionar_Módulo_de_Predicción = document.getElementById('link_rf06');
 
       // Ocultar el elemento si el tipo de usuario no tiene permisos
-      if (usuarioActivo.user.usuario_tipo == 'operador') { // Ajusta 'admin' al tipo de usuario que debe ver el menú
+      if (usuarioActivo.user.usuario_tipo == 'supervisor') { // Ajusta 'admin' al tipo de usuario que debe ver el menú
         menu_seguridad.style.display = 'none';
-        //menu_mantenimiento.style.display = 'none';
-        //menu_proyecto.style.display = 'none';
-      }
-      else if (usuarioActivo.user.usuario_tipo == 'pasajero') {
-        menu_seguridad.style.display = 'none';
-        menu_mantenimiento.style.display = 'none';
-        //menu_proyecto.style.display = 'none';
-        Gestionar_Notificaciones_y_Alertas.style.display = 'none';
-        Controlar_Módulo_de_Monitoreo.style.display = 'none';
-        Gestionar_Módulo_de_Predicción.style.display = 'none';
-      }
-      else if (usuarioActivo.user.usuario_tipo == 'conductor') {
-        menu_seguridad.style.display = 'none';
-        menu_mantenimiento.style.display = 'none';
-        //menu_proyecto.style.display = 'none';
-        Gestionar_Notificaciones_y_Alertas.style.display = 'none';
-        Controlar_Módulo_de_Rutas.style.display = 'none';
-        Controlar_Módulo_de_Monitoreo.style.display = 'none';
-        Gestionar_Módulo_de_Predicción.style.display = 'none';
       }
       else if (usuarioActivo.user.usuario_tipo == 'administrador') {
-          menu_seguridad.style.display = 'none';
-        //menu_mantenimiento.style.display = 'none';
-        //menu_mantenimiento.style.display = 'none';
+         // menu_seguridad.style.display = 'none';
       }
 
       console.log('Usuario activo:', usuarioActivo);

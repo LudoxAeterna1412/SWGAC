@@ -2,12 +2,10 @@
   color: $color;
   @include gradient-bg($background);
   border-color: $border;
-
-  hr {
+ hr {
     border-top-color: darken($border, 5%);
   }
-
-  .alert-link {
+ .alert-link {
     color: darken($color, 10%);
   }
 }
