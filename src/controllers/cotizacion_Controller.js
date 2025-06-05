@@ -58,32 +58,32 @@ class cotizacion_Controller extends Controller {
   }
 
   // Crear nueva cotización
-async store(req, res) {
-  try {
-    const { codigo, fecha, cliente, tipo, dni, ruc, total } = req.body;
+  async store(req, res) {
+    try {
+      const { codigo, fecha, cliente, tipo, dni, ruc, total } = req.body;
 
-    // Validación básica
-    if (!codigo || !fecha || !cliente || !tipo) {
-      return res.status(400).json({ message: 'Los campos codigo, fecha, cliente y tipo son obligatorios.' });
+      // Validación básica
+      if (!codigo || !fecha || !cliente || !tipo) {
+        return res.status(400).json({ message: 'Los campos codigo, fecha, cliente y tipo son obligatorios.' });
+      }
+
+      // Crear la nueva cotización usando el modelo personalizado
+      const newCotizacion = await Cotizacion.create({
+        codigo,
+        fecha,
+        cliente,
+        tipo,
+        dni,
+        ruc,
+        total
+      });
+
+      return res.status(201).json(newCotizacion);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: `Error: ${error.message}` });
     }
-
-    // Crear la nueva cotización usando el modelo personalizado
-    const newCotizacion = await Cotizacion.create({
-      codigo,
-      fecha,
-      cliente,
-      tipo,
-      dni,
-      ruc,
-      total
-    });
-
-    return res.status(201).json(newCotizacion);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: `Error: ${error.message}` });
   }
-}
 
 
 
@@ -91,17 +91,24 @@ async store(req, res) {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { cliente, tipo, descripcion, metros_cubicos, precio_unitario, total } = req.body;
+      const { codigo,
+        fecha,
+        cliente,
+        tipo,
+        dni,
+        ruc,
+        total } = req.body;
       // Validación mínima
       if (!cliente || !tipo) {
         return res.status(400).json({ message: 'Los campos cliente y tipo son obligatorios.' });
       }
       const updatedCotizacion = await Cotizacion.update(id, {
+        codigo,
+        fecha,
         cliente,
         tipo,
-        descripcion,
-        metros_cubicos,
-        precio_unitario,
+        dni,
+        ruc,
         total,
       });
       if (!updatedCotizacion) {
@@ -136,10 +143,22 @@ async store(req, res) {
   async updateModal(req, res) {
     try {
       const { id } = req.params;
-      const { codigo, fecha, cliente, tipo, dni, ruc, descripcion, colocado, metros_cubicos, precio_unitario, total } = req.body;
+      const {
+        codigo,
+        fecha,
+        cliente,
+        tipo,
+        dni,
+        ruc,
+        total
+      } = req.body;
+
       if (!codigo || !fecha || !cliente || !tipo) {
-        return res.status(400).json({ message: 'Los campos codigo, fecha, cliente y tipo son obligatorios.' });
+        return res.status(400).json({
+          message: 'Los campos código, fecha, cliente y tipo son obligatorios.'
+        });
       }
+
       const updatedCotizacion = await Cotizacion.update(id, {
         codigo,
         fecha,
@@ -147,21 +166,20 @@ async store(req, res) {
         tipo,
         dni,
         ruc,
-        descripcion,
-        colocado,
-        metros_cubicos,
-        precio_unitario,
-        total,
+        total
       });
+
       if (!updatedCotizacion) {
         return res.status(404).json({ message: 'Cotización no encontrada.' });
       }
+
       return res.status(200).json(updatedCotizacion);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
   }
+
 
   // Eliminar cotización
   async delete(req, res) {

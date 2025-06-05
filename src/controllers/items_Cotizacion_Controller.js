@@ -107,16 +107,17 @@ class items_Cotizacion_Controller extends Controller {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      const deletedItem = await Item.delete(id);
-      if (!deletedItem) {
-        return res.status(404).json({ message: "Ítem no encontrado." });
+      const result = await Item.delete(id);
+      if (!result) {
+        return res.status(404).json({ message: 'Ítem no encontrado para eliminar' });
       }
-      return res.status(200).json({ message: "Ítem eliminado exitosamente." });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: `Error: ${error.message}` });
+      return res.status(200).json({ message: 'Ítem eliminado' });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: `Error: ${err.message}` });
     }
   }
+
 
   // Renderizar vista de gestión de ítems (si aplica)
   gestor_items(req, res) {

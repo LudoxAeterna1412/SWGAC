@@ -334,7 +334,8 @@
       <div class="modal-dialog" style="max-width: 2000px; width: 95%;" modal-dialog-scrollable>
         <div class="modal-content">
 
-          <form id="modal_cotForm" onsubmit="saveCot(); return false;">
+          <!-- Único FORM que abarca todo el modal -->
+          <form id="modal_cotForm">
             <div class="modal-header">
               <h5 class="modal-title">Editar Cotización</h5>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -342,17 +343,224 @@
 
             <div class="modal-body">
               <% include modal_gestor_cotizaciones %>
+                <!-- Aquí iría el contenido incluido -->
             </div>
 
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <!-- Este submit DEBE estar dentro del mismo <form> -->
               <input type="submit" class="btn btn-primary" value="Actualizar Cotización">
             </div>
           </form>
+          <!-- FIN del FORM -->
 
         </div>
       </div>
     </div>
+    <!-- Scripts fuera del <form> -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modalForm = document.getElementById('modal_cotForm');
+        if (modalForm) {
+          modalForm.addEventListener('submit', async ev => {
+            ev.preventDefault();
+            console.log('saveCot2() invocado vía EventListener');
+            await saveCot2();
+          });
+        }
+      });
+      async function saveCot2() {
+        const cotId = document.getElementById('modal_id').value.trim();
+        if (!cotId) {
+          console.error('No hay ID de cotización en modal_id');
+          return;
+        }
+
+        const cabecera = {
+          codigo: document.getElementById('modal_codigo').value.trim(),
+          fecha: document.getElementById('modal_fecha').value,
+          cliente: document.getElementById('modal_cliente').value.trim(),
+          tipo: document.getElementById('modal_tipo').value,
+          dni: document.getElementById('modal_dni').value.trim(),
+          ruc: document.getElementById('modal_ruc').value.trim()
+        };
+
+        try {
+          // 1. Actualizar cabecera
+          const resCab = await fetch(`/api/cotizacion/updateModal/${cotId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cabecera)
+          });
+
+          if (!resCab.ok) {
+            const err = await resCab.json();
+            alert('Error actualizando cotización: ' + (err.message || resCab.statusText));
+            return;
+          }
+
+          console.log('Cabecera actualizada correctamente.');
+
+          // 2. Obtener ítems actuales por código y eliminarlos uno a uno
+          const resItems = await fetch('/api/items_cotizacion/getByCodigo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: cabecera.codigo })
+          });
+
+          if (resItems.ok) {
+            const items = await resItems.json();
+            const deletePromises = items.map(it =>
+              fetch(`/api/items_cotizacion/delete/${it._id}`, { method: 'DELETE' })
+            );
+            await Promise.allSettled(deletePromises);
+            console.log(`${items.length} ítems eliminados`);
+          }
+
+          // 3. Insertar los nuevos ítems que están actualmente en el modal
+          const container = document.getElementById('modalItemsContainer');
+          console.log('aqui el bug de duplicacion en gestor');
+          const bloques = Array.from(container.querySelectorAll('.item-block'));
+
+          const promesasItems = bloques.map(block => {
+            const itemData = {
+              codigo: cabecera.codigo,
+              codigo_diseno: block.querySelector('[name$="[codigo_diseno]"]').value.trim(),
+              descripcion: block.querySelector('[name$="[descripcion]"]').value.trim(),
+              colocado: block.querySelector('[name$="[colocado]"]').value.trim(),
+              metros_cubicos: +block.querySelector('[name$="[metros_cubicos]"]').value,
+              precio_unitario: +block.querySelector('[name$="[precio_unitario]"]').value,
+              total_item: +block.querySelector('[name$="[total_item]"]').value
+            };
+
+            return fetch('/api/items_cotizacion/store', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(itemData)
+            }).then(async res => {
+              if (!res.ok) {
+                const err = await res.json();
+                return Promise.reject(err.message || 'Error en ítem');
+              }
+              return res.json();
+            });
+          });
+
+          const results = await Promise.allSettled(promesasItems);
+          const exitos = results.filter(r => r.status === 'fulfilled').length;
+
+          alert(`Se guardaron ${exitos}/${bloques.length} ítems.`);
+        } catch (error) {
+          console.error('Error en saveCot2():', error);
+          alert('Ocurrió un error al guardar la cotización y sus ítems.');
+        }
+      }
+
+
+    </script>
+
+
+    <!-- ===========================
+     SCRIPTS: Funciones de Cotización
+=========================== -->
+    <script>
+      // 1) Abrir modal de Bootstrap genérico
+      async function openModal(modalId) {
+        try {
+          // pequeño delay para que el navegador pinte el interior del modal
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const modalEl = document.getElementById(modalId);
+          new bootstrap.Modal(modalEl).show();
+          // otro pequeño delay opcional antes de rellenar campos
+          await new Promise(resolve => setTimeout(resolve, 50));
+        } catch (error) {
+          console.error("Error al abrir el modal:", error);
+        }
+      }
+
+      // 2) Eliminar cotización
+      async function delCot(id) {
+        if (!confirm('¿Eliminar cotización?')) return;
+        const res = await fetch(`/api/cotizacion/delete/${id}`, { method: 'DELETE' });
+        if (res.ok) loadCotizaciones();
+        else alert('Error eliminando');
+      }
+
+      // 3) Editar cotización: abrir modal y poblar sólo campos principales
+      async function editCot(id) {
+        try {
+          // 1) Traigo la cabecera
+          const res = await fetch('/api/cotizacion/getById', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ _id: id })
+          });
+          if (!res.ok) throw new Error('Cotización no encontrada');
+          const c = await res.json();
+
+          // 2) Abro el modal
+          await openModal('cotModal');
+
+          // 3) Relleno la cabecera
+          document.getElementById('modal_id').value = c._id;
+          document.getElementById('modal_codigo').value = c.codigo;
+          document.getElementById('modal_fecha').value = c.fecha.split('T')[0];
+          document.getElementById('modal_cliente').value = c.cliente;
+          document.getElementById('modal_tipo').value = c.tipo;
+          document.getElementById('modal_dni').value = c.dni || '';
+          document.getElementById('modal_ruc').value = c.ruc || '';
+
+          // 4) Traigo los ítems cuyo código coincide
+          const rItems = await fetch('/api/items_cotizacion/getByCodigo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: c.codigo })
+          });
+          if (!rItems.ok) throw new Error('No se pudo cargar los ítems');
+          const items = await rItems.json(); // Ahora es un array
+
+          // 5) Listarlos en el modal
+          // Limpiar contenedor antes de poblar
+          const mContainer = document.getElementById('modalItemsContainer');
+          mContainer.innerHTML = '';
+          // Obtenemos la función de agregar ítem
+          const addBtn = document.getElementById('addModalItemBtn');
+
+          for (const itm of items) {
+            // 5.1) Clonamos una fila
+            addBtn.click();
+            // 5.2) Rellenamos la última fila
+            const filas = mContainer.querySelectorAll('.item-block');
+            const fila = filas[filas.length - 1];
+
+            fila.querySelector('input[name$="[codigo]"]').value = itm.codigo;
+            fila.querySelector('select[name$="[codigo_diseno]"]').value = itm.codigo_diseno;
+            fila.querySelector('input[name$="[descripcion]"]').value = itm.descripcion;
+            fila.querySelector('select[name$="[colocado]"]').value = itm.colocado;
+            fila.querySelector('input[name$="[metros_cubicos]"]').value = itm.metros_cubicos;
+            fila.querySelector('input[name$="[precio_unitario]"]').value = itm.precio_unitario;
+            fila.querySelector('input[name$="[total_item]"]').value = itm.total_item;
+
+            const idInput = fila.querySelector('input[name$="[id]"]');
+            if (idInput) idInput.value = itm._id || '';
+            console.log('idInput:', idInput);
+            console.log('aqui el bug de duplicacion en editCot');
+          }
+
+        } catch (err) {
+          console.error('Error en editCot:', err);
+          alert(err.message || 'Error al cargar datos de cotización');
+        }
+      }
+
+
+
+
+
+      // Asegurar que al cargar la página se recarguen las cotizaciones
+      window.onload = loadCotizaciones;
+    </script>
+
     <!-- ===========================
      SCRIPTS: Operaciones de Cotización
 ============================ -->
@@ -444,29 +652,42 @@
               body: JSON.stringify(cabecera)
             });
             const bodyCab = await resCab.json();
+
             if (!resCab.ok) {
               if (bodyCab.message?.includes('duplicate key')) {
                 alert(`El código "${cabecera.codigo}" ya existe. Usa otro diferente.`);
               } else {
                 alert(`Error al crear cotización: ${bodyCab.message || JSON.stringify(bodyCab)}`);
               }
+              submitBtn.disabled = false;
               return;
             }
+
             cotID = bodyCab._id;
             alert('Cotización creada (ID: ' + cotID + ')');
 
-            // 2) Recolectar y enviar cada ítem por separado
-            const bloques = Array.from(document.querySelectorAll('.item-block'));
+            // ───────────────────────────────────────────────────────────────────
+            // 2) **NO limpiar aún #itemsContainer**, para poder leer los bloques que haya agregado el usuario.
+            //    (Antes lo vaciábamos antes de tiempo, y por eso no había ítems que procesar.)
+            // ───────────────────────────────────────────────────────────────────
+
+            // 3) Recolectar y enviar cada ítem que efectivamente esté dentro de #itemsContainer
+            const bloques = Array.from(
+              document.querySelectorAll('#itemsContainer .item-block')
+            );
+
             const promesasItems = bloques.map(block => {
+              // AÑADIMOS el campo "codigo" para que el back-end relacione cada ítem con la cotización recién creada:
               const itemData = {
-                codigo: block.querySelector('[name$="[codigo]"]').value.trim(),
+                codigo: cabecera.codigo,  // <--- campo obligatorio para asociar con la cabecera
                 codigo_diseno: block.querySelector('[name$="[codigo_diseno]"]').value.trim(),
                 descripcion: block.querySelector('[name$="[descripcion]"]').value.trim(),
                 colocado: block.querySelector('[name$="[colocado]"]').value.trim(),
                 metros_cubicos: +block.querySelector('[name$="[metros_cubicos]"]').value,
                 precio_unitario: +block.querySelector('[name$="[precio_unitario]"]').value,
-                total_item: +block.querySelector('[name$="[total_item]"]').value,
+                total_item: +block.querySelector('[name$="[total_item]"]').value
               };
+
               return fetch('/api/items_cotizacion/store', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -486,9 +707,9 @@
               alert(`Se guardaron ${exitos}/${bloques.length} ítems.`);
             }
 
-            // 3) Limpiar formulario y recargar lista
+            // 4) Limpiar formulario y recargar la lista
             form.reset();
-            document.getElementById('itemsContainer').innerHTML = '';
+            document.getElementById('itemsContainer').innerHTML = '';  // <-- Aquí sí limpiamos, tras procesar
             if (typeof loadCotizaciones === 'function') {
               loadCotizaciones();
             }
@@ -500,127 +721,4 @@
           }
         }
       });
-    </script>
-
-
-
-
-    <!-- ===========================
-     SCRIPTS: Funciones de Cotización
-=========================== -->
-    <script>
-      // 1) Abrir modal de Bootstrap genérico
-      async function openModal(modalId) {
-        try {
-          // pequeño delay para que el navegador pinte el interior del modal
-          await new Promise(resolve => setTimeout(resolve, 100));
-          const modalEl = document.getElementById(modalId);
-          new bootstrap.Modal(modalEl).show();
-          // otro pequeño delay opcional antes de rellenar campos
-          await new Promise(resolve => setTimeout(resolve, 50));
-        } catch (error) {
-          console.error("Error al abrir el modal:", error);
-        }
-      }
-
-      // 2) Eliminar cotización
-      async function delCot(id) {
-        if (!confirm('¿Eliminar cotización?')) return;
-        const res = await fetch(`/api/cotizacion/delete/${id}`, { method: 'DELETE' });
-        if (res.ok) loadCotizaciones();
-        else alert('Error eliminando');
-      }
-
-      // 3) Editar cotización: abrir modal y poblar sólo campos principales
-      async function editCot(id) {
-        try {
-          // 1) Traigo la cabecera
-          const res = await fetch('/api/cotizacion/getById', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ _id: id })
-          });
-          if (!res.ok) throw new Error('Cotización no encontrada');
-          const c = await res.json();
-
-          // 2) Abro el modal
-          await openModal('cotModal');
-
-          // 3) Relleno la cabecera
-          document.getElementById('modal_id').value = c._id;
-          document.getElementById('modal_codigo').value = c.codigo;
-          document.getElementById('modal_fecha').value = c.fecha.split('T')[0];
-          document.getElementById('modal_cliente').value = c.cliente;
-          document.getElementById('modal_tipo').value = c.tipo;
-          document.getElementById('modal_dni').value = c.dni || '';
-          document.getElementById('modal_ruc').value = c.ruc || '';
-
-          // 4) Traigo los ítems cuyo código coincide
-          const rItems = await fetch('/api/items_cotizacion/getByCodigo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo: c.codigo })
-          });
-          if (!rItems.ok) throw new Error('No se pudo cargar los ítems');
-          const items = await rItems.json(); // Ahora es un array
-
-          // 5) Listarlos en el modal
-          // Limpiar contenedor antes de poblar
-          const mContainer = document.getElementById('modalItemsContainer');
-          mContainer.innerHTML = '';
-          // Obtenemos la función de agregar ítem
-          const addBtn = document.getElementById('addModalItemBtn');
-
-          for (const itm of items) {
-            // 5.1) Clonamos una fila
-            addBtn.click();
-            // 5.2) Rellenamos la última fila
-            const filas = mContainer.querySelectorAll('.item-block');
-            const fila = filas[filas.length - 1];
-
-            fila.querySelector('input[name$="[codigo]"]').value = itm.codigo;
-            fila.querySelector('select[name$="[codigo_diseno]"]').value = itm.codigo_diseno;
-            fila.querySelector('input[name$="[descripcion]"]').value = itm.descripcion;
-            fila.querySelector('select[name$="[colocado]"]').value = itm.colocado;
-            fila.querySelector('input[name$="[metros_cubicos]"]').value = itm.metros_cubicos;
-            fila.querySelector('input[name$="[precio_unitario]"]').value = itm.precio_unitario;
-            fila.querySelector('input[name$="[total_item]"]').value = itm.total_item;
-          }
-
-        } catch (err) {
-          console.error('Error en editCot:', err);
-          alert(err.message || 'Error al cargar datos de cotización');
-        }
-      }
-
-
-
-      // 4) Guardar actualización de cotización (sin manejar ítems)
-      async function saveCot() {
-        const id = document.getElementById('modal_id').value;
-        const data = {
-          codigo: document.getElementById('modal_codigo').value,
-          fecha: document.getElementById('modal_fecha').value,
-          cliente: document.getElementById('modal_cliente').value,
-          tipo: document.getElementById('modal_tipo').value,
-          dni: document.getElementById('modal_dni').value,
-          ruc: document.getElementById('modal_ruc').value
-        };
-        console.log('llega');
-        const res = await fetch(`/api/cotizacion/updateModal/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        if (res.ok) {
-          alert('Cotización actualizada');
-          loadCotizaciones();
-        } else {
-          alert('Error actualizando');
-        }
-      }
-
-      // Asegurar que al cargar la página se recarguen las cotizaciones
-      window.onload = loadCotizaciones;
     </script>
