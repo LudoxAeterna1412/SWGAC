@@ -1,4 +1,3 @@
-
 // Import models
 const ExcelJS = require('exceljs');
 const Cotizacion = require('../model/cotizacion_Model');
@@ -11,7 +10,6 @@ async function generateCotizacionesExcel(cotizaciones) {
   await wb.xlsx.readFile('src/resources/formats/cotizacion.xlsm');
 
   const ws = wb.getWorksheet('format');
-
   const c = cotizaciones[0];
 
   // Ubicaciones fijas según tu diseño:
@@ -20,17 +18,22 @@ async function generateCotizacionesExcel(cotizaciones) {
   ws.getCell('E12').value = c.cliente;
   ws.getCell('M12').value = c.tipo;
   ws.getCell('E13').value = c.dni || '';
-  ws.getCell('E13').value = c.ruc || '';
+  ws.getCell('E14').value = c.ruc || '';
+  // Nuevos campos:
+  ws.getCell('E15').value = c.codigo_certificacion || '';
+  ws.getCell('E16').value = c.estructura || '';
+  ws.getCell('E17').value = c.asesor || '';
+  ws.getCell('E18').value = c.celular || '';
+  ws.getCell('E19').value = c.maestro || '';
+
   ws.getCell('E23').value = c.descripcion || '';
   ws.getCell('M12').value = c.colocado ? 'Sí' : 'No';
   ws.getCell('I23').value = c.metros_cubicos;
   ws.getCell('M24').value = c.total;
 
-
   // Buffer
   return await wb.xlsx.writeBuffer();
 };
-
 
 class cotizacion_Controller extends Controller {
   // Obtener cotización por código
@@ -60,7 +63,7 @@ class cotizacion_Controller extends Controller {
   // Crear nueva cotización
   async store(req, res) {
     try {
-      const { codigo, fecha, cliente, tipo, dni, ruc, total } = req.body;
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
 
       // Validación básica
       if (!codigo || !fecha || !cliente || !tipo) {
@@ -75,6 +78,13 @@ class cotizacion_Controller extends Controller {
         tipo,
         dni,
         ruc,
+        codigo_certificacion,
+        estructura,
+        asesor,
+        celular,
+        maestro,
+        email,
+        estado,
         total
       });
 
@@ -85,19 +95,11 @@ class cotizacion_Controller extends Controller {
     }
   }
 
-
-
   // Actualizar cotización por ID
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { codigo,
-        fecha,
-        cliente,
-        tipo,
-        dni,
-        ruc,
-        total } = req.body;
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
       // Validación mínima
       if (!cliente || !tipo) {
         return res.status(400).json({ message: 'Los campos cliente y tipo son obligatorios.' });
@@ -109,7 +111,14 @@ class cotizacion_Controller extends Controller {
         tipo,
         dni,
         ruc,
-        total,
+        codigo_certificacion,
+        estructura,
+        asesor,
+        celular,
+        maestro,
+        email,
+        estado,
+        total
       });
       if (!updatedCotizacion) {
         return res.status(404).json({ message: 'Cotización no encontrada.' });
@@ -143,15 +152,7 @@ class cotizacion_Controller extends Controller {
   async updateModal(req, res) {
     try {
       const { id } = req.params;
-      const {
-        codigo,
-        fecha,
-        cliente,
-        tipo,
-        dni,
-        ruc,
-        total
-      } = req.body;
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
 
       if (!codigo || !fecha || !cliente || !tipo) {
         return res.status(400).json({
@@ -166,6 +167,13 @@ class cotizacion_Controller extends Controller {
         tipo,
         dni,
         ruc,
+        codigo_certificacion,
+        estructura,
+        asesor,
+        celular,
+        maestro,
+        email,
+        estado,
         total
       });
 
@@ -179,7 +187,6 @@ class cotizacion_Controller extends Controller {
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
   }
-
 
   // Eliminar cotización
   async delete(req, res) {
@@ -195,6 +202,7 @@ class cotizacion_Controller extends Controller {
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
   }
+
   // Exportar cotizaciones a Excel (por CÓDIGO opcionalmente)
   async exportExcel(req, res) {
     try {
@@ -204,7 +212,7 @@ class cotizacion_Controller extends Controller {
       if (codigo) {
         const cotizacion = await Cotizacion.getByCodigo(codigo); // <-- Cambio aquí
         if (!cotizacion) {
-          return res.status(404).json({ message: cotizacion });
+          return res.status(404).json({ message: 'Cotización no encontrada' });
         }
         cotizaciones.push(cotizacion); // Convertir en array
       } else {
@@ -222,7 +230,6 @@ class cotizacion_Controller extends Controller {
       return res.status(500).send(error.message);
     }
   }
-
 
   // Renderizar vista de gestor de cotizaciones
   gestor_cotizaciones(req, res) {

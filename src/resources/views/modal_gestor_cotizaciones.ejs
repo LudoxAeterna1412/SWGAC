@@ -1,68 +1,85 @@
-
-       <!-- ========================
+<!-- ========================
        DATOS DEL CLIENTE
   ========================= -->
-       <div style="display: flex; flex-direction: column; gap: 10px;">
-              <h4>Datos del Cliente</h4>
-              <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
-                     <input type="text" id="modal_id" placeholder="ID Cotización" disabled
-                            style="flex:1; min-width:200px;" class="form-control form-control-sm" />
+<div style="display: flex; flex-direction: column; gap: 10px;">
+       <h4>Datos del Cliente</h4>
+       <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
+              <input type="text" id="modal_id" placeholder="ID Cotización" disabled style="flex:1; min-width:200px;"
+                     class="form-control form-control-sm" />
 
-                     <div style="flex: 2 1 300px; min-width: 200px; display: flex; flex-direction: column;">
-                            <label for="modal_cliente">Cliente</label>
-                            <input type="text" id="modal_cliente" required class="form-control form-control-sm">
-                     </div>
-
-                     <div style="flex: 1 1 150px; min-width: 120px; display: flex; flex-direction: column;">
-                            <label for="modal_tipo">Tipo</label>
-                            <select id="modal_tipo" required class="form-control form-control-sm">
-                                   <option value="">Seleccione</option>
-                                   <option value="privado">privado</option>
-                                   <option value="publico">publico</option>
-                            </select>
-                     </div>
-
-                     <div style="flex: 1 1 300px; min-width: 200px; display: flex; gap: 10px;">
-                            <div style="flex: 1; display: flex; flex-direction: column;">
-                                   <label for="modal_dni">DNI</label>
-                                   <input type="text" id="modal_dni" class="form-control form-control-sm">
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column;">
-                                   <label for="modal_ruc">RUC</label>
-                                   <input type="text" id="modal_ruc" class="form-control form-control-sm">
-                            </div>
-                     </div>
+              <div style="flex: 2 1 300px; min-width: 200px; display: flex; flex-direction: column;">
+                     <label for="modal_cliente">Cliente</label>
+                     <input type="text" id="modal_cliente" required class="form-control form-control-sm">
               </div>
 
-              <h4>Datos de Cotización</h4>
-              <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                     <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
-                            <label for="modal_codigo">Código</label>
-                            <input type="text" id="modal_codigo" required class="form-control form-control-sm">
+              <div style="flex: 1 1 150px; min-width: 120px; display: flex; flex-direction: column;">
+                     <label for="modal_tipo">Tipo</label>
+                     <select id="modal_tipo" required class="form-control form-control-sm">
+                            <option value="">Seleccione</option>
+                            <option value="privado">privado</option>
+                            <option value="publico">publico</option>
+                     </select>
+              </div>
+
+              <div style="flex: 1 1 300px; min-width: 200px; display: flex; gap: 10px;">
+                     <div style="flex: 1; display: flex; flex-direction: column;">
+                            <label for="modal_dni">DNI</label>
+                            <input type="text" id="modal_dni" class="form-control form-control-sm">
                      </div>
-                     <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
-                            <label for="modal_fecha">Fecha</label>
-                            <input type="date" id="modal_fecha" required class="form-control form-control-sm">
+                     <div style="flex: 1; display: flex; flex-direction: column;">
+                            <label for="modal_ruc">RUC</label>
+                            <input type="text" id="modal_ruc" class="form-control form-control-sm">
                      </div>
               </div>
        </div>
 
-       <!-- =========================
+       <h4>Datos de Cotización</h4>
+       <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+              <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
+                     <label for="modal_codigo">Código</label>
+                     <input type="text" id="modal_codigo" required class="form-control form-control-sm">
+              </div>
+              <div style="flex: 0 0 25%; min-width: 150px; display: flex; flex-direction: column;">
+                     <label for="modal_fecha">Fecha</label>
+                     <input type="date" id="modal_fecha" required class="form-control form-control-sm">
+              </div>
+       </div>
+</div>
+
+<!-- =========================
        ÍTEMS DE LA COTIZACIÓN (MODAL)
   ========================= -->
-       <fieldset class="border p-3 rounded mt-3">
-              <legend class="px-2">Ítems de la cotización</legend>
+<fieldset class="border p-3 rounded mt-3">
+       <legend class="px-2">Ítems de la cotización</legend>
 
-              <!-- Contenedor de ítems -->
-              <div id="modalItemsContainer" class="d-flex flex-column gap-3"></div>
+       <!-- Contenedor de ítems -->
+       <div id="modalItemsContainer" class="d-flex flex-column gap-3"></div>
 
-              <!-- Botón agregar ítem -->
-              <div class="text-end mt-2">
-                     <button type="button" id="addModalItemBtn" class="btn btn-secondary btn-sm">
-                            Agregar ítem
-                     </button>
-              </div>
-       </fieldset>
+       <!-- Botón agregar ítem -->
+       <div class="text-end mt-2">
+              <button type="button" id="addModalItemBtn" class="btn btn-secondary btn-sm">
+                     Agregar ítem
+              </button>
+       </div>
+</fieldset>
+
+<!-- ================================
+     PAGOS DE LA COTIZACIÓN (MODAL)
+================================= -->
+<fieldset class="border p-3 rounded mt-4">
+       <legend class="px-2">Pagos de la cotización</legend>
+
+       <!-- Contenedor de pagos -->
+       <div id="modalPagosContainer" class="d-flex flex-column gap-3"></div>
+
+       <!-- Botón agregar pago -->
+       <div class="text-end mt-2">
+              <button type="button" id="addModalPagoBtn" class="btn btn-success btn-sm">
+                     Agregar pago
+              </button>
+       </div>
+</fieldset>
+
 
 <!-- TEMPLATE PARA CADA ÍTEM EN EL MODAL -->
 <template id="modal-item-block-template">
@@ -152,6 +169,54 @@
               </div>
        </div>
 </template>
+<!-- TEMPLATE PARA CADA PAGO -->
+<template id="modal-pago-block-template">
+       <div class="item-block">
+              <!-- Código -->
+              <div class="field codigo">
+                     <label>Código</label>
+                     <input type="text" name="modal_pagos[__IDX__][codigo]" required
+                            class="form-control form-control-sm">
+              </div>
+
+              <!-- Monto Total -->
+              <div class="field monto-total">
+                     <label>Monto Total</label>
+                     <input type="number" step="0.01" name="modal_pagos[__IDX__][monto_total]" required
+                            class="form-control form-control-sm">
+              </div>
+
+
+              <!-- Fecha de Pago -->
+              <div class="field fecha-pago">
+                     <label>Fecha Pago</label>
+                     <input type="date" name="modal_pagos[__IDX__][fecha_pago]" required
+                            class="form-control form-control-sm">
+              </div>
+
+              <!-- Forma de Pago -->
+              <div class="field forma-pago">
+                     <label>Forma de Pago</label>
+                     <select name="modal_pagos[__IDX__][forma_pago]" required class="form-control form-control-sm">
+                            <option value="adelanto">Adelanto</option>
+                            <option value="saldo">Saldo</option>
+                     </select>
+              </div>
+
+              <!-- Monto Pago -->
+              <div class="field monto-pago">
+                     <label>Monto Pago</label>
+                     <input type="number" step="0.01" name="modal_pagos[__IDX__][monto_pago]" required
+                            class="form-control form-control-sm">
+              </div>
+              <!-- Botón Eliminar -->
+              <div class="field remove">
+                     <label class="visually-hidden">Eliminar</label>
+                     <button type="button" class="btn btn-danger btn-sm btn-remove"
+                            aria-label="Eliminar pago">×</button>
+              </div>
+       </div>
+</template>
 
 <style>
        /* Copia aquí tus estilos de .item-block desde el form principal */
@@ -225,7 +290,28 @@
               });
 
               mAddBtn.addEventListener('click', addModalItem);
-       })();
 
-     
+              // Pagos
+              let pidx = 0;
+              const pContainer = document.getElementById('modalPagosContainer');
+              const pAddBtn = document.getElementById('addModalPagoBtn');
+              const pTpl = document.getElementById('modal-pago-block-template').innerHTML;
+
+              function addModalPago() {
+                     const html = pTpl.replace(/__IDX__/g, pidx);
+                     const wrap = document.createElement('div');
+                     wrap.innerHTML = html.trim();
+                     pContainer.appendChild(wrap.firstElementChild);
+                     pidx++;
+              }
+
+              pAddBtn.addEventListener('click', addModalPago);
+
+              pContainer.addEventListener('click', e => {
+                     if (e.target.matches('.btn-remove')) {
+                            const block = e.target.closest('.item-block');
+                            if (block) block.remove();
+                     }
+              });
+       })();
 </script>

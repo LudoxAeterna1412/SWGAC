@@ -25,7 +25,8 @@
     <!-- ===========================
        FORMULARIO DE COTIZACIÓN
   ============================ -->
-    <form id="cotizacionForm" style="display: flex; flex-direction: column; gap: 20px;">
+    <form id="cotizacionForm" action="/cotizaciones" method="POST"
+      style="display: flex; flex-direction: column; gap: 20px;">
 
       <!-- Sección 1: Datos de la cotización -->
       <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
@@ -35,22 +36,22 @@
 
           <div style="flex: 1 1 200px; display: flex; flex-direction: column;">
             <label for="codigo">Código</label>
-            <input type="text" id="codigo" class="form-control form-control-sm" required>
+            <input type="text" id="codigo" name="codigo" class="form-control form-control-sm" required>
           </div>
 
           <div style="flex: 1 1 200px; display: flex; flex-direction: column;">
             <label for="fecha">Fecha</label>
-            <input type="date" id="fecha" class="form-control form-control-sm" required>
+            <input type="date" id="fecha" name="fecha" class="form-control form-control-sm" required>
           </div>
 
           <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
             <label for="cliente">Cliente</label>
-            <input type="text" id="cliente" class="form-control form-control-sm" required>
+            <input type="text" id="cliente" name="cliente" class="form-control form-control-sm" required>
           </div>
 
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="tipo">Tipo</label>
-            <select id="tipo" class="form-control form-control-sm" required>
+            <select id="tipo" name="tipo" class="form-control form-control-sm" required>
               <option value="">Seleccione</option>
               <option value="publico">publico</option>
               <option value="privado">privado</option>
@@ -59,18 +60,62 @@
 
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="dni">DNI</label>
-            <input type="text" id="dni" class="form-control form-control-sm">
+            <input type="text" id="dni" name="dni" class="form-control form-control-sm">
           </div>
 
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="ruc">RUC</label>
-            <input type="text" id="ruc" class="form-control form-control-sm">
+            <input type="text" id="ruc" name="ruc" class="form-control form-control-sm">
+          </div>
+
+          <!-- Nuevos campos agregados -->
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="codigo_certificacion">Código Certificación</label>
+            <input type="text" id="codigo_certificacion" name="codigo_certificacion"
+              class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
+            <label for="estructura">Estructura</label>
+            <input type="text" id="estructura" name="estructura" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
+            <label for="asesor">Asesor</label>
+            <input type="text" id="asesor" name="asesor" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="celular">Celular</label>
+            <input type="text" id="celular" name="celular" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
+            <label for="maestro">Maestro</label>
+            <input type="text" id="maestro" name="maestro" class="form-control form-control-sm">
+          </div>
+
+          <div style="flex: 2 1 300px; display: flex; flex-direction: column;">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" class="form-control form-control-sm">
+          </div>
+
+     
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado" class="form-control form-control-sm" required>
+              <option value="">Seleccione</option>
+              <option value="esperando">esperando</option>
+              <option value="apobado">apobado</option>
+              <option value="terminado">terminado</option>
+            </select>
           </div>
 
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="total">Total</label>
-            <input type="number" id="total" class="form-control form-control-sm" required step="0.01">
+            <input type="number" id="total" name="total" class="form-control form-control-sm" required step="0.01">
           </div>
+
         </div>
       </fieldset>
 
@@ -89,11 +134,50 @@
         </div>
       </fieldset>
 
+      <!-- Sección 3: Resumen de Bombas -->
+      <fieldset class="border p-3 rounded">
+        <legend class="px-2">Resumen de Bombas</legend>
+        <div
+          style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: flex-start;">
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="codigo_bomba">Código</label>
+            <input type="text" id="codigo_bomba" name="codigo_bomba" class="form-control form-control-sm" required>
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="precio_unitario">Precio Unitario</label>
+            <input type="number" id="precio_unitario" name="precio_unitario" class="form-control form-control-sm"
+              required step="0.01">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="excedente">Excedente</label>
+            <input type="number" id="excedente" name="excedente" class="form-control form-control-sm" required
+              step="0.01">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="adicional">Adicional</label>
+            <input type="number" id="adicional" name="adicional" class="form-control form-control-sm" required
+              step="0.01">
+          </div>
+
+          <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
+            <label for="total_bomba">Total</label>
+            <input type="number" id="total_bomba" name="total_bomba" class="form-control form-control-sm" required
+              step="0.01">
+          </div>
+
+        </div>
+      </fieldset>
+
       <!-- Botón de envío general -->
       <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
         <input type="submit" class="btn btn-primary btn-sm" value="Registrar">
       </div>
     </form>
+
 
     <!-- ===========================
        TEMPLATE DE ITEMS
@@ -544,7 +628,6 @@
             const idInput = fila.querySelector('input[name$="[id]"]');
             if (idInput) idInput.value = itm._id || '';
             console.log('idInput:', idInput);
-            console.log('aqui el bug de duplicacion en editCot');
           }
 
         } catch (err) {
@@ -641,6 +724,13 @@
             tipo: document.getElementById('tipo').value,
             dni: document.getElementById('dni').value.trim(),
             ruc: document.getElementById('ruc').value.trim(),
+            codigo_certificacion: document.getElementById('codigo_certificacion').value.trim(),
+            estructura: document.getElementById('estructura').value.trim(),
+            asesor: document.getElementById('asesor').value.trim(),
+            celular: document.getElementById('celular').value.trim(),
+            maestro: document.getElementById('maestro').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            estado: document.getElementById('estado').value.trim(),
             total: +document.getElementById('total').value
           };
 
@@ -654,11 +744,8 @@
             const bodyCab = await resCab.json();
 
             if (!resCab.ok) {
-              if (bodyCab.message?.includes('duplicate key')) {
-                alert(`El código "${cabecera.codigo}" ya existe. Usa otro diferente.`);
-              } else {
-                alert(`Error al crear cotización: ${bodyCab.message || JSON.stringify(bodyCab)}`);
-              }
+              // Eliminada verificación de clave duplicada, solo mensaje genérico
+              alert(`Error al crear cotización: ${bodyCab.message || JSON.stringify(bodyCab)}`);
               submitBtn.disabled = false;
               return;
             }
@@ -707,7 +794,32 @@
               alert(`Se guardaron ${exitos}/${bloques.length} ítems.`);
             }
 
-            // 4) Limpiar formulario y recargar la lista
+            // 4) — Ahora procesar la Sección 3: Resumen de Bombas —
+            const bombaData = {
+              codigo: document.getElementById('codigo_bomba').value.trim(),
+              precio_unitario: +document.getElementById('precio_unitario').value,
+              excedente: +document.getElementById('excedente').value,
+              adicional: +document.getElementById('adicional').value,
+              total: +document.getElementById('total_bomba').value
+            };
+            try {
+              const resBomba = await fetch('/api/bombas_cotizacion/store', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bombaData)
+              });
+              const bodyBomba = await resBomba.json();
+              if (resBomba.ok) {
+                alert('Bomba guardada (ID: ' + bodyBomba._id + ')');
+              } else {
+                alert('Error al guardar bomba: ' + (bodyBomba.message || JSON.stringify(bodyBomba)));
+              }
+            } catch (e) {
+              console.error('Error bomba:', e);
+              alert('Error inesperado en bomba.');
+            }
+
+            // 5) Limpiar formulario y recargar la lista
             form.reset();
             document.getElementById('itemsContainer').innerHTML = '';  // <-- Aquí sí limpiamos, tras procesar
             if (typeof loadCotizaciones === 'function') {

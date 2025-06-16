@@ -8,7 +8,9 @@ const {
     usuario_Controller,
     notificacion_Controller,
     cotizacion_Controller,
-    items_Cotizacion_Controller
+    items_Cotizacion_Controller,
+    bombas_Cotizacion_Controller,
+    pagos_Cotizacion_Controller
 } = require('../controllers/barrel_Controller');
 
 // declara los Routes para utilizar prefijos
@@ -16,12 +18,39 @@ const authRoutes = express.Router();
 const userRoutes = express.Router();
 const cotizacionRoutes = express.Router();
 const items_cotizacionRoutes = express.Router();
+const bombas_cotizacionRoutes = express.Router();
 const notificacionRoutes = express.Router();
+const pagos_cotizacionRoutes = express.Router();
 
 /* ==============================
    Auth Controller Routes
    ============================== */
 authRoutes.post('/login', auth_Controller.login);
+
+/* ==============================
+   bombas_Cotizacion Controller Routes
+   ============================== */
+// Obtener todos los bombas
+bombas_cotizacionRoutes.get('/records', bombas_Cotizacion_Controller.records);
+bombas_cotizacionRoutes.post('/getByCodigo', bombas_Cotizacion_Controller.getByCodigo);
+bombas_cotizacionRoutes.post('/getById', bombas_Cotizacion_Controller.getById);
+bombas_cotizacionRoutes.post('/store', bombas_Cotizacion_Controller.store);
+bombas_cotizacionRoutes.put('/update/:id', bombas_Cotizacion_Controller.update);
+bombas_cotizacionRoutes.delete('/delete/:id', bombas_Cotizacion_Controller.delete);
+bombas_cotizacionRoutes.get('/gestor', bombas_Cotizacion_Controller.gestor_bombas);
+
+/* ==============================
+   pagos_Cotizacion Controller Routes
+   ============================== */
+// Obtener todos los pagos
+pagos_cotizacionRoutes.get('/records', pagos_Cotizacion_Controller.records);
+pagos_cotizacionRoutes.post('/getByCodigo', pagos_Cotizacion_Controller.getByCodigo);
+pagos_cotizacionRoutes.post('/getById', pagos_Cotizacion_Controller.getById);
+pagos_cotizacionRoutes.post('/store', pagos_Cotizacion_Controller.store);
+pagos_cotizacionRoutes.put('/update/:id', pagos_Cotizacion_Controller.update);
+pagos_cotizacionRoutes.delete('/delete/:id', pagos_Cotizacion_Controller.delete);
+pagos_cotizacionRoutes.get('/gestor', pagos_Cotizacion_Controller.gestor_pagos);
+
 
 /* ==============================
    items_Cotizacion Controller Routes
@@ -110,7 +139,9 @@ notificacionRoutes.post('/sendEmail', async (req, res) => {
 router.use('/auth', authRoutes);             // prefijo auth
 router.use('/usuario', userRoutes);          // prefijo usuario
 router.use('/cotizacion', cotizacionRoutes); // prefijo cotizacion
-router.use('/items_cotizacion', items_cotizacionRoutes); // prefijo cotizacion
+router.use('/items_cotizacion', items_cotizacionRoutes); // prefijo items
+router.use('/bombas_cotizacion', bombas_cotizacionRoutes); // prefijo bombas
+router.use('/pagos_cotizacion', pagos_cotizacionRoutes); // prefijo pagos
 router.use('/notificacion', notificacionRoutes); // prefijo notificacion
 
 module.exports = router;
