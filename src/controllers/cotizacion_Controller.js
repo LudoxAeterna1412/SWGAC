@@ -1,39 +1,10 @@
 // Import models
 const ExcelJS = require('exceljs');
-const Cotizacion = require('../model/cotizacion_Model');
-const Controller = require('./cls_wraper_Controller');
 const path = require('path');
-
-// Servicio de generación de Excel
-async function generateCotizacionesExcel(cotizaciones) {
-  const wb = new ExcelJS.Workbook();
-  await wb.xlsx.readFile('src/resources/formats/cotizacion.xlsm');
-
-  const ws = wb.getWorksheet('format');
-  const c = cotizaciones[0];
-
-  // Ubicaciones fijas según tu diseño:
-  ws.getCell('N5').value = c.codigo;
-  ws.getCell('M5').value = c.fecha.toISOString().split('T')[0];
-  ws.getCell('E12').value = c.cliente;
-  ws.getCell('M12').value = c.tipo;
-  ws.getCell('E13').value = c.dni || '';
-  ws.getCell('E14').value = c.ruc || '';
-  // Nuevos campos:
-  ws.getCell('E15').value = c.codigo_certificacion || '';
-  ws.getCell('E16').value = c.estructura || '';
-  ws.getCell('E17').value = c.asesor || '';
-  ws.getCell('E18').value = c.celular || '';
-  ws.getCell('E19').value = c.maestro || '';
-
-  ws.getCell('E23').value = c.descripcion || '';
-  ws.getCell('M12').value = c.colocado ? 'Sí' : 'No';
-  ws.getCell('I23').value = c.metros_cubicos;
-  ws.getCell('M24').value = c.total;
-
-  // Buffer
-  return await wb.xlsx.writeBuffer();
-};
+const ItemModel = require('../model/items_cotizacion_Model');
+const Cotizacion = require('../model/cotizacion_Model');
+const PagoModel = require('../model/pago_cotizacion_Model');
+const Controller = require('./cls_wraper_Controller');
 
 class cotizacion_Controller extends Controller {
   // Obtener cotización por código
@@ -63,14 +34,12 @@ class cotizacion_Controller extends Controller {
   // Crear nueva cotización
   async store(req, res) {
     try {
-      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total, descripcion } = req.body;
 
-      // Validación básica
       if (!codigo || !fecha || !cliente || !tipo) {
         return res.status(400).json({ message: 'Los campos codigo, fecha, cliente y tipo son obligatorios.' });
       }
 
-      // Crear la nueva cotización usando el modelo personalizado
       const newCotizacion = await Cotizacion.create({
         codigo,
         fecha,
@@ -85,7 +54,8 @@ class cotizacion_Controller extends Controller {
         maestro,
         email,
         estado,
-        total
+        total,
+        descripcion // <-- NUEVO CAMPO AGREGADO
       });
 
       return res.status(201).json(newCotizacion);
@@ -94,16 +64,16 @@ class cotizacion_Controller extends Controller {
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
   }
-
   // Actualizar cotización por ID
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
-      // Validación mínima
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total, descripcion } = req.body;
+
       if (!cliente || !tipo) {
         return res.status(400).json({ message: 'Los campos cliente y tipo son obligatorios.' });
       }
+
       const updatedCotizacion = await Cotizacion.update(id, {
         codigo,
         fecha,
@@ -118,11 +88,14 @@ class cotizacion_Controller extends Controller {
         maestro,
         email,
         estado,
-        total
+        total,
+        descripcion // <-- NUEVO CAMPO AGREGADO
       });
+
       if (!updatedCotizacion) {
         return res.status(404).json({ message: 'Cotización no encontrada.' });
       }
+
       return res.status(200).json(updatedCotizacion);
     } catch (error) {
       console.error(error);
@@ -152,7 +125,7 @@ class cotizacion_Controller extends Controller {
   async updateModal(req, res) {
     try {
       const { id } = req.params;
-      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total } = req.body;
+      const { codigo, fecha, cliente, tipo, dni, ruc, codigo_certificacion, estructura, asesor, celular, maestro, email, estado, total, descripcion } = req.body;
 
       if (!codigo || !fecha || !cliente || !tipo) {
         return res.status(400).json({
@@ -174,7 +147,8 @@ class cotizacion_Controller extends Controller {
         maestro,
         email,
         estado,
-        total
+        total,
+        descripcion // <-- NUEVO CAMPO AGREGADO
       });
 
       if (!updatedCotizacion) {
@@ -204,26 +178,76 @@ class cotizacion_Controller extends Controller {
   }
 
   // Exportar cotizaciones a Excel (por CÓDIGO opcionalmente)
+  // Exportar cotización a Excel
   async exportExcel(req, res) {
     try {
-      const { codigo } = req.query; // Leer 'codigo' desde query string (puede venir o no)
-      let cotizaciones = [];
+      const { codigo } = req.query;
+      const cotizacion = await Cotizacion.getByCodigo(codigo);
+      if (!cotizacion) return res.status(404).json({ message: 'Cotización no encontrada' });
 
-      if (codigo) {
-        const cotizacion = await Cotizacion.getByCodigo(codigo); // <-- Cambio aquí
-        if (!cotizacion) {
-          return res.status(404).json({ message: 'Cotización no encontrada' });
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.readFile('src/resources/formats/cotizacion.xlsm');
+      const ws = wb.getWorksheet('format');
+      const items = await ItemModel.getByCodigo(codigo);
+      const pagos = await PagoModel.getByCodigo(codigo);
+      const n_items = items.length;
+
+      // === 1. Cabecera ===
+      ws.getCell('E12').value = cotizacion.cliente;
+      ws.getCell('E14').value = cotizacion.email || '';
+      ws.getCell('M12').value = cotizacion.celular || '';
+      ws.getCell('M13').value = cotizacion.dni || '';
+      ws.getCell('E13').value = cotizacion.ruc || '';
+      ws.getCell('E17').value = cotizacion.direccion || '';
+      ws.getCell('E18').value = cotizacion.asesor || '';
+      ws.getCell('E19').value = cotizacion.maestro || '';
+      ws.getCell('M17').value = pagos[0]?.forma_pago || '';
+      ws.getCell('M18').value = cotizacion.estructura || '';
+      ws.getCell('M19').value = cotizacion.codigo_certificacion || '';
+      ws.getCell('M5').value = cotizacion.fecha?.toISOString().split('T')[0] || '';
+      ws.getCell('N5').value = cotizacion.codigo;
+
+      // === 2. Desplazar A23:O89 ===
+      for (let row = 89; row >= 23; row--) {
+        for (let col = 1; col <= 15; col++) {
+          const source = ws.getCell(row, col);
+          const target = ws.getCell(row + n_items, col);
+
+          target.value = source.value;
+          target.font = Object.assign({}, source.font);
+          target.fill = Object.assign({}, source.fill);
+          target.alignment = Object.assign({}, source.alignment);
+          target.border = Object.assign({}, source.border);
+          target.numFmt = source.numFmt;
+          source.value = null;
         }
-        cotizaciones.push(cotizacion); // Convertir en array
-      } else {
-        cotizaciones = await Cotizacion.getAll(); // Si no hay código, obtener todas
       }
 
-      const buffer = await generateCotizacionesExcel(cotizaciones);
+      // === 3. Insertar ítems desde C22:M22 ===
+      for (let i = 0; i < n_items; i++) {
+        const fila = 22 + i;
+        const item = items[i];
+        for (let col = 3; col <= 13; col++) {
+          const base = ws.getCell(22, col);
+          const dest = ws.getCell(fila, col);
+          dest.font = Object.assign({}, base.font);
+          dest.fill = Object.assign({}, base.fill);
+          dest.alignment = Object.assign({}, base.alignment);
+          dest.border = Object.assign({}, base.border);
+          dest.numFmt = base.numFmt;
+        }
+        ws.getCell(fila, 3).value = i + 1;
+        ws.getCell(fila, 4).value = item.descripcion || '';
+        ws.getCell(fila, 9).value = item.metros_cubicos || 0;
+        ws.getCell(fila, 10).value = 'M3';
+        ws.getCell(fila, 11).value = item.total_item || 0;
+        const conIGV = item.total_item ? item.total_item * 1.16 : 0;
+        ws.getCell(fila, 13).value = parseFloat(conIGV.toFixed(2));
+      }
 
-      res.setHeader('Content-Disposition', 'attachment; filename="cotizaciones.xlsx"');
+      const buffer = await wb.xlsx.writeBuffer();
+      res.setHeader('Content-Disposition', 'attachment; filename="Reporte_Cotizacion.xlsx"');
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
       return res.send(buffer);
     } catch (error) {
       console.error('Error exportando Excel:', error);

@@ -63,6 +63,41 @@
        </div>
 </fieldset>
 
+<!-- =========================
+     DATOS DE BOMBA (SOLO 1)
+========================= -->
+<fieldset class="border p-3 rounded mt-4">
+       <legend class="px-2">Datos de Bomba</legend>
+       <div id="modalBombasContainer" class="bomba-block d-flex flex-wrap gap-3">
+
+              <div style="flex: 1 1 150px; min-width: 200px;">
+                     <label>Precio Unitario</label>
+                     <input type="number" step="0.01" name="modal_bombas[0][precio_unitario]"
+                            class="form-control form-control-sm">
+              </div>
+
+              <div style="flex: 1 1 150px; min-width: 200px;">
+                     <label>Excedente</label>
+                     <input type="number" step="0.01" name="modal_bombas[0][excedente]"
+                            class="form-control form-control-sm">
+              </div>
+
+              <div style="flex: 1 1 150px; min-width: 200px;">
+                     <label>Adicional</label>
+                     <input type="number" step="0.01" name="modal_bombas[0][adicional]"
+                            class="form-control form-control-sm">
+              </div>
+
+              <div style="flex: 1 1 150px; min-width: 200px;">
+                     <label>Total</label>
+                     <input type="number" step="0.01" name="modal_bombas[0][total]"
+                            class="form-control form-control-sm">
+              </div>
+
+       </div>
+</fieldset>
+
+
 <!-- ================================
      PAGOS DE LA COTIZACIÓN (MODAL)
 ================================= -->
@@ -171,7 +206,10 @@
 </template>
 <!-- TEMPLATE PARA CADA PAGO -->
 <template id="modal-pago-block-template">
-       <div class="item-block">
+       <div class="item-block pago-block">
+              <!-- id -->
+              <input type="hidden" name="modal_pagos[__IDX__][id]" class="pago-id-hidden">
+
               <!-- Código -->
               <div class="field codigo">
                      <label>Código</label>

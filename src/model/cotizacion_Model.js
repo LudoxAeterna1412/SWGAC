@@ -3,21 +3,28 @@ const Model = require('./cls_wraper_Model');
 
 // Definición del schema para Cotización (sin items)
 const cotizacionSchema = new mongoose.Schema({
-  codigo:               { type: String, required: true, unique: true },
-  fecha:                { type: Date,   required: false },
+  
+// DATOS DEL CLIENTE  
   cliente:              { type: String, required: false },
-  tipo:                 { type: String, required: false },
+  email:                { type: String, required: false },
+  celular:              { type: String, required: false },
   dni:                  { type: String, required: false },
   ruc:                  { type: String, required: false },
-  total:                { type: Number, required: false, default: 0 },
-  codigo_certificacion: { type: String, required: false },
-  estructura:           { type: String, required: false },
+
+  tipo:                 { type: String, required: false },
+// DATOS DEL PROYECTO  
+  fecha:                { type: Date,   required: false },
+  codigo:               { type: String, required: true, unique: true },
+
+  direccion:            { type: String, required: false },
   asesor:               { type: String, required: false },
-  celular:              { type: String, required: false },
   maestro:              { type: String, required: false },
-  email:                { type: String, required: false },
-  estado:               { type: String, required: false },
-  direccion:            { type: String, required: false }
+  // tipo de pago (pago_cotizacion_Model)
+  estructura:           { type: String, required: false },
+  codigo_certificacion: { type: String, required: false },
+
+  total:                { type: Number, required: false, default: 0 },
+  estado:               { type: String, required: false }
 });
 
 // Tercer parámetro 'cotizacion' será el nombre de la colección en MongoDB

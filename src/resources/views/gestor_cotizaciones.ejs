@@ -53,8 +53,8 @@
             <label for="tipo">Tipo</label>
             <select id="tipo" name="tipo" class="form-control form-control-sm" required>
               <option value="">Seleccione</option>
-              <option value="publico">publico</option>
-              <option value="privado">privado</option>
+              <option value="publico">Publico</option>
+              <option value="privado">Privado</option>
             </select>
           </div>
 
@@ -100,7 +100,7 @@
             <input type="text" id="email" name="email" class="form-control form-control-sm">
           </div>
 
-     
+
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="estado">Estado</label>
             <select id="estado" name="estado" class="form-control form-control-sm" required>
@@ -389,7 +389,7 @@
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Tipo</th>
-                <th>Colocado</th>
+                <th>Estado</th>
                 <th>Total</th>
                 <th>Acciones</th>
               </tr>
@@ -400,7 +400,7 @@
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Tipo</th>
-                <th>Colocado</th>
+                <th>Estado</th>
                 <th>Total</th>
                 <th>Acciones</th>
               </tr>
@@ -453,6 +453,7 @@
           });
         }
       });
+
       async function saveCot2() {
         const cotId = document.getElementById('modal_id').value.trim();
         if (!cotId) {
@@ -485,7 +486,7 @@
 
           console.log('Cabecera actualizada correctamente.');
 
-          // 2. Obtener ítems actuales por código y eliminarlos uno a uno
+          // 2. Eliminar ítems actuales
           const resItems = await fetch('/api/items_cotizacion/getByCodigo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -501,9 +502,8 @@
             console.log(`${items.length} ítems eliminados`);
           }
 
-          // 3. Insertar los nuevos ítems que están actualmente en el modal
+          // 3. Insertar nuevos ítems
           const container = document.getElementById('modalItemsContainer');
-          console.log('aqui el bug de duplicacion en gestor');
           const bloques = Array.from(container.querySelectorAll('.item-block'));
 
           const promesasItems = bloques.map(block => {
@@ -530,6 +530,127 @@
             });
           });
 
+          // 4. Procesar pagos
+          const pagosContainer = document.getElementById('modalPagosContainer');
+          const pagoBlocks = pagosContainer.querySelectorAll('.pago-block');
+          console.log('Detectados bloques de pago:', pagoBlocks.length);
+          
+          // === ELIMINAR PAGOS QUE YA NO ESTÁN EN EL MODAL ===
+          try {
+            const resPagos = await fetch('/api/pagos_cotizacion/getByCodigo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ codigo: cabecera.codigo })
+            });
+
+            const pagosMostrados = Array.from(document.querySelectorAll('.pago-block input[name$="[id]"]'))
+              .map(input => input.value.trim())
+              .filter(id => !!id);
+
+            if (resPagos.ok) {
+              const pagosBD = await resPagos.json();
+
+              const pagosAEliminar = pagosBD.filter(pg => !pagosMostrados.includes(pg._id));
+
+              for (const pago of pagosAEliminar) {
+                await fetch(`/api/pagos_cotizacion/delete/${pago._id}`, { method: 'DELETE' });
+                console.log('Pago eliminado:', pago._id);
+              }
+            }
+          } catch (err) {
+            console.error('Error eliminando pagos no mostrados:', err);
+          }
+
+          for (const pagoBlock of pagoBlocks) {
+            const codigo = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[codigo]"]').value.trim();
+            const monto_total = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[monto_total]"]').value.trim();
+            const monto_pago = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[monto_pago]"]').value.trim();
+            const fecha_pago = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[fecha_pago]"]').value.trim();
+            const forma_pago = pagoBlock.querySelector('select[name^="modal_pagos"][name$="[forma_pago]"]').value.trim();
+
+            if (!codigo || !monto_pago || !fecha_pago || !forma_pago) {
+              console.warn('Campos de pago incompletos, se omite este pago.');
+              continue;
+            }
+
+
+            try {
+              const idInput = pagoBlock.querySelector('input[name$="[id]"]');
+              const id = idInput ? idInput.value.trim() : '';
+
+              console.log('idInput ', id)
+              const pagoData = {
+                codigo,
+                monto_total: parseFloat(monto_total),
+                monto_pago: parseFloat(monto_pago),
+                fecha_pago,
+                forma_pago
+              };
+
+              let resPago;
+
+              if (id) {
+                // Actualizar pago existente
+                resPago = await fetch(`/api/pagos_cotizacion/update/${id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(pagoData)
+                });
+              } else {
+                // Crear nuevo pago
+                resPago = await fetch('/api/pagos_cotizacion/store', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(pagoData)
+                });
+              }
+
+
+            } catch (err) {
+              console.error('Fallo al enviar pago:', err);
+            }
+          }
+
+          // === BOMBAS - Enviar una sola bomba si está presente
+          const bombaForm = document.getElementById('modalBombaSection');
+          if (bombaForm) {
+            const codigo = cabecera.codigo;
+            const precio_unitario = bombaForm.querySelector('input[name="modal_bomba[precio_bomba]"]').value.trim();
+            const m3 = bombaForm.querySelector('input[name="modal_bomba[m3]"]').value.trim();
+            const tipo_bomba = bombaForm.querySelector('input[name="modal_bomba[tipo_bomba]"]').value.trim();
+            const total = bombaForm.querySelector('input[name="modal_bomba[total_bomba]"]').value.trim();
+
+            if (codigo && precio_unitario && m3 && tipo_bomba && total) {
+              const bombaData = {
+                codigo,
+                precio_bomba: parseFloat(precio_unitario),
+                m3: parseFloat(m3),
+                tipo_bomba,
+                total_bomba: parseFloat(total)
+              };
+
+              try {
+                const resBomba = await fetch('/api/bombas_cotizacion/store', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(bombaData)
+                });
+
+                if (!resBomba.ok) {
+                  console.error('Error al registrar bomba:', await resBomba.text());
+                } else {
+                  console.log('Bomba registrada:', bombaData);
+                }
+              } catch (err) {
+                console.error('Fallo al enviar bomba:', err);
+              }
+            } else {
+              console.warn('Campos de bomba incompletos, no se envía');
+            }
+          }
+
+
+
           const results = await Promise.allSettled(promesasItems);
           const exitos = results.filter(r => r.status === 'fulfilled').length;
 
@@ -539,10 +660,7 @@
           alert('Ocurrió un error al guardar la cotización y sus ítems.');
         }
       }
-
-
     </script>
-
 
     <!-- ===========================
      SCRIPTS: Funciones de Cotización
@@ -551,11 +669,9 @@
       // 1) Abrir modal de Bootstrap genérico
       async function openModal(modalId) {
         try {
-          // pequeño delay para que el navegador pinte el interior del modal
           await new Promise(resolve => setTimeout(resolve, 100));
           const modalEl = document.getElementById(modalId);
           new bootstrap.Modal(modalEl).show();
-          // otro pequeño delay opcional antes de rellenar campos
           await new Promise(resolve => setTimeout(resolve, 50));
         } catch (error) {
           console.error("Error al abrir el modal:", error);
@@ -570,10 +686,10 @@
         else alert('Error eliminando');
       }
 
-      // 3) Editar cotización: abrir modal y poblar sólo campos principales
+      // 3) Editar cotización
       async function editCot(id) {
         try {
-          // 1) Traigo la cabecera
+          // Traer cabecera
           const res = await fetch('/api/cotizacion/getById', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -582,10 +698,16 @@
           if (!res.ok) throw new Error('Cotización no encontrada');
           const c = await res.json();
 
-          // 2) Abro el modal
+          // Abrir modal
           await openModal('cotModal');
 
-          // 3) Relleno la cabecera
+          // Limpiar bombas
+          const bombaContainer = document.getElementById('modalBombasContainer');
+          if (bombaContainer) {
+            bombaContainer.querySelectorAll('input').forEach(input => input.value = '');
+          }
+
+          // Llenar cabecera
           document.getElementById('modal_id').value = c._id;
           document.getElementById('modal_codigo').value = c.codigo;
           document.getElementById('modal_fecha').value = c.fecha.split('T')[0];
@@ -594,26 +716,21 @@
           document.getElementById('modal_dni').value = c.dni || '';
           document.getElementById('modal_ruc').value = c.ruc || '';
 
-          // 4) Traigo los ítems cuyo código coincide
+          // Traer ítems
           const rItems = await fetch('/api/items_cotizacion/getByCodigo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ codigo: c.codigo })
           });
           if (!rItems.ok) throw new Error('No se pudo cargar los ítems');
-          const items = await rItems.json(); // Ahora es un array
+          const items = await rItems.json();
 
-          // 5) Listarlos en el modal
-          // Limpiar contenedor antes de poblar
+          // Mostrar ítems
           const mContainer = document.getElementById('modalItemsContainer');
           mContainer.innerHTML = '';
-          // Obtenemos la función de agregar ítem
           const addBtn = document.getElementById('addModalItemBtn');
-
           for (const itm of items) {
-            // 5.1) Clonamos una fila
             addBtn.click();
-            // 5.2) Rellenamos la última fila
             const filas = mContainer.querySelectorAll('.item-block');
             const fila = filas[filas.length - 1];
 
@@ -627,7 +744,87 @@
 
             const idInput = fila.querySelector('input[name$="[id]"]');
             if (idInput) idInput.value = itm._id || '';
-            console.log('idInput:', idInput);
+          }
+
+          // Traer pagos con manejo de errores sin romper flujo
+          try {
+            const rPagos = await fetch('/api/pagos_cotizacion/getByCodigo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ codigo: c.codigo })
+            });
+
+            const pContainer = document.getElementById('modalPagosContainer');
+            pContainer.innerHTML = '';
+
+            if (rPagos.ok) {
+              const pagos = await rPagos.json();
+              const addPagoBtn = document.getElementById('addModalPagoBtn');
+              for (const pg of pagos) {
+                addPagoBtn.click();
+                const bloques = pContainer.querySelectorAll('.pago-block');
+                const bloque = bloques[bloques.length - 1];
+                bloque.querySelector('input[name$="[id]"]').value = pg._id || '';
+
+                bloque.querySelector('input[name$="[codigo]"]').value = pg.codigo;
+                bloque.querySelector('input[name$="[monto_total]"]').value = pg.monto_total;
+                bloque.querySelector('input[name$="[monto_pago]"]').value = pg.monto_pago;
+                bloque.querySelector('input[name$="[fecha_pago]"]').value = pg.fecha_pago?.split('T')[0] || '';
+                bloque.querySelector('select[name$="[forma_pago]"]').value = pg.forma_pago;
+              }
+              console.log(`Pagos cargados: ${pagos.length}`);
+            } else {
+              console.warn('No existen pagos o error en la solicitud');
+            }
+          } catch (errPagos) {
+            console.warn('Error cargando pagos:', errPagos);
+          }
+
+          // Traer bomba
+          try {
+            const resBomba = await fetch('/api/bombas_cotizacion/getByCodigo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ codigo: c.codigo })
+            });
+
+            const bombasContainer = document.getElementById('modalBombasContainer');
+            if (!bombasContainer) {
+              console.warn('modalBombasContainer no está presente en el DOM');
+              return;
+            }
+
+            bombasContainer.querySelectorAll('input').forEach(input => input.value = '');
+
+            if (!resBomba.ok) {
+              console.warn('No se pudo cargar datos de bomba para esta cotización');
+              return;
+            }
+
+            const bombas = await resBomba.json();
+            if (!Array.isArray(bombas) || bombas.length === 0) {
+              console.info('No hay bombas registradas para esta cotización');
+              return;
+            }
+
+            const bomba = bombas[0];
+            const precioInput = bombasContainer.querySelector('input[name="modal_bombas[0][precio_unitario]"]');
+            const excedenteInput = bombasContainer.querySelector('input[name="modal_bombas[0][excedente]"]');
+            const adicionalInput = bombasContainer.querySelector('input[name="modal_bombas[0][adicional]"]');
+            const totalInput = bombasContainer.querySelector('input[name="modal_bombas[0][total]"]');
+
+            if (!precioInput || !excedenteInput || !adicionalInput || !totalInput) {
+              console.warn('Uno o más inputs de bomba no se encontraron en el DOM');
+              return;
+            }
+
+            precioInput.value = bomba.precio_unitario ?? '';
+            excedenteInput.value = bomba.excedente ?? '';
+            adicionalInput.value = bomba.adicional ?? '';
+            totalInput.value = bomba.total ?? '';
+
+          } catch (e) {
+            console.error('Error general al cargar datos de bomba:', e);
           }
 
         } catch (err) {
@@ -636,17 +833,13 @@
         }
       }
 
-
-
-
-
-      // Asegurar que al cargar la página se recarguen las cotizaciones
       window.onload = loadCotizaciones;
     </script>
 
+
     <!-- ===========================
      SCRIPTS: Operaciones de Cotización
-============================ -->
+     ============================ -->
     <script>
       // 1) Eliminar cotización de la vista
       //function eliminarItem(button) {
@@ -664,7 +857,7 @@
         const downloadUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = 'cotizaciones.xlsx';
+        a.download = 'Reporte_Cotizacion.xlsx';
         a.click();
         URL.revokeObjectURL(downloadUrl);
       }
@@ -680,7 +873,7 @@
               new Date(c.fecha).toLocaleDateString(),
               c.cliente,
               c.tipo,
-              c.colocado ? 'Sí' : 'No',
+              c.estado,
               c.total,
               `<button onclick="editCot('${c._id}')">Editar</button>
            <button onclick="delCot('${c._id}')">Eliminar</button>
@@ -689,7 +882,7 @@
             destroy: true,
             columns: [
               { title: "Código" }, { title: "Fecha" }, { title: "Cliente" },
-              { title: "Tipo" }, { title: "Colocado" }, { title: "Total" },
+              { title: "Tipo" }, { title: "Estado" }, { title: "Total" },
               { title: "Acciones", orderable: false, searchable: false }
             ]
           });
