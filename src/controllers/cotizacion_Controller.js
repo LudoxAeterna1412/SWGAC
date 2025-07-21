@@ -222,7 +222,7 @@ class cotizacion_Controller extends Controller {
       for (let col = 2; col <= 12; col++) {
         const cell = ws.getCell(filaBase, col);
         plantilla[col] = {
-          font: { ...cell.font, color: { argb: 'FF000000' } }, // negro
+          font: { ...cell.font, color: { argb: 'FF000000' } },
           fill: cell.fill,
           alignment: cell.alignment,
           border: cell.border,
@@ -268,6 +268,40 @@ class cotizacion_Controller extends Controller {
       const filaTotal = filaBase + n_items;
       ws.getCell(filaTotal, 10).value = `Total = ${totalSinIGV.toFixed(2)}`;
       ws.getCell(filaTotal, 12).value = `Total = ${totalConIGV.toFixed(2)}`;
+
+      // === 4. Insertar imágenes inmediatamente después de la fila de totales ===
+      const filaInicioImg = filaTotal + 1;
+
+      const imagenes = [
+        {
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/9.JPG',
+          tl: { col: 0, row: filaInicioImg },
+          br: { col: 13, row: filaInicioImg + 15 },
+        },
+        {
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/10.JPG',
+          tl: { col: 0, row: filaInicioImg + 16 },
+          br: { col: 13, row: filaInicioImg + 36 },
+        },
+        {
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/11.JPG',
+          tl: { col: 0, row: filaInicioImg + 37 },
+          br: { col: 13, row: filaInicioImg + 52 },
+        },
+      ];
+
+      for (const img of imagenes) {
+        const response = await axios.get(img.url, { responseType: 'arraybuffer' });
+        const imageId = wb.addImage({
+          buffer: Buffer.from(response.data),
+          extension: 'jpeg',
+        });
+        ws.addImage(imageId, {
+          tl: img.tl,
+          br: img.br,
+          editAs: 'absolute',
+        });
+      }
 
       const buffer = await wb.xlsx.writeBuffer();
       res.setHeader('Content-Disposition', 'attachment; filename="Reporte_Cotizacion.xlsm"');
