@@ -4,6 +4,7 @@ const path = require('path');
 const ItemModel = require('../model/items_cotizacion_Model');
 const Cotizacion = require('../model/cotizacion_Model');
 const PagoModel = require('../model/pago_cotizacion_Model');
+const axios = require('axios');
 const Controller = require('./cls_wraper_Controller');
 
 class cotizacion_Controller extends Controller {
@@ -188,65 +189,88 @@ class cotizacion_Controller extends Controller {
       const wb = new ExcelJS.Workbook();
       await wb.xlsx.readFile('src/resources/formats/cotizacion.xlsm');
       const ws = wb.getWorksheet('format');
-      const items = await ItemModel.getByCodigo(codigo);
+
       const pagos = await PagoModel.getByCodigo(codigo);
+      const items = await ItemModel.getByCodigo(codigo);
       const n_items = items.length;
 
-      // === 1. Cabecera ===
-      ws.getCell('E12').value = cotizacion.cliente;
-      ws.getCell('E14').value = cotizacion.email || '';
-      ws.getCell('M12').value = cotizacion.celular || '';
-      ws.getCell('M13').value = cotizacion.dni || '';
-      ws.getCell('E13').value = cotizacion.ruc || '';
-      ws.getCell('E17').value = cotizacion.direccion || '';
-      ws.getCell('E18').value = cotizacion.asesor || '';
-      ws.getCell('E19').value = cotizacion.maestro || '';
-      ws.getCell('M17').value = pagos[0]?.forma_pago || '';
-      ws.getCell('M18').value = cotizacion.estructura || '';
-      ws.getCell('M19').value = cotizacion.codigo_certificacion || '';
-      ws.getCell('M5').value = cotizacion.fecha?.toISOString().split('T')[0] || '';
-      ws.getCell('N5').value = cotizacion.codigo;
+      // === 1. Insertar datos fijos ===
+      const campos = [
+        { celda: 'D8', valor: cotizacion.cliente },
+        { celda: 'D10', valor: cotizacion.email || '' },
+        { celda: 'L8', valor: cotizacion.celular || '' },
+        { celda: 'L9', valor: cotizacion.dni || '' },
+        { celda: 'L10', valor: cotizacion.ruc || '' },
+        { celda: 'D12', valor: cotizacion.direccion || '' },
+        { celda: 'D13', valor: cotizacion.asesor || '' },
+        { celda: 'D14', valor: cotizacion.maestro || '' },
+        { celda: 'L12', valor: pagos[0]?.forma_pago || '' },
+        { celda: 'L13', valor: cotizacion.estructura || '' },
+        { celda: 'L14', valor: cotizacion.codigo_certificacion || '' },
+        { celda: 'L4', valor: cotizacion.fecha?.toISOString().split('T')[0] || '' },
+        { celda: 'M4', valor: cotizacion.codigo },
+      ];
 
-      // === 2. Desplazar A23:O89 ===
-      for (let row = 89; row >= 23; row--) {
-        for (let col = 1; col <= 15; col++) {
-          const source = ws.getCell(row, col);
-          const target = ws.getCell(row + n_items, col);
-
-          target.value = source.value;
-          target.font = Object.assign({}, source.font);
-          target.fill = Object.assign({}, source.fill);
-          target.alignment = Object.assign({}, source.alignment);
-          target.border = Object.assign({}, source.border);
-          target.numFmt = source.numFmt;
-          source.value = null;
-        }
+      for (const campo of campos) {
+        ws.getCell(campo.celda).value = campo.valor;
       }
 
-      // === 3. Insertar ítems desde C22:M22 ===
+      // === 2. Insertar ítems a partir de B16:L16 replicando su estilo ===
+      const filaBase = 16;
+      const plantilla = {};
+
+      for (let col = 2; col <= 12; col++) {
+        const cell = ws.getCell(filaBase, col);
+        plantilla[col] = {
+          font: { ...cell.font, color: { argb: 'FF000000' } }, // negro
+          fill: cell.fill,
+          alignment: cell.alignment,
+          border: cell.border,
+          numFmt: cell.numFmt
+        };
+      }
+
+      for (let i = 1; i < n_items; i++) {
+        ws.insertRow(filaBase + i, []);
+      }
+
+      let totalSinIGV = 0;
+      let totalConIGV = 0;
+
       for (let i = 0; i < n_items; i++) {
-        const fila = 22 + i;
+        const fila = filaBase + i;
         const item = items[i];
-        for (let col = 3; col <= 13; col++) {
-          const base = ws.getCell(22, col);
+        const total = item.total_item || 0;
+        const conIGV = total * 1.16;
+
+        totalSinIGV += total;
+        totalConIGV += conIGV;
+
+        for (let col = 2; col <= 12; col++) {
           const dest = ws.getCell(fila, col);
-          dest.font = Object.assign({}, base.font);
-          dest.fill = Object.assign({}, base.fill);
-          dest.alignment = Object.assign({}, base.alignment);
-          dest.border = Object.assign({}, base.border);
-          dest.numFmt = base.numFmt;
+          const estilo = plantilla[col];
+          if (estilo.font) dest.font = estilo.font;
+          if (estilo.fill) dest.fill = estilo.fill;
+          if (estilo.alignment) dest.alignment = estilo.alignment;
+          if (estilo.border) dest.border = estilo.border;
+          if (estilo.numFmt) dest.numFmt = estilo.numFmt;
         }
-        ws.getCell(fila, 3).value = i + 1;
-        ws.getCell(fila, 4).value = item.descripcion || '';
-        ws.getCell(fila, 9).value = item.metros_cubicos || 0;
-        ws.getCell(fila, 10).value = 'M3';
-        ws.getCell(fila, 11).value = item.total_item || 0;
-        const conIGV = item.total_item ? item.total_item * 1.16 : 0;
-        ws.getCell(fila, 13).value = parseFloat(conIGV.toFixed(2));
+
+        ws.getCell(fila, 2).value = i + 1;
+        ws.getCell(fila, 3).value = item.descripcion || '';
+        ws.getCell(fila, 8).value = item.metros_cubicos || 0;
+        ws.getCell(fila, 9).value = 'M3';
+        ws.getCell(fila, 10).value = total;
+        ws.getCell(fila, 12).value = parseFloat(conIGV.toFixed(2));
       }
+
+      // === 3. Insertar totales en la fila siguiente sin aplicar estilos ===
+      const filaTotal = filaBase + n_items;
+      ws.getCell(filaTotal, 10).value = `Total = ${totalSinIGV.toFixed(2)}`;
+      ws.getCell(filaTotal, 12).value = `Total = ${totalConIGV.toFixed(2)}`;
 
       const buffer = await wb.xlsx.writeBuffer();
-      res.setHeader('Content-Disposition', 'attachment; filename="Reporte_Cotizacion.xlsx"');
+      res.setHeader('Content-Disposition', 'attachment; filename="Reporte_Cotizacion.xlsm"');
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       return res.send(buffer);
     } catch (error) {
@@ -254,6 +278,7 @@ class cotizacion_Controller extends Controller {
       return res.status(500).send(error.message);
     }
   }
+
 
   // Renderizar vista de gestor de cotizaciones
   gestor_cotizaciones(req, res) {

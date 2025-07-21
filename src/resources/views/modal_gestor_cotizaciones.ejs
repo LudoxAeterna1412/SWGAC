@@ -66,9 +66,10 @@
 <!-- =========================
      DATOS DE BOMBA (SOLO 1)
 ========================= -->
-<fieldset class="border p-3 rounded mt-4">
+<fieldset id="modalBombaSection" class="border p-3 rounded mt-4">
        <legend class="px-2">Datos de Bomba</legend>
        <div id="modalBombasContainer" class="bomba-block d-flex flex-wrap gap-3">
+
 
               <div style="flex: 1 1 150px; min-width: 200px;">
                      <label>Precio Unitario</label>
@@ -93,7 +94,10 @@
                      <input type="number" step="0.01" name="modal_bombas[0][total]"
                             class="form-control form-control-sm">
               </div>
-
+              <div style="flex: 1 1 100%; display: flex; justify-content: flex-end; margin-top: 10px;">
+                     <button type="button" class="btn btn-warning btn-sm" onclick="limpiarBombasModal()">Limpiar
+                            Bombas</button>
+              </div>
        </div>
 </fieldset>
 
@@ -352,4 +356,13 @@
                      }
               });
        })();
+
+       function limpiarBombasModal() {
+              const container = document.getElementById('modalBombasContainer');
+              if (!container) return;
+
+              container.querySelectorAll('input').forEach(input => {
+                     input.value = '';
+              });
+       }
 </script>

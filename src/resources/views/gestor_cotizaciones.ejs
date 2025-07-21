@@ -139,7 +139,6 @@
         <legend class="px-2">Resumen de Bombas</legend>
         <div
           style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: flex-start;">
-
           <div style="flex: 1 1 150px; display: flex; flex-direction: column;">
             <label for="codigo_bomba">Código</label>
             <input type="text" id="codigo_bomba" name="codigo_bomba" class="form-control form-control-sm" required>
@@ -168,14 +167,21 @@
             <input type="number" id="total_bomba" name="total_bomba" class="form-control form-control-sm" required
               step="0.01">
           </div>
+        </div>
 
+        <!-- Botón limpiar bombas -->
+        <div class="text-end mt-3">
+          <button type="button" class="btn btn-warning btn-sm" onclick="limpiarBombas()">Limpiar Bombas</button>
         </div>
       </fieldset>
 
       <!-- Botón de envío general -->
-      <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+      <!-- Botones Registrar y Limpiar -->
+      <div style="display: flex; justify-content: flex-end; margin-top: 1rem; gap: 10px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="limpiarFormulario()">Limpiar</button>
         <input type="submit" class="btn btn-primary btn-sm" value="Registrar">
       </div>
+
     </form>
 
 
@@ -534,7 +540,7 @@
           const pagosContainer = document.getElementById('modalPagosContainer');
           const pagoBlocks = pagosContainer.querySelectorAll('.pago-block');
           console.log('Detectados bloques de pago:', pagoBlocks.length);
-          
+
           // === ELIMINAR PAGOS QUE YA NO ESTÁN EN EL MODAL ===
           try {
             const resPagos = await fetch('/api/pagos_cotizacion/getByCodigo', {
@@ -615,26 +621,77 @@
           const bombaForm = document.getElementById('modalBombaSection');
           if (bombaForm) {
             const codigo = cabecera.codigo;
-            const precio_unitario = bombaForm.querySelector('input[name="modal_bomba[precio_bomba]"]').value.trim();
-            const m3 = bombaForm.querySelector('input[name="modal_bomba[m3]"]').value.trim();
-            const tipo_bomba = bombaForm.querySelector('input[name="modal_bomba[tipo_bomba]"]').value.trim();
-            const total = bombaForm.querySelector('input[name="modal_bomba[total_bomba]"]').value.trim();
+            const precio_unitario = bombaForm.querySelector('input[name="modal_bombas[0][precio_unitario]"]').value.trim();
+            const excedente = bombaForm.querySelector('input[name="modal_bombas[0][excedente]"]').value.trim();
+            const adicional = bombaForm.querySelector('input[name="modal_bombas[0][adicional]"]').value.trim();
+            const total = bombaForm.querySelector('input[name="modal_bombas[0][total]"]').value.trim();
 
-            if (codigo && precio_unitario && m3 && tipo_bomba && total) {
+
+            if (codigo && precio_unitario && excedente && adicional && total) {
               const bombaData = {
                 codigo,
-                precio_bomba: parseFloat(precio_unitario),
-                m3: parseFloat(m3),
-                tipo_bomba,
-                total_bomba: parseFloat(total)
+                precio_unitario: parseFloat(precio_unitario),
+                excedente: parseFloat(excedente),
+                adicional: parseFloat(adicional),
+                total: parseFloat(total)
               };
 
               try {
-                const resBomba = await fetch('/api/bombas_cotizacion/store', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(bombaData)
-                });
+                try {
+                  // Verificar si ya existe bomba
+                  const resExist = await fetch('/api/bombas_cotizacion/getByCodigo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo })
+                  });
+
+                  if (resExist.ok) {
+                    const bombas = await resExist.json();
+                    if (bombas.length > 0) {
+                      const bombaId = bombas[0]._id;
+                      // Actualizar bomba existente
+                      const resUpdate = await fetch(`/api/bombas_cotizacion/update/${bombaId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          precio_unitario: parseFloat(precio_unitario),
+                          excedente: parseFloat(excedente),
+                          adicional: parseFloat(adicional),
+                          total: parseFloat(total)
+                        })
+                      });
+
+                      if (!resUpdate.ok) {
+                        console.error('Error actualizando bomba:', await resUpdate.text());
+                      } else {
+                        console.log('Bomba actualizada');
+                      }
+
+                    } else {
+                      // Si no existe, insertar nueva
+                      const resInsert = await fetch('/api/bombas_cotizacion/store', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          codigo,
+                          precio_unitario: parseFloat(precio_unitario),
+                          excedente: parseFloat(excedente),
+                          adicional: parseFloat(adicional),
+                          total: parseFloat(total)
+                        })
+                      });
+
+                      if (!resInsert.ok) {
+                        console.error('Error al insertar bomba:', await resInsert.text());
+                      } else {
+                        console.log('Bomba creada');
+                      }
+                    }
+                  }
+                } catch (err) {
+                  console.error('Error general al guardar bomba:', err);
+                }
+
 
                 if (!resBomba.ok) {
                   console.error('Error al registrar bomba:', await resBomba.text());
@@ -659,6 +716,32 @@
           console.error('Error en saveCot2():', error);
           alert('Ocurrió un error al guardar la cotización y sus ítems.');
         }
+      }
+
+      function limpiarFormulario() {
+        const form = document.getElementById('cotizacionForm');
+        if (!form) return;
+
+        // Limpiar todos los campos de entrada y selección
+        form.querySelectorAll('input, select').forEach(el => {
+          if (el.type === 'submit' || el.type === 'button') return; // no limpiar botones
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = false;
+          } else {
+            el.value = '';
+          }
+        });
+
+        // Limpiar contenedor de ítems
+        const itemsContainer = document.getElementById('itemsContainer');
+        if (itemsContainer) itemsContainer.innerHTML = '';
+      }
+      function limpiarBombas() {
+        document.getElementById('codigo_bomba').value = '';
+        document.getElementById('precio_unitario').value = '';
+        document.getElementById('excedente').value = '';
+        document.getElementById('adicional').value = '';
+        document.getElementById('total_bomba').value = '';
       }
     </script>
 
