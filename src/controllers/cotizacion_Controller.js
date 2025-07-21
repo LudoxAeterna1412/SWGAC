@@ -270,25 +270,39 @@ class cotizacion_Controller extends Controller {
       ws.getCell(filaTotal, 12).value = `Total = ${totalConIGV.toFixed(2)}`;
 
       // === 4. Insertar imágenes inmediatamente después de la fila de totales ===
-      const filaInicioImg = filaTotal + 1;
+      // === 4. Insertar imágenes inmediatamente después de la fila de totales ===
+      const filaInicioImg = filaTotal;
 
       const imagenes = [
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/9.svg',
-          tl: { col: 0, row: filaInicioImg },
-          br: { col: 13, row: filaInicioImg + 15 },
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/71a56b1319a5836dfeefd14f03b6c0f34c54fc87/src/resources/img/9.JPG',
+          tl: { col: 0, row: filaInicioImg },       // A:{filaInicioImg}
+          br: { col: 14, row: filaInicioImg + 15 }, // N:{filaInicioImg + 15}
         },
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/10.svg',
-          tl: { col: 0, row: filaInicioImg + 16 },
-          br: { col: 13, row: filaInicioImg + 36 },
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/71a56b1319a5836dfeefd14f03b6c0f34c54fc87/src/resources/img/10.JPG',
+          tl: { col: 0, row: filaInicioImg + 15 },
+          br: { col: 14, row: filaInicioImg + 38 },
         },
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/11.svg',
-          tl: { col: 0, row: filaInicioImg + 37 },
-          br: { col: 13, row: filaInicioImg + 52 },
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/71a56b1319a5836dfeefd14f03b6c0f34c54fc87/src/resources/img/11.JPG',
+          tl: { col: 0, row: filaInicioImg + 38 },
+          br: { col: 14, row: filaInicioImg + 55 },
         },
       ];
+
+      for (const img of imagenes) {
+        const response = await axios.get(img.url, { responseType: 'arraybuffer' });
+        const imageId = wb.addImage({
+          buffer: Buffer.from(response.data),
+          extension: 'jpeg',
+        });
+        ws.addImage(imageId, {
+          tl: img.tl,
+          br: img.br,
+          editAs: 'absolute',
+        });
+      }
 
       for (const img of imagenes) {
         const response = await axios.get(img.url, { responseType: 'arraybuffer' });
@@ -312,6 +326,7 @@ class cotizacion_Controller extends Controller {
       return res.status(500).send(error.message);
     }
   }
+
 
 
   // Renderizar vista de gestor de cotizaciones
