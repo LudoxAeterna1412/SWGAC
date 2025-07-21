@@ -274,17 +274,17 @@ class cotizacion_Controller extends Controller {
 
       const imagenes = [
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/9.JPG',
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/9.svg',
           tl: { col: 0, row: filaInicioImg },
           br: { col: 13, row: filaInicioImg + 15 },
         },
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/10.JPG',
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/10.svg',
           tl: { col: 0, row: filaInicioImg + 16 },
           br: { col: 13, row: filaInicioImg + 36 },
         },
         {
-          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/0046590ab2ef7cb0524ad31e8ade1d1febf2a93e/src/resources/img/11.JPG',
+          url: 'https://raw.githubusercontent.com/LudoxAeterna1412/SWGAC/fbf791dafa79c5aea921fd5b64816cb6590e8156/src/resources/img/11.svg',
           tl: { col: 0, row: filaInicioImg + 37 },
           br: { col: 13, row: filaInicioImg + 52 },
         },
