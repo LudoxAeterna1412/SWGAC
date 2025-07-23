@@ -7,7 +7,6 @@ const http = require('http');
 const logger = require('morgan');
 const { Server } = require('socket.io');
 const socketRoutes = require('./src/routes/sockets');
-
 dotenv.config();
 const app = express();
 
@@ -29,14 +28,14 @@ const io = new Server(server, {
 
 // socketRoutes(io);
 connectDB()
-.then(() => {
-  console.log('Conexión a la base de datos exitosa');
-})
-.catch((err) => {
-  console.error('Error al conectar a la base de datos:', err);
-  process.exit(1); // Salir de la app si la DB no levanta
-})
-;
+    .then(() => {
+        console.log('Conexión a la base de datos exitosa');
+    })
+    .catch((err) => {
+        console.error('Error al conectar a la base de datos:', err);
+        process.exit(1); // Salir de la app si la DB no levanta
+    })
+    ;
 // // Manejo de conexiones de Socket.IO
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -86,8 +85,8 @@ app.use((err, req, res, next) => {
 // Ruta raíz
 app.get('/', (req, res) => {
     res.sendFile(process.cwd() + '/src/resources/views/auth/login.html');
-  });
-  
+});
+
 
 // Iniciar servidor HTTP
 if (require.main === module) {

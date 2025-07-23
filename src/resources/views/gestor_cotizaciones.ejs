@@ -53,8 +53,8 @@
             <label for="tipo">Tipo</label>
             <select id="tipo" name="tipo" class="form-control form-control-sm" required>
               <option value="">Seleccione</option>
-              <option value="publico">Publico</option>
-              <option value="privado">Privado</option>
+              <option value="publico">publico</option>
+              <option value="privado">privado</option>
             </select>
           </div>
 
@@ -573,6 +573,8 @@
             const monto_pago = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[monto_pago]"]').value.trim();
             const fecha_pago = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[fecha_pago]"]').value.trim();
             const forma_pago = pagoBlock.querySelector('select[name^="modal_pagos"][name$="[forma_pago]"]').value.trim();
+            const condicion_venta = pagoBlock.querySelector('select[name^="modal_pagos"][name$="[condicion_venta]"]').value.trim();
+            const monto_saldo = pagoBlock.querySelector('input[name^="modal_pagos"][name$="[monto_saldo]"]').value.trim();
 
             if (!codigo || !monto_pago || !fecha_pago || !forma_pago) {
               console.warn('Campos de pago incompletos, se omite este pago.');
@@ -589,6 +591,8 @@
                 codigo,
                 monto_total: parseFloat(monto_total),
                 monto_pago: parseFloat(monto_pago),
+                monto_saldo: parseFloat(monto_saldo),
+                condicion_venta,
                 fecha_pago,
                 forma_pago
               };
@@ -848,12 +852,14 @@
                 const bloques = pContainer.querySelectorAll('.pago-block');
                 const bloque = bloques[bloques.length - 1];
                 bloque.querySelector('input[name$="[id]"]').value = pg._id || '';
-
                 bloque.querySelector('input[name$="[codigo]"]').value = pg.codigo;
                 bloque.querySelector('input[name$="[monto_total]"]').value = pg.monto_total;
                 bloque.querySelector('input[name$="[monto_pago]"]').value = pg.monto_pago;
                 bloque.querySelector('input[name$="[fecha_pago]"]').value = pg.fecha_pago?.split('T')[0] || '';
                 bloque.querySelector('select[name$="[forma_pago]"]').value = pg.forma_pago;
+                bloque.querySelector('select[name$="[condicion_venta]"]').value = pg.condicion_venta || 'contado';
+                bloque.querySelector('input[name$="[monto_saldo]"]').value = pg.monto_saldo?.toFixed(2) || '';
+
               }
               console.log(`Pagos cargados: ${pagos.length}`);
             } else {
@@ -1109,4 +1115,24 @@
           }
         }
       });
+
+      //async function exportarTicket(btn) {
+      //  const pagoBlock = btn.closest('.pago-block');
+      //  if (!pagoBlock) return alert("Bloque de pago no encontrado.");
+      //
+      //  const codigo = document.getElementById("modal_codigo").value.trim();
+      //  if (!codigo) return alert("Código de cotización no encontrado.");
+      //
+      //  const url = `/api/cotizacion/exportTicket?codigo=${encodeURIComponent(codigo)}`;
+      //  const res = await fetch(url);
+      //  if (!res.ok) return alert("Error exportando ticket.");
+      //
+      //  const blob = await res.blob();
+      //  const downloadUrl = URL.createObjectURL(blob);
+      //  const a = document.createElement('a');
+      //  a.href = downloadUrl;
+      //  a.download = `Ticket_Venta_${codigo}.xlsm`;
+      //  a.click();
+      //  URL.revokeObjectURL(downloadUrl);
+      //}
     </script>

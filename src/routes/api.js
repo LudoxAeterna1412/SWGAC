@@ -86,6 +86,8 @@ cotizacionRoutes.post('/getById', cotizacion_Controller.getById);
 cotizacionRoutes.put('/update/:id', cotizacion_Controller.update);
 cotizacionRoutes.put('/updateModal/:id', cotizacion_Controller.updateModal);
 cotizacionRoutes.get('/export', cotizacion_Controller.exportExcel);
+cotizacionRoutes.get('/exportTicket', cotizacion_Controller.exportTicket);
+
 //cotizacionRoutes.get('/gestor', cotizacion_Controller.gestor_cotizaciones);
 
 /* ==============================

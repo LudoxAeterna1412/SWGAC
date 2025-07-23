@@ -113,6 +113,7 @@
     "nodemailer": "^6.9.16",
     "nopt": "^5.0.0",
     "npmlog": "^5.0.1",
+    "numero-a-letras": "^1.0.6",
     "object-assign": "^4.1.1",
     "object-inspect": "^1.13.2",
     "on-finished": "^2.4.1",

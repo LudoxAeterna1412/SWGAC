@@ -187,7 +187,7 @@
                      </select>
               </div>
               <div class="field m3">
-                     <label>m³</label>
+                     <label>cantidad m³</label>
                      <input type="number" step="0.01" name="modal_items[__IDX__][metros_cubicos]" required
                             class="form-control form-control-sm">
               </div>
@@ -240,8 +240,26 @@
               <div class="field forma-pago">
                      <label>Forma de Pago</label>
                      <select name="modal_pagos[__IDX__][forma_pago]" required class="form-control form-control-sm">
+                            <option value="EFECTIVO">EFECTIVO</option>
+                            <option value="EFECTIVO_CONTRAENTREGA">EFECTIVO_CONTRAENTREGA</option>
+                            <option value="EFECTIVO_TOTAL">EFECTIVO_TOTAL</option>
+                            <option value="SCOTIABANK_TRANSFERENCIA">SCOTIABANK_TRANSFERENCIA</option>
+                            <option value="BCP_CONTRAENTREGA">BCP_CONTRAENTREGA</option>
+                            <option value="BBVA_TRANSFERENCIA">BBVA_TRANSFERENCIA</option>
+                            <option value="INVERSIONES_TRANSFERENCIA">INVERSIONES_TRANSFERENCIA</option>
+                            <option value="BCP">BCP</option>
+                            <option value="SCOTIABANK">SCOTIABANK</option>
+                            <option value="INTERBANK">INTERBANK</option>
+                            <option value="BBVA">BBVA</option>
+                            <option value="BANCO_DE_LA_NACION">BANCO_DE_LA_NACION</option>
+                     </select>
+              </div>
+              <div class="field condicion-venta">
+                     <label>Condición de Venta</label>
+                     <select name="modal_pagos[__IDX__][condicion_venta]" required class="form-control form-control-sm">
                             <option value="adelanto">Adelanto</option>
                             <option value="saldo">Saldo</option>
+                            <option value="contado">Contado</option>
                      </select>
               </div>
 
@@ -251,11 +269,19 @@
                      <input type="number" step="0.01" name="modal_pagos[__IDX__][monto_pago]" required
                             class="form-control form-control-sm">
               </div>
+              <div class="field monto-saldo">
+                     <label>Monto Saldo</label>
+                     <input type="number" step="0.01" name="modal_pagos[__IDX__][monto_saldo]"
+                            class="form-control form-control-sm" readonly>
+              </div>
+
               <!-- Botón Eliminar -->
               <div class="field remove">
-                     <label class="visually-hidden">Eliminar</label>
+                     <!-- Botón Eliminar -->
                      <button type="button" class="btn btn-danger btn-sm btn-remove"
-                            aria-label="Eliminar pago">×</button>
+                            onclick="exportarTicket(this)">Eliminar pago</button>
+                     <button type="button" class="btn btn-info btn-sm" onclick="exportarTicket(this)">Exportar
+                            Ticket</button>
               </div>
        </div>
 </template>
@@ -365,4 +391,42 @@
                      input.value = '';
               });
        }
+       async function exportarTicket(btn) {
+              const codigo = document.getElementById("modal_codigo").value.trim();
+              if (!codigo) return alert("Código no definido.");
+
+              try {
+                     const res = await fetch(`/api/cotizacion/exportTicket?codigo=${encodeURIComponent(codigo)}`);
+                     if (!res.ok) throw new Error("No se pudo exportar el ticket");
+
+                     const blob = await res.blob();
+                     const downloadUrl = URL.createObjectURL(blob);
+                     const a = document.createElement("a");
+                     a.href = downloadUrl;
+                     a.download = `Ticket_Venta_${codigo}.xlsx`; // extensión y nombre correcto
+                     document.body.appendChild(a);
+                     a.click();
+                     document.body.removeChild(a);
+                     URL.revokeObjectURL(downloadUrl);
+              } catch (error) {
+                     console.error("Error exportando ticket:", error);
+                     alert("Ocurrió un error al exportar el ticket.");
+              }
+       }
+       
+       function actualizarSaldo(input) {
+              const pagoBlock = input.closest('.pago-block');
+              if (!pagoBlock) return;
+
+              const totalInput = pagoBlock.querySelector('input[name$="[monto_total]"]');
+              const pagoInput = pagoBlock.querySelector('input[name$="[monto_pago]"]');
+              const saldoInput = pagoBlock.querySelector('input[name$="[monto_saldo]"]');
+
+              const total = parseFloat(totalInput?.value) || 0;
+              const pago = parseFloat(pagoInput?.value) || 0;
+
+              const saldo = Math.max(total - pago, 0);
+              if (saldoInput) saldoInput.value = saldo.toFixed(2);
+       }
+
 </script>

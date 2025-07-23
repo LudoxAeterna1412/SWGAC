@@ -7,6 +7,7 @@ const pagoCotizacionSchema = new mongoose.Schema({
   monto_total:  { type: Number, required: false, default: 0 },
   monto_pago:   { type: Number, required: false, default: 0 },
   monto_saldo:  { type: Number, required: false, default: 0 },
+  condicion_venta:   { type: String, required: false }, //Tipo de Pago
   forma_pago:   { type: String, required: false },
   fecha_pago:   { type: Date,   required: false }
 });

@@ -33,9 +33,9 @@ class pagos_Cotizacion_Controller extends Controller {
   // Crear nuevo pago de cotización
   async store(req, res) {
     try {
-      const { codigo, monto_total, monto_pago, forma_pago, fecha_pago } = req.body;
+      const { codigo, monto_total, monto_pago, condicion_venta, forma_pago, fecha_pago } = req.body;
 
-      if (!codigo || monto_total == null || monto_pago == null || !forma_pago || !fecha_pago) {
+      if (!codigo || monto_total == null || monto_pago == null || condicion_venta == null || !forma_pago || !fecha_pago) {
         return res.status(400).json({ message: "Todos los campos son obligatorios." });
       }
 
@@ -43,6 +43,7 @@ class pagos_Cotizacion_Controller extends Controller {
         codigo,
         monto_total,
         monto_pago,
+        condicion_venta,//Tipo de Pago
         forma_pago,
         fecha_pago
       });
@@ -58,15 +59,16 @@ class pagos_Cotizacion_Controller extends Controller {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { monto_total, monto_pago, forma_pago, fecha_pago } = req.body;
+      const { monto_total, monto_pago, condicion_venta, forma_pago, fecha_pago } = req.body;
 
-      if (monto_total == null || monto_pago == null || !forma_pago || !fecha_pago) {
+      if (monto_total == null || monto_pago == null || !condicion_venta || !forma_pago || !fecha_pago) {
         return res.status(400).json({ message: "Todos los campos son obligatorios." });
       }
 
       const updatedPago = await Pagos.update(id, {
         monto_total,
         monto_pago,
+        condicion_venta,//Tipo de Pago
         forma_pago,
         fecha_pago
       });
